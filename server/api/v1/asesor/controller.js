@@ -2,7 +2,6 @@
 
 const Model = require('./model');
 const {paginar} = require('../../../utils');
-const {singToken} = require('./../auth'); 
 
 
 const { fields } = require('./model');

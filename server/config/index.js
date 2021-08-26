@@ -11,7 +11,7 @@ const config = {
     password: process.env.DATABASE_PASSWORD
   },
   pagination:{
-    limit:2,
+    limit:10,
     skip:0,
     page:1,
   },
@@ -25,5 +25,9 @@ const config = {
       options:['asc','desc'],
     },
   },
+  token:{
+    secret:process.env.TOKEN_SECRET,
+    expires: process.env.TOKEN_EXPIRES,
+  }
 }
 module.exports = config;
