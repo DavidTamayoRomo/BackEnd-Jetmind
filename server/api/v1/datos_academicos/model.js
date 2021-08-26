@@ -19,7 +19,7 @@ const fields = {
 };
 
 //timestamps es created at - updated at
-const task = new Schema(fields, {timestamps:true});
+const datosacademicos = new Schema(fields, {timestamps:true});
 
-module.exports =  mongoose.model('task', task);
+module.exports =  mongoose.model('datosacademicos', datosacademicos);
 

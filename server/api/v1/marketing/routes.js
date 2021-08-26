@@ -2,21 +2,21 @@ const router = require('express').Router();
 const controller = require('./controller');
 
 /**
- * /api/tasks/ POST - CREATE
- * /api/tasks/ GET - READ ALL
- * /api/tasks/:id GET - READ ONE
- * /api/tasks/:id PUT - UPDATE
- * /api/tasks/:id DELETE - DELETE 
+ * /api/marketing/ POST - CREATE
+ * /api/marketing/ GET - READ ALL
+ * /api/marketing/:id GET - READ ONE
+ * /api/marketing/:id PUT - UPDATE
+ * /api/marketing/:id DELETE - DELETE 
  */
 
 
 /**
  * @swagger
- * /tasks:
+ * /marketing:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recuperar una lista de tareas formato JSON.
+ *     - "marketing"
+ *     summary: Recuperar una lista de marketings formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:
  *       200:
@@ -33,7 +33,7 @@ const controller = require('./controller');
  *                     properties:
  *                       id:
  *                         type: integer
- *                         description: The task ID.
+ *                         description: The marketing ID.
  *                         example: 0
  *                       title:
  *                         type: string
@@ -41,10 +41,10 @@ const controller = require('./controller');
  *                         example: Leanne Graham
  *   post:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
- *     operationId: "addTask"
+ *     - "marketing"
+ *     summary: "Agregar una nueva marketing"
+ *     description: "Creacion de una nueva marketing"
+ *     operationId: "addmarketing"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -54,7 +54,7 @@ const controller = require('./controller');
  *     parameters:
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada marketing"
  *       required: true
  *       schema:
  *        type: object
@@ -64,19 +64,19 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "marketing not found"
  * 
- * /tasks/{id}:
+ * /marketing/{id}:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recupera una tarea al enviar un ID.
- *     description: Muestra una tarea de la que enviamos un ID.
+ *     - "marketing"
+ *     summary: Recupera una marketing al enviar un ID.
+ *     description: Muestra una marketing de la que enviamos un ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la tarea.
+ *         description: ID de la marketing.
  *         schema:
  *           type: integer
  *     responses:
@@ -85,13 +85,13 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "marketing not found"
  *   put:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
- *     operationId: "addTask"
+ *     - "marketing"
+ *     summary: "Agregar una nueva marketing"
+ *     description: "Creacion de una nueva marketing"
+ *     operationId: "addmarketing"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -102,10 +102,10 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la marketing a mdificar"
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada marketing"
  *       required: true
  *       schema:
  *        type: object
@@ -115,14 +115,14 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "marketing not found"
  *
  *   delete:
  *     tags:
- *     - "tasks"
- *     summary: "Eliminar tarea"
+ *     - "marketing"
+ *     summary: "Eliminar marketing"
  *     description: "Eliminar"
- *     operationId: "deleteTask"
+ *     operationId: "deletemarketing"
  *     produces:
  *     - "application/xml"
  *     - "application/json"
@@ -130,14 +130,14 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la marketing a mdificar"
  *     responses:
  *       "200":
  *          description: "successful operation"
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "marketing not found"
  */
 
 router

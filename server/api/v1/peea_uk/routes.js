@@ -2,21 +2,21 @@ const router = require('express').Router();
 const controller = require('./controller');
 
 /**
- * /api/tasks/ POST - CREATE
- * /api/tasks/ GET - READ ALL
- * /api/tasks/:id GET - READ ONE
- * /api/tasks/:id PUT - UPDATE
- * /api/tasks/:id DELETE - DELETE 
+ * /api/peeauk/ POST - CREATE
+ * /api/peeauk/ GET - READ ALL
+ * /api/peeauk/:id GET - READ ONE
+ * /api/peeauk/:id PUT - UPDATE
+ * /api/peeauk/:id DELETE - DELETE 
  */
 
 
 /**
  * @swagger
- * /tasks:
+ * /peeauk:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recuperar una lista de tareas formato JSON.
+ *     - "peeauk"
+ *     summary: Recuperar una lista de peeauks formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:
  *       200:
@@ -33,7 +33,7 @@ const controller = require('./controller');
  *                     properties:
  *                       id:
  *                         type: integer
- *                         description: The task ID.
+ *                         description: The peeauk ID.
  *                         example: 0
  *                       title:
  *                         type: string
@@ -41,10 +41,10 @@ const controller = require('./controller');
  *                         example: Leanne Graham
  *   post:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
- *     operationId: "addTask"
+ *     - "peeauk"
+ *     summary: "Agregar una nueva peeauk"
+ *     description: "Creacion de una nueva peeauk"
+ *     operationId: "addpeeauk"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -54,7 +54,7 @@ const controller = require('./controller');
  *     parameters:
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada peeauk"
  *       required: true
  *       schema:
  *        type: object
@@ -64,19 +64,19 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "peeauk not found"
  * 
- * /tasks/{id}:
+ * /peeauk/{id}:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recupera una tarea al enviar un ID.
- *     description: Muestra una tarea de la que enviamos un ID.
+ *     - "peeauk"
+ *     summary: Recupera una peeauk al enviar un ID.
+ *     description: Muestra una peeauk de la que enviamos un ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la tarea.
+ *         description: ID de la peeauk.
  *         schema:
  *           type: integer
  *     responses:
@@ -85,13 +85,13 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "peeauk not found"
  *   put:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
- *     operationId: "addTask"
+ *     - "peeauk"
+ *     summary: "Agregar una nueva peeauk"
+ *     description: "Creacion de una nueva peeauk"
+ *     operationId: "addpeeauk"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -102,10 +102,10 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la peeauk a mdificar"
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada peeauk"
  *       required: true
  *       schema:
  *        type: object
@@ -115,14 +115,14 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "peeauk not found"
  *
  *   delete:
  *     tags:
- *     - "tasks"
- *     summary: "Eliminar tarea"
+ *     - "peeauk"
+ *     summary: "Eliminar peeauk"
  *     description: "Eliminar"
- *     operationId: "deleteTask"
+ *     operationId: "deletepeeauk"
  *     produces:
  *     - "application/xml"
  *     - "application/json"
@@ -130,14 +130,14 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la peeauk a mdificar"
  *     responses:
  *       "200":
  *          description: "successful operation"
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "peeauk not found"
  */
 
 router

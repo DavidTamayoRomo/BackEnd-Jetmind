@@ -2,21 +2,21 @@ const router = require('express').Router();
 const controller = require('./controller');
 
 /**
- * /api/tasks/ POST - CREATE
- * /api/tasks/ GET - READ ALL
- * /api/tasks/:id GET - READ ONE
- * /api/tasks/:id PUT - UPDATE
- * /api/tasks/:id DELETE - DELETE 
+ * /api/datostomatis/ POST - CREATE
+ * /api/datostomatis/ GET - READ ALL
+ * /api/datostomatis/:id GET - READ ONE
+ * /api/datostomatis/:id PUT - UPDATE
+ * /api/datostomatis/:id DELETE - DELETE 
  */
 
 
 /**
  * @swagger
- * /tasks:
+ * /datostomatis:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recuperar una lista de tareas formato JSON.
+ *     - "datostomatis"
+ *     summary: Recuperar una lista de datostomatiss formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:
  *       200:
@@ -41,9 +41,9 @@ const controller = require('./controller');
  *                         example: Leanne Graham
  *   post:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
+ *     - "datostomatis"
+ *     summary: "Agregar una nueva datostomatis"
+ *     description: "Creacion de una nueva datostomatis"
  *     operationId: "addTask"
  *     consumes:
  *     - "application/json"
@@ -54,7 +54,7 @@ const controller = require('./controller');
  *     parameters:
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada datostomatis"
  *       required: true
  *       schema:
  *        type: object
@@ -66,17 +66,17 @@ const controller = require('./controller');
  *       "404":
  *          description: "Task not found"
  * 
- * /tasks/{id}:
+ * /datostomatis/{id}:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recupera una tarea al enviar un ID.
- *     description: Muestra una tarea de la que enviamos un ID.
+ *     - "datostomatis"
+ *     summary: Recupera una datostomatis al enviar un ID.
+ *     description: Muestra una datostomatis de la que enviamos un ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la tarea.
+ *         description: ID de la datostomatis.
  *         schema:
  *           type: integer
  *     responses:
@@ -88,9 +88,9 @@ const controller = require('./controller');
  *          description: "Task not found"
  *   put:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
+ *     - "datostomatis"
+ *     summary: "Agregar una nueva datostomatis"
+ *     description: "Creacion de una nueva datostomatis"
  *     operationId: "addTask"
  *     consumes:
  *     - "application/json"
@@ -102,10 +102,10 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la datostomatis a mdificar"
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada datostomatis"
  *       required: true
  *       schema:
  *        type: object
@@ -119,8 +119,8 @@ const controller = require('./controller');
  *
  *   delete:
  *     tags:
- *     - "tasks"
- *     summary: "Eliminar tarea"
+ *     - "datostomatis"
+ *     summary: "Eliminar datostomatis"
  *     description: "Eliminar"
  *     operationId: "deleteTask"
  *     produces:
@@ -130,7 +130,7 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la datostomatis a mdificar"
  *     responses:
  *       "200":
  *          description: "successful operation"

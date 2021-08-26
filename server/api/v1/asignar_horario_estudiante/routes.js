@@ -2,21 +2,21 @@ const router = require('express').Router();
 const controller = require('./controller');
 
 /**
- * /api/tasks/ POST - CREATE
- * /api/tasks/ GET - READ ALL
- * /api/tasks/:id GET - READ ONE
- * /api/tasks/:id PUT - UPDATE
- * /api/tasks/:id DELETE - DELETE 
+ * /api/asignarhorario/ POST - CREATE
+ * /api/asignarhorario/ GET - READ ALL
+ * /api/asignarhorario/:id GET - READ ONE
+ * /api/asignarhorario/:id PUT - UPDATE
+ * /api/asignarhorario/:id DELETE - DELETE 
  */
 
 
 /**
  * @swagger
- * /tasks:
+ * /asignarhorario:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recuperar una lista de tareas formato JSON.
+ *     - "asignarhorario"
+ *     summary: Recuperar una lista de asignar horarios formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:
  *       200:
@@ -41,9 +41,9 @@ const controller = require('./controller');
  *                         example: Leanne Graham
  *   post:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
+ *     - "asignarhorario"
+ *     summary: "Agregar una nueva asignar horario"
+ *     description: "Creacion de una nueva asignar horario"
  *     operationId: "addTask"
  *     consumes:
  *     - "application/json"
@@ -54,7 +54,7 @@ const controller = require('./controller');
  *     parameters:
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada asignar horario"
  *       required: true
  *       schema:
  *        type: object
@@ -66,17 +66,17 @@ const controller = require('./controller');
  *       "404":
  *          description: "Task not found"
  * 
- * /tasks/{id}:
+ * /asignarhorario/{id}:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recupera una tarea al enviar un ID.
- *     description: Muestra una tarea de la que enviamos un ID.
+ *     - "asignarhorario"
+ *     summary: Recupera una asignar horario al enviar un ID.
+ *     description: Muestra una asignar horario de la que enviamos un ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la tarea.
+ *         description: ID de la asignar horario.
  *         schema:
  *           type: integer
  *     responses:
@@ -88,9 +88,9 @@ const controller = require('./controller');
  *          description: "Task not found"
  *   put:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
+ *     - "asignarhorario"
+ *     summary: "Agregar una nueva asignar horario"
+ *     description: "Creacion de una nueva asignar horario"
  *     operationId: "addTask"
  *     consumes:
  *     - "application/json"
@@ -102,10 +102,10 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la asignar horario a mdificar"
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada asignar horario"
  *       required: true
  *       schema:
  *        type: object
@@ -119,8 +119,8 @@ const controller = require('./controller');
  *
  *   delete:
  *     tags:
- *     - "tasks"
- *     summary: "Eliminar tarea"
+ *     - "asignarhorario"
+ *     summary: "Eliminar asignar horario"
  *     description: "Eliminar"
  *     operationId: "deleteTask"
  *     produces:
@@ -130,7 +130,7 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la asignar horario a mdificar"
  *     responses:
  *       "200":
  *          description: "successful operation"

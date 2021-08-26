@@ -2,21 +2,21 @@ const router = require('express').Router();
 const controller = require('./controller');
 
 /**
- * /api/tasks/ POST - CREATE
- * /api/tasks/ GET - READ ALL
- * /api/tasks/:id GET - READ ONE
- * /api/tasks/:id PUT - UPDATE
- * /api/tasks/:id DELETE - DELETE 
+ * /api/sucursal/ POST - CREATE
+ * /api/sucursal/ GET - READ ALL
+ * /api/sucursal/:id GET - READ ONE
+ * /api/sucursal/:id PUT - UPDATE
+ * /api/sucursal/:id DELETE - DELETE 
  */
 
 
 /**
  * @swagger
- * /tasks:
+ * /sucursal:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recuperar una lista de tareas formato JSON.
+ *     - "sucursal"
+ *     summary: Recuperar una lista de sucursals formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:
  *       200:
@@ -33,7 +33,7 @@ const controller = require('./controller');
  *                     properties:
  *                       id:
  *                         type: integer
- *                         description: The task ID.
+ *                         description: The sucursal ID.
  *                         example: 0
  *                       title:
  *                         type: string
@@ -41,10 +41,10 @@ const controller = require('./controller');
  *                         example: Leanne Graham
  *   post:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
- *     operationId: "addTask"
+ *     - "sucursal"
+ *     summary: "Agregar una nueva sucursal"
+ *     description: "Creacion de una nueva sucursal"
+ *     operationId: "addsucursal"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -54,7 +54,7 @@ const controller = require('./controller');
  *     parameters:
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada sucursal"
  *       required: true
  *       schema:
  *        type: object
@@ -64,19 +64,19 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "sucursal not found"
  * 
- * /tasks/{id}:
+ * /sucursal/{id}:
  *   get:
  *     tags:
- *     - "tasks"
- *     summary: Recupera una tarea al enviar un ID.
- *     description: Muestra una tarea de la que enviamos un ID.
+ *     - "sucursal"
+ *     summary: Recupera una sucursal al enviar un ID.
+ *     description: Muestra una sucursal de la que enviamos un ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la tarea.
+ *         description: ID de la sucursal.
  *         schema:
  *           type: integer
  *     responses:
@@ -85,13 +85,13 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "sucursal not found"
  *   put:
  *     tags:
- *     - "tasks"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
- *     operationId: "addTask"
+ *     - "sucursal"
+ *     summary: "Agregar una nueva sucursal"
+ *     description: "Creacion de una nueva sucursal"
+ *     operationId: "addsucursal"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -102,10 +102,10 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la sucursal a mdificar"
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada sucursal"
  *       required: true
  *       schema:
  *        type: object
@@ -115,14 +115,14 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "sucursal not found"
  *
  *   delete:
  *     tags:
- *     - "tasks"
- *     summary: "Eliminar tarea"
+ *     - "sucursal"
+ *     summary: "Eliminar sucursal"
  *     description: "Eliminar"
- *     operationId: "deleteTask"
+ *     operationId: "deletesucursal"
  *     produces:
  *     - "application/xml"
  *     - "application/json"
@@ -130,14 +130,14 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la sucursal a mdificar"
  *     responses:
  *       "200":
  *          description: "successful operation"
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "sucursal not found"
  */
 
 router

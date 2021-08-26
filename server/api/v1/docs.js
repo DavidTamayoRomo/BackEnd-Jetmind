@@ -20,7 +20,7 @@ const options = {
     './server/api/v1/persona/routes.js',
     './server/api/v1/asesor/routes.js',
     './server/api/v1/asignar_horario_estudiante/routes.js',
-    './server/api/v1/aistencia/routes.js',
+    './server/api/v1/asistencia/routes.js',
     './server/api/v1/citas_telemarketing/routes.js',
     './server/api/v1/ciudad/routes.js',
     './server/api/v1/contrato/routes.js',

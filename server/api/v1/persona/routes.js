@@ -15,7 +15,7 @@ const controller = require('./controller');
  *   get:
  *     tags:
  *     - "persona"
- *     summary: Recuperar una lista de tareas formato JSON.
+ *     summary: Recuperar una lista de personas formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:
  *       200:
@@ -32,7 +32,7 @@ const controller = require('./controller');
  *                     properties:
  *                       id:
  *                         type: integer
- *                         description: The task ID.
+ *                         description: The persona ID.
  *                         example: 0
  *                       title:
  *                         type: string
@@ -41,9 +41,9 @@ const controller = require('./controller');
  *   post:
  *     tags:
  *     - "persona"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
- *     operationId: "addTask"
+ *     summary: "Agregar una nueva persona"
+ *     description: "Creacion de una nueva persona"
+ *     operationId: "addpersona"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -53,7 +53,7 @@ const controller = require('./controller');
  *     parameters:
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada persona"
  *       required: true
  *       schema:
  *        type: object
@@ -63,19 +63,19 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "persona not found"
  * 
  * /persona/{id}:
  *   get:
  *     tags:
  *     - "persona"
- *     summary: Recupera una tarea al enviar un ID.
- *     description: Muestra una tarea de la que enviamos un ID.
+ *     summary: Recupera una persona al enviar un ID.
+ *     description: Muestra una persona de la que enviamos un ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la tarea.
+ *         description: ID de la persona.
  *         schema:
  *           type: integer
  *     responses:
@@ -84,13 +84,13 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "persona not found"
  *   put:
  *     tags:
  *     - "persona"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
- *     operationId: "addTask"
+ *     summary: "Agregar una nueva persona"
+ *     description: "Creacion de una nueva persona"
+ *     operationId: "addpersona"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -101,10 +101,10 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la persona a mdificar"
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada persona"
  *       required: true
  *       schema:
  *        type: object
@@ -114,14 +114,14 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "persona not found"
  *
  *   delete:
  *     tags:
  *     - "persona"
- *     summary: "Eliminar tarea"
+ *     summary: "Eliminar persona"
  *     description: "Eliminar"
- *     operationId: "deleteTask"
+ *     operationId: "deletepersona"
  *     produces:
  *     - "application/xml"
  *     - "application/json"
@@ -129,14 +129,14 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la persona a mdificar"
  *     responses:
  *       "200":
  *          description: "successful operation"
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "Task not found"
+ *          description: "persona not found"
  */
 
 router

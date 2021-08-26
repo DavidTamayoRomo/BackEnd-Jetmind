@@ -2,20 +2,20 @@ const router = require('express').Router();
 const controller = require('./controller');
 
 /**
- * /api/persona/ POST - CREATE
- * /api/persona/ GET - READ ALL
- * /api/persona/:id GET - READ ONE
- * /api/persona/:id PUT - UPDATE
- * /api/persona/:id DELETE - DELETE 
+ * /api/asesor/ POST - CREATE
+ * /api/asesor/ GET - READ ALL
+ * /api/asesor/:id GET - READ ONE
+ * /api/asesor/:id PUT - UPDATE
+ * /api/asesor/:id DELETE - DELETE 
  */
 
 /**
  * @swagger
- * /persona:
+ * /asesor:
  *   get:
  *     tags:
- *     - "persona"
- *     summary: Recuperar una lista de tareas formato JSON.
+ *     - "asesor"
+ *     summary: Recuperar una lista de asesors formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:
  *       200:
@@ -40,9 +40,9 @@ const controller = require('./controller');
  *                         example: Leanne Graham
  *   post:
  *     tags:
- *     - "persona"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
+ *     - "asesor"
+ *     summary: "Agregar una nueva asesor"
+ *     description: "Creacion de una nueva asesor"
  *     operationId: "addTask"
  *     consumes:
  *     - "application/json"
@@ -53,7 +53,7 @@ const controller = require('./controller');
  *     parameters:
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada asesor"
  *       required: true
  *       schema:
  *        type: object
@@ -65,17 +65,17 @@ const controller = require('./controller');
  *       "404":
  *          description: "Task not found"
  * 
- * /persona/{id}:
+ * /asesor/{id}:
  *   get:
  *     tags:
- *     - "persona"
- *     summary: Recupera una tarea al enviar un ID.
- *     description: Muestra una tarea de la que enviamos un ID.
+ *     - "asesor"
+ *     summary: Recupera una asesor al enviar un ID.
+ *     description: Muestra una asesor de la que enviamos un ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la tarea.
+ *         description: ID de la asesor.
  *         schema:
  *           type: integer
  *     responses:
@@ -87,9 +87,9 @@ const controller = require('./controller');
  *          description: "Task not found"
  *   put:
  *     tags:
- *     - "persona"
- *     summary: "Agregar una nueva tarea"
- *     description: "Creacion de una nueva tarea"
+ *     - "asesor"
+ *     summary: "Agregar una nueva asesor"
+ *     description: "Creacion de una nueva asesor"
  *     operationId: "addTask"
  *     consumes:
  *     - "application/json"
@@ -101,10 +101,10 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la asesor a mdificar"
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada tarea"
+ *       description: "Objeto con los atributos de cada asesor"
  *       required: true
  *       schema:
  *        type: object
@@ -118,8 +118,8 @@ const controller = require('./controller');
  *
  *   delete:
  *     tags:
- *     - "persona"
- *     summary: "Eliminar tarea"
+ *     - "asesor"
+ *     summary: "Eliminar asesor"
  *     description: "Eliminar"
  *     operationId: "deleteTask"
  *     produces:
@@ -129,7 +129,7 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la tarea a mdificar"
+ *       description: "Id de la asesor a mdificar"
  *     responses:
  *       "200":
  *          description: "successful operation"

@@ -1,23 +1,22 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-
-const Model = require('./../persona')
+const {body}= require('express-validator');
 
 const {Schema} = mongoose;
 
 
 const fields = {
-  fechaIngresoEmpresa:{
-    type : Date,
-    require:false
-  },
-  numeroDeCuenta:{
-    type : String
+  title:{
+    type : String,
+    require:true,
+    trim:true,
+    maxlength:128
   },
 };
 
 //timestamps es created at - updated at
 const asesor = new Schema(fields, {timestamps:true});
 
-module.exports =  Model.discriminator('asesor', asesor);
+module.exports =  mongoose.model('asesor', asesor);
+
 
