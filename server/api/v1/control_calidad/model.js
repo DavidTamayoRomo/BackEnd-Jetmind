@@ -10,11 +10,61 @@ const sanitizers = [
 */
 
 const fields = {
-  title:{
+  IdTelemarketing:{
     type : String,
     require:true,
-    trim:true,
-    maxlength:128
+  },
+  estado:{
+    type : Boolean,
+    require:true,
+  },
+  fecha:{
+    type : Date,
+    require:true,
+  },
+  tipoPago:{
+    type : Number,
+    require:false,
+  },
+  fechaPago:{
+    type : Date,
+    require:false,
+  },
+  cantidaPago:{
+    type : Number,
+    require:false,
+  },
+  observaciones:{
+    type : String,
+    require:false,
+  },
+  pregunta1:{
+    type : String,
+    require:false,
+  },
+  pregunta2:{
+    type : String,
+    require:false,
+  },
+  pregunta3:{
+    type : String,
+    require:false,
+  },
+  pregunta4:{
+    type : String,
+    require:false,
+  },
+  pregunta5:{
+    type : String,
+    require:false,
+  },
+  addedUser:{
+    type : String,
+    require:false,
+  },
+  modifiedUser:{
+    type : String,
+    require:false,
   },
 };
 

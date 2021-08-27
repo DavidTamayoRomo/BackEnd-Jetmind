@@ -10,11 +10,72 @@ const sanitizers = [
 */
 
 const fields = {
-  title:{
+  codigo:{
     type : String,
     require:true,
-    trim:true,
-    maxlength:128
+  },
+  fecha:{
+    type : Date,
+    require:true,
+  },
+  estado:{
+    type : String,
+    require:true,
+  },
+  idRepresentante:{
+    type : String,
+  },
+  tipoPago:{
+    type : String,
+    require:false,
+  },
+  estadoVenta:{
+    type : String,
+    require:false,
+  },
+  abono:{
+    type : Number,
+    require:false,
+  },
+  valorMatricula:{
+    type : Number,
+    require:false,
+  },
+  valorTotal:{
+    type : Number,
+    require:false,
+  },
+  numeroCuotas:{
+    type : Number,
+    require:false,
+  },
+  formaPago:{
+    type : String,
+    require:false,
+  },
+  comentario:{
+    type : String,
+    require:false,
+  },
+  directorAsignado:{
+    type : String,
+    require:false,
+  },
+  estadoPrograma:{
+    type : String,
+    require:false,
+  },
+  fechaAprobacion:{
+    type : String,
+    require:false,
+  },
+  addedUser:{
+    type : String,
+    require:false,
+  },
+  modifiedUser:{
+    type : String,
+    require:false,
   },
 };
 

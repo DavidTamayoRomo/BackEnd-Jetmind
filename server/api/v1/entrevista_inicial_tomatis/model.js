@@ -10,28 +10,36 @@ const sanitizers = [
 */
 
 const fields = {
-  idMarca:{
+  fecha:{
     type : String,
-    require:true,
+    require:false,
   },
-  idPrograma:[{
+  tiempoCapacitación:{
     type : String,
-    require:true,
-  }],
-  nombre:{
-    type : String,
-    require:true,
+    require:false,
   },
-  dias:[{
+  idDocentes:[{
     type : String,
     require:false,
   }],
-  horaInicio:{
-    type : Date,
+  idHorario:[{
+    type : String,
+    require:false,
+  }],
+  observaciones:[{
+    type : String,
+    require:false,
+  }],
+  pregunta1:{
+    type : String,
     require:false,
   },
-  horaFin:{
-    type : Date,
+  pregunta2:{
+    type : String,
+    require:false,
+  },
+  pregunta3:{
+    type : String,
     require:false,
   },
   addedUser:{
@@ -45,7 +53,7 @@ const fields = {
 };
 
 //timestamps es created at - updated at
-const horario = new Schema(fields, {timestamps:true});
+const entrevistainicialtomatis = new Schema(fields, {timestamps:true});
 
-module.exports =  mongoose.model('horario', horario);
+module.exports =  mongoose.model('entrevistainicialtomatis', entrevistainicialtomatis);
 

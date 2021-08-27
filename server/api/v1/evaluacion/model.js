@@ -10,11 +10,25 @@ const sanitizers = [
 */
 
 const fields = {
-  title:{
+  idEstudiante:{
     type : String,
     require:true,
-    trim:true,
-    maxlength:128
+  },
+  nivel:{
+    type : String,
+    require:false,
+  },
+  fechaEntrega:{
+    type : String,
+    require:false,
+  },
+  addedUser:{
+    type : String,
+    require:false,
+  },
+  modifiedUser:{
+    type : String,
+    require:false,
   },
 };
 

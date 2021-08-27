@@ -10,46 +10,58 @@ const sanitizers = [
 */
 
 const fields = {
-  idContrato:{
-    type : String,
-    require:true,
-  },
-  programa:[{
-    type : String,
-    require:false,
-  }],
-  nombre:{
+  fecha:{
     type : String,
     require:false,
   },
-  cedula_ruc:{
-    type : Number,
-    require:false,
-  },
-  telefono:{
-    type : Number,
-    require:false,
-  },
-  correo:{
+  tiempoCapacitación:{
     type : String,
     require:false,
   },
-  direccion:{
-    type : String,
-    require:false,
-  },
-  total:{
-    type : Number,
-    require:false,
-  },
-  tarjetaCredito:{
-    type : Boolean,
-    require:false,
-  },
-  voucher:[{
+  idDocentes:[{
     type : String,
     require:false,
   }],
+  idHorario:[{
+    type : String,
+    require:false,
+  }],
+  observaciones:[{
+    type : String,
+    require:false,
+  }],
+  pregunta1:{
+    type : String,
+    require:false,
+  },
+  pregunta2:{
+    type : String,
+    require:false,
+  },
+  pregunta3:{
+    type : String,
+    require:false,
+  },
+  pregunta4:{
+    type : String,
+    require:false,
+  },
+  pregunta5:{
+    type : String,
+    require:false,
+  },
+  pregunta6:{
+    type : String,
+    require:false,
+  },
+  pregunta7:{
+    type : String,
+    require:false,
+  },
+  pregunta8:{
+    type : String,
+    require:false,
+  },
   addedUser:{
     type : String,
     require:false,
@@ -61,7 +73,7 @@ const fields = {
 };
 
 //timestamps es created at - updated at
-const facturar = new Schema(fields, {timestamps:true});
+const entrevistainicialilvem = new Schema(fields, {timestamps:true});
 
-module.exports =  mongoose.model('facturar', facturar);
+module.exports =  mongoose.model('entrevistainicialilvem', entrevistainicialilvem);
 

@@ -3,18 +3,24 @@ const validator = require("validator");
 const {body}= require('express-validator');
 
 const {Schema} = mongoose;
-/*
-const sanitizers = [
-  body.apply(title).escape()
-]
-*/
+
 
 const fields = {
-  title:{
+  nombre:{
     type : String,
     require:true,
-    trim:true,
-    maxlength:128
+  },
+  logo:{
+    type : String,
+    require:false,
+  },
+  addedUser:{
+    type : String,
+    require:false,
+  },
+  modifiedUser:{
+    type : String,
+    require:false,
   },
 };
 

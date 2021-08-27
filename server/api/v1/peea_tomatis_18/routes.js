@@ -2,21 +2,21 @@ const router = require('express').Router();
 const controller = require('./controller');
 
 /**
- * /api/peeauk/ POST - CREATE
- * /api/peeauk/ GET - READ ALL
- * /api/peeauk/:id GET - READ ONE
- * /api/peeauk/:id PUT - UPDATE
- * /api/peeauk/:id DELETE - DELETE 
+ * /api/peeatomatis/ POST - CREATE
+ * /api/peeatomatis/ GET - READ ALL
+ * /api/peeatomatis/:id GET - READ ONE
+ * /api/peeatomatis/:id PUT - UPDATE
+ * /api/peeatomatis/:id DELETE - DELETE 
  */
 
 
 /**
  * @swagger
- * /peeauk:
+ * /peeatomatis:
  *   get:
  *     tags:
- *     - "peeauk"
- *     summary: Recuperar una lista de peeauks formato JSON.
+ *     - "peeatomatis"
+ *     summary: Recuperar una lista de peeatomatiss formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:
  *       200:
@@ -33,7 +33,7 @@ const controller = require('./controller');
  *                     properties:
  *                       id:
  *                         type: integer
- *                         description: The peeauk ID.
+ *                         description: The peeatomatis ID.
  *                         example: 0
  *                       title:
  *                         type: string
@@ -41,10 +41,10 @@ const controller = require('./controller');
  *                         example: Leanne Graham
  *   post:
  *     tags:
- *     - "peeauk"
- *     summary: "Agregar una nueva peeauk"
- *     description: "Creacion de una nueva peeauk"
- *     operationId: "addpeeauk"
+ *     - "peeatomatis"
+ *     summary: "Agregar una nueva peeatomatis"
+ *     description: "Creacion de una nueva peeatomatis"
+ *     operationId: "addpeeatomatis"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -54,7 +54,7 @@ const controller = require('./controller');
  *     parameters:
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada peeauk"
+ *       description: "Objeto con los atributos de cada peeatomatis"
  *       required: true
  *       schema:
  *        type: object
@@ -64,19 +64,19 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "peeauk not found"
+ *          description: "peeatomatis not found"
  * 
- * /peeauk/{id}:
+ * /peeatomatis/{id}:
  *   get:
  *     tags:
- *     - "peeauk"
- *     summary: Recupera una peeauk al enviar un ID.
- *     description: Muestra una peeauk de la que enviamos un ID.
+ *     - "peeatomatis"
+ *     summary: Recupera una peeatomatis al enviar un ID.
+ *     description: Muestra una peeatomatis de la que enviamos un ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la peeauk.
+ *         description: ID de la peeatomatis.
  *         schema:
  *           type: integer
  *     responses:
@@ -85,13 +85,13 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "peeauk not found"
+ *          description: "peeatomatis not found"
  *   put:
  *     tags:
- *     - "peeauk"
- *     summary: "Agregar una nueva peeauk"
- *     description: "Creacion de una nueva peeauk"
- *     operationId: "addpeeauk"
+ *     - "peeatomatis"
+ *     summary: "Agregar una nueva peeatomatis"
+ *     description: "Creacion de una nueva peeatomatis"
+ *     operationId: "addpeeatomatis"
  *     consumes:
  *     - "application/json"
  *     - "application/xml"
@@ -102,10 +102,10 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la peeauk a mdificar"
+ *       description: "Id de la peeatomatis a mdificar"
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada peeauk"
+ *       description: "Objeto con los atributos de cada peeatomatis"
  *       required: true
  *       schema:
  *        type: object
@@ -115,14 +115,14 @@ const controller = require('./controller');
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "peeauk not found"
+ *          description: "peeatomatis not found"
  *
  *   delete:
  *     tags:
- *     - "peeauk"
- *     summary: "Eliminar peeauk"
+ *     - "peeatomatis"
+ *     summary: "Eliminar peeatomatis"
  *     description: "Eliminar"
- *     operationId: "deletepeeauk"
+ *     operationId: "deletepeeatomatis"
  *     produces:
  *     - "application/xml"
  *     - "application/json"
@@ -130,14 +130,14 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la peeauk a mdificar"
+ *       description: "Id de la peeatomatis a mdificar"
  *     responses:
  *       "200":
  *          description: "successful operation"
  *       "400":
  *          description: "Invalid ID supplied"
  *       "404":
- *          description: "peeauk not found"
+ *          description: "peeatomatis not found"
  */
 
 router
