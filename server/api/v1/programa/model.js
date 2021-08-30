@@ -3,18 +3,45 @@ const validator = require("validator");
 const {body}= require('express-validator');
 
 const {Schema} = mongoose;
-/*
-const sanitizers = [
-  body.apply(title).escape()
-]
-*/
+
 
 const fields = {
-  title:{
+  idMarca:{
     type : String,
     require:true,
-    trim:true,
-    maxlength:128
+  },
+  idCiudad:{
+    type : String,
+    require:true,
+  },
+  idSucursal:{
+    type : String,
+    require:true,
+  },
+  //TODO: crear una tabla para ingresas los nombres de los programas
+  nombre:{
+    type : String,
+    require:true,
+  },
+  tipo:{
+    type : String,
+    require:true,
+  },
+  modalidad:{
+    type : String,
+    require:true,
+  },
+  idEstudiante:{
+    type : Date,
+    require:false,
+  },
+  addedUser:{
+    type : String,
+    require:false,
+  },
+  modifiedUser:{
+    type : String,
+    require:false,
   },
 };
 

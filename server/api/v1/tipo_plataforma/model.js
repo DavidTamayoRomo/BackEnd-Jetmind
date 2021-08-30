@@ -10,11 +10,25 @@ const sanitizers = [
 */
 
 const fields = {
-  title:{
+  nombre:{
     type : String,
     require:true,
-    trim:true,
-    maxlength:128
+  },
+  pregunta1:{
+    type : String,
+    require:true,
+  },
+  pregunta2:{
+    type : String,
+    require:true,
+  },
+  addedUser:{
+    type : String,
+    require:false,
+  },
+  modifiedUser:{
+    type : String,
+    require:false,
   },
 };
 

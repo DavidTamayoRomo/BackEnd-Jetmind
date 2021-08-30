@@ -10,11 +10,21 @@ const sanitizers = [
 */
 
 const fields = {
-  title:{
-    type : String,
+  fechaInicio:{
+    type : Date,
     require:true,
-    trim:true,
-    maxlength:128
+  },
+  fechaCierre:{
+    type : Date,
+    require:true,
+  },
+  addedUser:{
+    type : String,
+    require:false,
+  },
+  modifiedUser:{
+    type : String,
+    require:false,
   },
 };
 

@@ -238,6 +238,14 @@ const fields = {
     type : String,
     require:false,
   },
+  addedUser:{
+    type : String,
+    require:false,
+  },
+  modifiedUser:{
+    type : String,
+    require:false,
+  },
 };
 
 //timestamps es created at - updated at
