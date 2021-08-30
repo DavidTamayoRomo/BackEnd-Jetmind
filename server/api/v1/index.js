@@ -25,6 +25,7 @@ const facturar = require('./facturar/routes');
 const horario = require('./horario/routes');
 const marca = require('./marca/routes');
 const marketing = require('./marketing/routes');
+const nombrePrograma = require('./nombrePrograma/routes');
 const peeacharlotte17 = require('./peea_charlotte_uk_17/routes');
 const peeacharlotte18 = require('./peea_charlotte_uk_18/routes');
 const peeailvem17 = require('./peea_ilvem_17/routes');
@@ -39,6 +40,7 @@ const sucursal = require('./sucursal/routes');
 const telemarketing = require('./telemarketing/routes');
 const tipoplataforma = require('./tipo_plataforma/routes');
 const vigencia = require('./vigencia/routes');
+
 
 router.use('/tasks',tasks);
 router.use('/persona', persona);
@@ -65,6 +67,7 @@ router.use('/facturar',facturar);
 router.use('/horario',horario);
 router.use('/marca',marca);
 router.use('/marketing',marketing);
+router.use('/nombrePrograma',nombrePrograma);
 router.use('/peeacharlotte17',peeacharlotte17);
 router.use('/peeacharlotte18',peeacharlotte18);
 router.use('/peeailvem17',peeailvem17);
@@ -79,6 +82,7 @@ router.use('/sucursal',sucursal);
 router.use('/telemarketing',telemarketing);
 router.use('/tipoplataforma',tipoplataforma);
 router.use('/vigencia',vigencia);
+
 
 
 module.exports = router; 

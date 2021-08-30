@@ -3,35 +3,31 @@ const validator = require("validator");
 const {body}= require('express-validator');
 
 const {Schema} = mongoose;
-
+/*
+const sanitizers = [
+  body.apply(title).escape()
+]
+*/
 
 const fields = {
   idMarca:{
     type : String,
     require:true,
   },
-  idCiudad:{
+  nombre:{
     type : String,
-    require:true,
+    require:false,
   },
-  idSucursal:{
+  estado:{
+    type : Boolean,
+    require:false,
+  },
+  pdf:{
     type : String,
-    require:true,
+    require:false,
   },
-  idNombrePrograma:{
+  observaciones:{
     type : String,
-    require:true,
-  },
-  tipo:{
-    type : String,
-    require:true,
-  },
-  modalidad:{
-    type : String,
-    require:true,
-  },
-  idEstudiante:{
-    type : Date,
     require:false,
   },
   addedUser:{
@@ -45,7 +41,7 @@ const fields = {
 };
 
 //timestamps es created at - updated at
-const programa = new Schema(fields, {timestamps:true});
+const nombrePrograma = new Schema(fields, {timestamps:true});
 
-module.exports =  mongoose.model('programa', programa);
+module.exports =  mongoose.model('nombrePrograma', nombrePrograma);
 
