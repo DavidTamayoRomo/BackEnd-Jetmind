@@ -22,6 +22,10 @@ const fields = {
     type : String,
     require:false,
   },
+  estado:{
+    type : Boolean,
+    require:false,
+  },
   addedUser:{
     type : String,
     require:false,
