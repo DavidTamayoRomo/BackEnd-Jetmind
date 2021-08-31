@@ -50,6 +50,7 @@ const options = {
     './server/api/v1/telemarketing/routes.js',
     './server/api/v1/tipo_plataforma/routes.js',
     './server/api/v1/vigencia/routes.js',
+    './server/api/v1/nombrePrograma/routes.js',
 
   ],
 };

@@ -139,12 +139,19 @@ const controller = require('./controller');
  *          description: "persona not found"
  */
 
+router.param('id', controller.id);
+
 router
   .route('/')
   .post(controller.create)
   .get(controller.all);
 
-router.param('id', controller.id);
+router.route('/signup')
+  .post(controller.signup);
+
+router.route('/signin')
+  .post(controller.signin); 
+
 
 router
   .route('/:id')

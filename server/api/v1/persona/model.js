@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const {hash, compare} = require("bcryptjs");
 
 const {Schema} = mongoose;
 
 let tiposValidos = {
   values:['Marketing','Telemarketing','DirectorGeneral','Director','Docente'],
-  message:'{VALUE}: valor no valido'
+  message:'{VALUE}: no es un valor valido'
 }
 
 
@@ -49,6 +50,10 @@ const fields = {
       message:(props)=>`${props.value} no es un email valido`,
     },
   },
+  password:{
+    type : String,
+    require:true,
+  },
   cedula:{
     type : String,
     require:true,
@@ -59,7 +64,7 @@ const fields = {
     require:false
   },
   telefonoDomicilio:{
-    type : Date,
+    type : String,
     require:false
   },
   fechaNacimiento:{
@@ -91,7 +96,7 @@ const fields = {
     require:false
   },
   numeroCuenta:{
-    type : Date,
+    type : String,
     require:false
   },
   addedUser:{
@@ -106,6 +111,18 @@ const fields = {
 
 //timestamps es created at - updated at
 const persona = new Schema(fields, {timestamps:true});
+
+persona.pre('save', async function save(next) {
+  if (this.isNew || this.isModified('password')) {
+    this.password = await hash(this.password, 10);
+  }
+  next();
+});
+
+persona.methods.verifyPassword = function verifyPassword(password) {
+  return compare(password,this.password);
+}
+
 
 module.exports =  mongoose.model('persona', persona);
 

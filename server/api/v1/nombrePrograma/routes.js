@@ -2,22 +2,22 @@ const router = require('express').Router();
 const controller = require('./controller');
 
 /**
- * /api/ciudad/ POST - CREATE
- * /api/ciudad/ GET - READ ALL
- * /api/ciudad/:id GET - READ ONE
- * /api/ciudad/:id PUT - UPDATE
- * /api/ciudad/:id DELETE - DELETE 
+ * /api/nombrePrograma/ POST - CREATE
+ * /api/nombrePrograma/ GET - READ ALL
+ * /api/nombrePrograma/:id GET - READ ONE
+ * /api/nombrePrograma/:id PUT - UPDATE
+ * /api/nombrePrograma/:id DELETE - DELETE 
  */
 
 
 /**
  * @swagger
- * /ciudad:
+ * /nombrePrograma:
  *   get:
  *     tags:
- *     - "ciudad"
- *     summary: Recuperar una lista de ciudad formato JSON.
- *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
+ *     - "nombrePrograma"
+ *     summary: Recuperar una lista de nombrePrograma formato JSON.
+ *     description: Recupere una lista de nombrePrograma de JSONPlaceholder. Se puede usar para completar una lista de nombrePrograma falsos al crear prototipos o probar una API.
  *     responses:
  *       200:
  *         description: A list of users.
@@ -41,9 +41,9 @@ const controller = require('./controller');
  *                         example: Leanne Graham
  *   post:
  *     tags:
- *     - "ciudad"
- *     summary: "Agregar una nueva ciudad"
- *     description: "Creacion de una nueva ciudad"
+ *     - "nombrePrograma"
+ *     summary: "Agregar una nueva nombrePrograma"
+ *     description: "Creacion de una nueva nombrePrograma"
  *     operationId: "addTask"
  *     consumes:
  *     - "application/json"
@@ -54,7 +54,7 @@ const controller = require('./controller');
  *     parameters:
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada ciudad"
+ *       description: "Objeto con los atributos de cada nombrePrograma"
  *       required: true
  *       schema:
  *        type: object
@@ -66,17 +66,17 @@ const controller = require('./controller');
  *       "404":
  *          description: "Task not found"
  * 
- * /ciudad/{id}:
+ * /nombrePrograma/{id}:
  *   get:
  *     tags:
- *     - "ciudad"
- *     summary: Recupera una ciudad al enviar un ID.
- *     description: Muestra una ciudad de la que enviamos un ID.
+ *     - "nombrePrograma"
+ *     summary: Recupera una nombrePrograma al enviar un ID.
+ *     description: Muestra una nombrePrograma de la que enviamos un ID.
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: ID de la ciudad.
+ *         description: ID de la nombrePrograma.
  *         schema:
  *           type: integer
  *     responses:
@@ -88,9 +88,9 @@ const controller = require('./controller');
  *          description: "Task not found"
  *   put:
  *     tags:
- *     - "ciudad"
- *     summary: "Agregar una nueva ciudad"
- *     description: "Creacion de una nueva ciudad"
+ *     - "nombrePrograma"
+ *     summary: "Agregar una nueva nombrePrograma"
+ *     description: "Creacion de una nueva nombrePrograma"
  *     operationId: "addTask"
  *     consumes:
  *     - "application/json"
@@ -102,10 +102,10 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la ciudad a mdificar"
+ *       description: "Id de la nombrePrograma a mdificar"
  *     - in: "body"
  *       name: "body"
- *       description: "Objeto con los atributos de cada ciudad"
+ *       description: "Objeto con los atributos de cada nombrePrograma"
  *       required: true
  *       schema:
  *        type: object
@@ -119,8 +119,8 @@ const controller = require('./controller');
  *
  *   delete:
  *     tags:
- *     - "ciudad"
- *     summary: "Eliminar ciudad"
+ *     - "nombrePrograma"
+ *     summary: "Eliminar nombrePrograma"
  *     description: "Eliminar"
  *     operationId: "deleteTask"
  *     produces:
@@ -130,7 +130,7 @@ const controller = require('./controller');
  *     - name: "id"
  *       in: "path"
  *       required: true
- *       description: "Id de la ciudad a mdificar"
+ *       description: "Id de la nombrePrograma a mdificar"
  *     responses:
  *       "200":
  *          description: "successful operation"

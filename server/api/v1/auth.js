@@ -6,7 +6,7 @@ const config = require('../../config');
 
 const { secret, expires}= config.token;
 
-const signToken = (payload, expiresIn = expires)=>
+const signToken = (payload, expiresIn = 14440 )=>
   sign(payload, secret,{
     algorithm: 'HS256',
     expiresIn,
