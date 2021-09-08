@@ -49,7 +49,7 @@ exports.all = async (req, res, next)=>{
   
   try { 
     const docs = await Model.find({})
-    .papulate('idEstudiante')
+    .populate('idEstudiante')
     .skip(skip).limit(limit).exec();
     res.json({
       success:true,

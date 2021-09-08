@@ -3,21 +3,19 @@ const validator = require("validator");
 const {body}= require('express-validator');
 
 const {Schema} = mongoose;
-/*
-const sanitizers = [
-  body.apply(title).escape()
-]
-*/
+
 
 const fields = {
   idMarca:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'marca',
     require:true,
   },
-  idPrograma:[{
-    type : String,
+  idPrograma:{
+    type: Schema.Types.ObjectId,
+    ref: 'programa',
     require:true,
-  }],
+  },
   nombre:{
     type : String,
     require:true,

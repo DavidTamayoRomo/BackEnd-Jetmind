@@ -7,7 +7,8 @@ const {Schema} = mongoose;
 
 const fields = {
   idContrato:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'contrato',
     require:false,
   },
   fecha:{

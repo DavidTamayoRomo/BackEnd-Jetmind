@@ -11,7 +11,8 @@ const sanitizers = [
 
 const fields = {
   idMarca:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'marca',
     require:true,
   },
   nombre:{
