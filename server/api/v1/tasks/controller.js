@@ -27,7 +27,14 @@ exports.id = async (req, res, next, id)=>{
 }
 
 exports.create = async (req, res, next)=>{
-  const {body={}} = req;
+  const {body={}, params={}, decoded={}} = req;
+  const {_id=null}=decoded;
+  if (_id) {
+    //body.addedUser=_id;
+    body.userId=_id;
+  }
+  Object.assign(body, params);
+  
   const document = new Model(body);
 
   try {

@@ -63,10 +63,6 @@ const fields = {
     type : String,
     require:false
   },
-  telefonoOficina:{
-    type : String,
-    require:false
-  },
   numeroEmergencia:{
     type : String,
     require:false
@@ -76,10 +72,6 @@ const fields = {
     require:false
   },
   telefonoDomicilio:{
-    type : String,
-    require:false
-  },
-  numeroEmergencia:{
     type : String,
     require:false
   },

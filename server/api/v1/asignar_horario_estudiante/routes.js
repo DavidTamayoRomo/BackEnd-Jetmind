@@ -12,10 +12,10 @@ const controller = require('./controller');
 
 /**
  * @swagger
- * /asignarhorario:
+ * /asignarhorarioestudiante:
  *   get:
  *     tags:
- *     - "asignarhorario"
+ *     - "asignarhorarioestudiante"
  *     summary: Recuperar una lista de asignar horarios formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:
@@ -41,7 +41,7 @@ const controller = require('./controller');
  *                         example: Leanne Graham
  *   post:
  *     tags:
- *     - "asignarhorario"
+ *     - "asignarhorarioestudiante"
  *     summary: "Agregar una nueva asignar horario"
  *     description: "Creacion de una nueva asignar horario"
  *     operationId: "addTask"
@@ -66,10 +66,10 @@ const controller = require('./controller');
  *       "404":
  *          description: "Task not found"
  * 
- * /asignarhorario/{id}:
+ * /asignarhorarioestudiante/{id}:
  *   get:
  *     tags:
- *     - "asignarhorario"
+ *     - "asignarhorarioestudiante"
  *     summary: Recupera una asignar horario al enviar un ID.
  *     description: Muestra una asignar horario de la que enviamos un ID.
  *     parameters:
@@ -88,7 +88,7 @@ const controller = require('./controller');
  *          description: "Task not found"
  *   put:
  *     tags:
- *     - "asignarhorario"
+ *     - "asignarhorarioestudiante"
  *     summary: "Agregar una nueva asignar horario"
  *     description: "Creacion de una nueva asignar horario"
  *     operationId: "addTask"
@@ -119,7 +119,7 @@ const controller = require('./controller');
  *
  *   delete:
  *     tags:
- *     - "asignarhorario"
+ *     - "asignarhorarioestudiante"
  *     summary: "Eliminar asignar horario"
  *     description: "Eliminar"
  *     operationId: "deleteTask"

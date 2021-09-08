@@ -19,7 +19,8 @@ const fields = {
     require:false,
   },
   idEstudiante:{
-    type : String,
+    type : Schema.Types.ObjectId,
+    ref: 'estudiante',
     require:false,
   },
   addedUser:{

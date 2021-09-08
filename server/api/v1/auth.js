@@ -67,6 +67,7 @@ const me =  (req, res, next)=>{
 const owner = (req, res, next)=>{
   const {decoded = {}, doc = {} }=req;
   const {_id} = decoded;
+  //const {id}= doc.addedUser;
   const {id}= doc.userId;//cambiar nombre userid
   if (_id !== id) {
     const message = 'Forbidden';

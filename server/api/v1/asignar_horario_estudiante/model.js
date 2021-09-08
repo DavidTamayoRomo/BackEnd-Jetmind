@@ -6,15 +6,18 @@ const {Schema} = mongoose;
 
 const fields = {
   idDocente:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:true,
   },
   idHorario:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'horario',
     require:true,
   },
   idEstudiantes:[{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'estudiante',
     require:true,
   }],
   addedUser:{

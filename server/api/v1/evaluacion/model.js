@@ -11,7 +11,8 @@ const sanitizers = [
 
 const fields = {
   idEstudiante:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'estudiante',
     require:true,
   },
   nivel:{

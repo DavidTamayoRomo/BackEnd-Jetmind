@@ -56,7 +56,8 @@ const fields = {
     require:false
   },
   idRepresentante:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'representante',
     require:false
   },
   addedUser:{

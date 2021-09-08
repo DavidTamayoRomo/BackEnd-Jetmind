@@ -23,7 +23,8 @@ const fields = {
     require:true,
   },
   idRepresentante:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'representante',
   },
   tipoPago:{
     type : String,

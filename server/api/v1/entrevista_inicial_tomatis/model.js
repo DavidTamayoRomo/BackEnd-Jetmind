@@ -19,11 +19,13 @@ const fields = {
     require:false,
   },
   idDocentes:[{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   }],
   idHorario:[{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'horario',
     require:false,
   }],
   observaciones:[{

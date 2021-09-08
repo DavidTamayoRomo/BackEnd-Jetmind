@@ -15,7 +15,8 @@ const fields = {
     require:true,
   },
   idPrograma:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'programa',
     require:true,
   },
   estado:{
@@ -47,7 +48,8 @@ const fields = {
     require:false,
   },
   idSucursal:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'sucursal',
     require:false,
   },
   zoom:{
@@ -63,7 +65,8 @@ const fields = {
     require:false,
   },
   idMarketing:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
   observacionesAsesor:{
@@ -71,7 +74,8 @@ const fields = {
     require:false,
   },
   idTelemarketing:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
   addedUser:{

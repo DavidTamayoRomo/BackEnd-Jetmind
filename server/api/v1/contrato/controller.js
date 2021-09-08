@@ -43,45 +43,16 @@ exports.create = async (req, res, next)=>{
 };
 
 exports.all = async (req, res, next)=>{
-  /*
-  const { query = {} } = req;
-  const {limit , page, skip }=paginar(query);
-  const {sortBy, direction}=sortParseParams(query,fields);
-  
-  const all =  Model.find({})
-    .sort(sortCompactToStr(sortBy,direction))
-    .skip(skip)
-    .limit(limit);
-  const count = Model.countDocuments();
 
-  try {
-    const data = await Promise.all([all.exec(), count.exec()]);
-    const [docs, total]= data;
-    const pages = Math.ceil(total / limit);
-    res.json({
-      success:true,
-      data:docs,
-      meta: {
-        limit,
-        skip,
-        total,
-        page,
-        pages,
-        sortBy,
-        direction
-      }
-    });
-  } catch (err) {
-    next(new Error(err));
-  }
-  */
   
   const { query = {} } = req;
   const {limit , page, skip }=paginar(query);
   
   
   try { 
-    const docs = await Model.find({}).skip(skip).limit(limit).exec();
+    const docs = await Model.find({})
+    .populate('idRepresentante')
+    .skip(skip).limit(limit).exec();
     res.json({
       success:true,
       data:docs,

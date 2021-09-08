@@ -11,7 +11,8 @@ const sanitizers = [
 
 const fields = {
   IdTelemarketing:{
-    type : String,
+    type :Schema.Types.ObjectId,
+    ref: 'persona',
     require:true,
   },
   estado:{

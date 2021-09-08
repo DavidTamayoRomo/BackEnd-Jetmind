@@ -81,7 +81,11 @@ exports.all = async (req, res, next)=>{
   
   
   try { 
-    const docs = await Model.find({}).skip(skip).limit(limit).exec();
+    const docs = await Model.find({})
+    .populate('idEstudiantes')
+    .populate('idHorario')
+    .populate('idDocente')
+    .skip(skip).limit(limit).exec();
     res.json({
       success:true,
       data:docs,
