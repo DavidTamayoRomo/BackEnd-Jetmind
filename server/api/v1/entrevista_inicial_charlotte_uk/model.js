@@ -69,11 +69,13 @@ const fields = {
     require:false,
   },
   addedUser:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
   modifiedUser:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
 };

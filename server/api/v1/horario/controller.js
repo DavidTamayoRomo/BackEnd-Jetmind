@@ -53,6 +53,8 @@ exports.all = async (req, res, next)=>{
     .find({})
     .populate('idMarca')
     .populate('idPrograma')
+    .populate('addedUser', 'nombresApellidos tipo email estado')
+    .populate('modifiedUser', 'nombresApellidos tipo email estado')
     .skip(skip).limit(limit).exec();
     res.json({
       success:true,

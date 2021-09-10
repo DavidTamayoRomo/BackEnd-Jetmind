@@ -52,6 +52,8 @@ exports.all = async (req, res, next)=>{
     const docs = await Model.find({})
     .populate('idDocentes')
     .populate('idHorario')
+    .populate('addedUser', 'nombresApellidos tipo email estado')
+    .populate('modifiedUser', 'nombresApellidos tipo email estado')
     .skip(skip).limit(limit).exec();
     res.json({
       success:true,

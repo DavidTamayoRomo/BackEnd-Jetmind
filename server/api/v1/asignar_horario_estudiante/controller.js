@@ -85,6 +85,8 @@ exports.all = async (req, res, next)=>{
     .populate('idEstudiantes')
     .populate('idHorario')
     .populate('idDocente')
+    .populate('addedUser', 'nombresApellidos tipo email estado')
+    .populate('modifiedUser', 'nombresApellidos tipo email estado')
     .skip(skip).limit(limit).exec();
     res.json({
       success:true,

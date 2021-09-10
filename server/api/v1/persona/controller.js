@@ -108,7 +108,13 @@ exports.all = async (req, res, next)=>{
   
   
   try { 
-    const docs = await Model.find({}).skip(skip).limit(limit).exec();
+    const docs = await Model.find({})
+    .populate('idMarca')
+    .populate('idCiudad')
+    .populate('idSucursal')
+    .populate('addedUser', 'nombresApellidos tipo email estado')
+    .populate('modifiedUser', 'nombresApellidos tipo email estado')
+    .skip(skip).limit(limit).exec();
     res.json({
       success:true,
       ok:"all",

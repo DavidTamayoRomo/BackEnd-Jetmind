@@ -3,11 +3,6 @@ const validator = require("validator");
 const {body}= require('express-validator');
 
 const {Schema} = mongoose;
-/*
-const sanitizers = [
-  body.apply(title).escape()
-]
-*/
 
 const fields = {
   fechaInicio:{
@@ -19,11 +14,13 @@ const fields = {
     require:true,
   },
   addedUser:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
   modifiedUser:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
 };
@@ -32,4 +29,3 @@ const fields = {
 const vigencia = new Schema(fields, {timestamps:true});
 
 module.exports =  mongoose.model('vigencia', vigencia);
-

@@ -203,6 +203,16 @@ const fields = {
     type : String,
     require:false,
   },
+  addedUser:{
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
+    require:false,
+  },
+  modifiedUser:{
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
+    require:false,
+  },
 };
 
 //timestamps es created at - updated at

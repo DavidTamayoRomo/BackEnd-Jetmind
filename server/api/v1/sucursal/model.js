@@ -3,13 +3,14 @@ const validator = require("validator");
 const {body}= require('express-validator');
 
 const {Schema} = mongoose;
-/*
-const sanitizers = [
-  body.apply(title).escape()
-]
-*/
+
 
 const fields = {
+
+  idMarcas:[{
+    type: Schema.Types.ObjectId,
+    ref: 'marca'
+  }],
   nombre:{
     type : String,
     require:true,
@@ -27,11 +28,13 @@ const fields = {
     require:false,
   },
   addedUser:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
   modifiedUser:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
 };

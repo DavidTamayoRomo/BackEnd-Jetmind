@@ -7,19 +7,23 @@ const {Schema} = mongoose;
 
 const fields = {
   idMarca:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'marca',
     require:true,
   },
   idCiudad:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'ciudad',
     require:true,
   },
   idSucursal:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'sucursal',
     require:true,
   },
   idNombrePrograma:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'nombrePrograma',
     require:true,
   },
   tipo:{
@@ -31,15 +35,18 @@ const fields = {
     require:true,
   },
   idEstudiante:{
-    type : Date,
+    type: Schema.Types.ObjectId,
+    ref: 'estudiante',
     require:false,
   },
   addedUser:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
   modifiedUser:{
-    type : String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require:false,
   },
 };
