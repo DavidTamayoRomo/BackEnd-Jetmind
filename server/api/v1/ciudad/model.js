@@ -14,6 +14,17 @@ const fields = {
     type : String,
     require:false,
   },
+  email:{
+    type : String,
+    unique:true,
+    lowecase:true,
+    validator:{
+      validator(value){
+        return validator.isEmail(value);
+      },
+      message:(props)=>`${props.value} no es un email valido`,
+    },
+  },
   codigoPostal:{
     type : String,
     require:false,

@@ -10,6 +10,11 @@ const sanitizers = [
 */
 
 const fields = {
+  idCiudad:{
+    type: Schema.Types.ObjectId,
+    ref: 'ciudad',
+    require:true,
+  },
   idMarca:{
     type: Schema.Types.ObjectId,
     ref: 'marca',

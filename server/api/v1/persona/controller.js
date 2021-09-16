@@ -8,6 +8,8 @@ const { fields } = require('./model');
 const { verify } = require('jsonwebtoken');
 const {signToken}= require('./../auth');
 
+const email = require('../../../email');
+
 exports.id = async (req, res, next, id)=>{
   try {
     const doc = await Model.findById(id).exec();
@@ -35,6 +37,7 @@ exports.signup = async(req, res, next)=>{
     const {_id} = doc;
     const token = signToken({_id});
     res.status(201);
+   
     res.json({
       success:true,
       data:doc,
@@ -92,11 +95,38 @@ exports.create = async (req, res, next)=>{
   try {
     const doc = await document.save();
     res.status(201);
+    email.transporter.sendMail({
+      from: "pruebaenvio@charlotteenglishschool.com",
+      to: "davidtamayoromo@gmail.com",
+      subject: "Prueba email NODEJS",
+    })
     res.json({
       success:true,
       ok:"create",
       data:doc
     });
+  } catch (err) {
+    next(new Error(err));
+  }
+};
+
+exports.enviar = async (req, res, next)=>{
+  try {
+    for (let index = 1; index < 100; index++){
+      //con await esperamos la respuesta del envio del email
+      const esperar = await email.transporter.sendMail({
+        from: "pruebaenvio@charlotteenglishschool.com",
+        to: "davidtamayoromo@gmail.com",
+        subject: "Prueba email NODEJS"+index,
+      });
+      //If necesario para esperar la respuesta del envio del email
+      if (esperar!=null) {
+        console.log('Esperando');
+      }else{
+        console.log('Enviado');
+      }
+      console.log("Epoch: "+index);
+    }
   } catch (err) {
     next(new Error(err));
   }

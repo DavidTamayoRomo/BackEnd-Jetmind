@@ -53,6 +53,7 @@ exports.all = async (req, res, next)=>{
     const docs = await Model.find({})
     .populate('addedUser', 'nombresApellidos tipo email estado')
     .populate('modifiedUser', 'nombresApellidos tipo email estado')
+    .populate('idPrograma')
     .skip(skip).limit(limit).exec();
     res.json({
       success:true,

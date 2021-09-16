@@ -10,24 +10,15 @@ const sanitizers = [
 */
 
 const fields = {
-  fecha:{
-    type : String,
-    require:false,
+  idContrato:{
+    type: Schema.Types.ObjectId,
+    ref: 'contrato',
+    require:false
   },
   tiempoCapacitación:{
     type : String,
     require:false,
   },
-  idDocentes:[{
-    type: Schema.Types.ObjectId,
-    ref: 'persona',
-    require:false,
-  }],
-  idHorario:[{
-    type: Schema.Types.ObjectId,
-    ref: 'horario',
-    require:false,
-  }],
   observaciones:{
     type : String,
     require:false,
@@ -80,7 +71,6 @@ const fields = {
   },
 };
 
-//timestamps es created at - updated at
 const entrevistainicialChUk = new Schema(fields, {timestamps:true});
 
 module.exports =  mongoose.model('entrevistainicialChUk', entrevistainicialChUk);

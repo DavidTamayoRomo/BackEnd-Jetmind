@@ -146,6 +146,10 @@ router
   .post(controller.create)
   .get(controller.all);
 
+router
+  .route('/email')
+  .get(controller.enviar)
+
 router.route('/signup')
   .post(controller.signup);
 

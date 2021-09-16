@@ -2,7 +2,6 @@
 
 const Model = require('./model');
 const {paginar} = require('../../../utils');
-const {singToken} = require('./../auth'); 
 
 
 const { fields } = require('./model');
@@ -43,6 +42,7 @@ exports.create = async (req, res, next)=>{
 };
 
 exports.all = async (req, res, next)=>{
+
   
   const { query = {} } = req;
   const {limit , page, skip }=paginar(query);
@@ -52,7 +52,6 @@ exports.all = async (req, res, next)=>{
     const docs = await Model.find({})
     .populate('addedUser', 'nombresApellidos tipo email estado')
     .populate('modifiedUser', 'nombresApellidos tipo email estado')
-    .populate('idContrato')
     .skip(skip).limit(limit).exec();
     res.json({
       success:true,

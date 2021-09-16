@@ -10,6 +10,10 @@ const sanitizers = [
 */
 
 const fields = {
+  idPrograma:{
+    type: Schema.Types.ObjectId,
+    ref: 'programa',
+  },
   fechaInicio:{
     type : String,
     require:false,
