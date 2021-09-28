@@ -40,6 +40,7 @@ const sucursal = require('./sucursal/routes');
 const telemarketing = require('./telemarketing/routes');
 const tipoplataforma = require('./tipo_plataforma/routes');
 const vigencia = require('./vigencia/routes');
+const utils = require('./utils/routes');
 
 
 router.use('/tasks',tasks);
@@ -82,6 +83,8 @@ router.use('/sucursal',sucursal);
 router.use('/telemarketing',telemarketing);
 router.use('/tipoplataforma',tipoplataforma);
 router.use('/vigencia',vigencia);
+router.use('/utils',utils);
+
 
 
 

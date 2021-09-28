@@ -54,7 +54,7 @@ exports.signin = async(req, res, next)=>{
   try {
     const user = await Model.findOne({email}).exec();
     if (!user) {
-      const message = 'Contrase;a o email no valido';
+      const message = 'Contraseña o email no valido';
       return next({
         success: false,
         message,
@@ -64,7 +64,7 @@ exports.signin = async(req, res, next)=>{
     }
     const verified = await user.verifyPassword(password);
     if (!verified) {
-      const message = 'Contrase;a o email no valido';
+      const message = 'Contraseña o email no valido';
       return next({
         success: false,
         message,
@@ -89,7 +89,15 @@ exports.signin = async(req, res, next)=>{
 }
 
 exports.create = async (req, res, next)=>{
-  const {body={}} = req;
+  const {body={}, params= {}, decoded={}} = req;
+  const {_id=null}=decoded;
+  console.log("ID:"+_id);
+  if (_id) {
+    body.addedUser=_id;
+  }
+
+  Object.assign(body, params);
+
   const document = new Model(body);
 
   try {

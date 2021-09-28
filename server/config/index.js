@@ -11,7 +11,7 @@ const config = {
     password: process.env.DATABASE_PASSWORD
   },
   pagination:{
-    limit:20,
+    limit:5,
     skip:0,
     page:1,
   },

@@ -12,6 +12,10 @@ const signToken = (payload, expiresIn = 14440 )=>
     expiresIn,
   });
 
+
+/**
+ * Autentificacion por token
+ *  */  
 const auth = (req, res, next)=>{
   let token = req.headers.authorization || req.query.token || '';
   if (token.startsWith('Bearer ')) {
@@ -44,8 +48,9 @@ const auth = (req, res, next)=>{
 };
 
 
-
-
+/**
+ * Control sobre sus datos
+ */
 const me =  (req, res, next)=>{
   const {decoded = {}, params = {} }=req;
   const {_id} = decoded;
@@ -62,8 +67,9 @@ const me =  (req, res, next)=>{
     next();
   };
 }
-
-
+ /**
+  * Datos propios 
+  */
 const owner = (req, res, next)=>{
   const {decoded = {}, doc = {} }=req;
   const {_id} = decoded;
@@ -80,8 +86,8 @@ const owner = (req, res, next)=>{
   }else {
     next();
   };
-
 }
+
 
 
 module.exports = {

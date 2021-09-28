@@ -5,7 +5,7 @@ const {hash, compare} = require("bcryptjs");
 const {Schema} = mongoose;
 
 let tiposValidos = {
-  values:['Marketing','Telemarketing','DirectorGeneral','Director','Docente'],
+  values:['Admin','Marketing','Telemarketing','DirectorGeneral','Director','Docente'],
   message:'{VALUE}: no es un valor valido'
 }
 

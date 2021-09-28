@@ -65,6 +65,28 @@ const controller = require('./controller');
  *       "404":
  *          description: "persona not found"
  * 
+ *   signin:
+ *     tags:
+ *     - "persona"
+ *     summary: "Ingreso de persona SINGIN"
+ *     description: "ingreso"
+ *     operationId: "singinPersona"
+ *     produces:
+ *     - "application/xml"
+ *     - "application/json"
+ *     parameters:
+ *     - name: "id"
+ *       in: "path"
+ *       required: true
+ *       description: "Id de la persona a mdificar"
+ *     responses:
+ *       "200":
+ *          description: "successful operation"
+ *       "400":
+ *          description: "Invalid ID supplied"
+ *       "404":
+ *          description: "persona not found"
+ * 
  * /persona/{id}:
  *   get:
  *     tags:
@@ -137,6 +159,7 @@ const controller = require('./controller');
  *          description: "Invalid ID supplied"
  *       "404":
  *          description: "persona not found"
+ * 
  */
 
 router.param('id', controller.id);
