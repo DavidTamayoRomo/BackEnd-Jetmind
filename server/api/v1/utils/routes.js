@@ -16,6 +16,11 @@ router
 router.use(expressFileUpload());
 
 router
-    .route('/uploads/:tabla/:id')
-      .put(controller.fileUpload);
+    .route('/uploads/:tabla/:atributo/:id')
+      .put(controller.fileUpload)
+
+router
+    .route('/uploads/:tabla/:atributo/:imagen')
+      .get(controller.fileUpload)
+
 module.exports = router;

@@ -86,6 +86,10 @@ const fields = {
     type : String,
     require:false
   },
+  fotoPerfil:{
+    type : String,
+    require:false
+  },
   fotoCedula1:{
     type : String,
     require:false

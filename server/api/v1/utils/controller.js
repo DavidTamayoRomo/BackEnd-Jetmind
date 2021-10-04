@@ -1,5 +1,9 @@
 const {response} = require('express');
+const path = require('path');
 const { v4 }= require('uuid');
+const {actualizarImagen} = require('../../../utils');
+const fs = require('fs')
+
 
 const Persona = require('../persona/model');
 const Contrato = require('../contrato/model');
@@ -7,7 +11,9 @@ const Estudiante = require('../estudiante/model');
 const Representante = require('../representante/model');
 
 /**
+ * ================================================
  * Buscar en todas las colecciones del sistema
+ * ================================================
  */
 exports.busquedaGeneral = async (req, res = response)=>{
   const busqueda = req.params.busqueda;
@@ -35,7 +41,9 @@ exports.busquedaGeneral = async (req, res = response)=>{
 }
 
 /**
+ * ===============================================
  * Busqueda tabla en especifica
+ * ===============================================
  */
 exports.busquedaEspecifica = async (req, res = response)=>{
   const tabla = req.params.tabla;
@@ -73,14 +81,18 @@ exports.busquedaEspecifica = async (req, res = response)=>{
 }
 
 /**
- * Upoads Archivos
+ * ======================================
+ * Uploads Archivos
+ * ======================================
  */
 exports.fileUpload = (req, res)=>{
   
   const tabla = req.params.tabla;
+  const atributo = req.params.atributo;
   const id = req.params.id;
+  
   /**Validar tipo */
-  const tiposValidos = ['personas','representantes']; //a;adir los tipos validos es decir tablas que se tengan que subir archivos
+  const tiposValidos = ['personas','representantes','estudiantes','empresas','sucursales','marcas','contratos','facturas']; //a;adir los tipos validos es decir tablas que se tengan que subir archivos
   if (!tiposValidos.includes(tabla)) {
     return res.status(400).json({
       success:false,
@@ -100,7 +112,7 @@ exports.fileUpload = (req, res)=>{
   const extensionArchivo = NombreCortado[NombreCortado.length -1];
 
   /**Validar extension */
-  const extensionesValidas = ['png', 'jpg', 'jpeg', 'gif'];
+  const extensionesValidas = ['png', 'PNG', 'jpg', 'jpeg', 'gif'];
   if (!extensionesValidas.includes(extensionArchivo)) {
     return res.status(400).json({
       success:false,
@@ -121,7 +133,8 @@ exports.fileUpload = (req, res)=>{
         msg:'Error al mover la imagen'
       });
     }
-
+    /**Actualizar la ruta en la base de datos */
+    actualizarImagen(tabla, atributo, id, nombreArchivo);
     res.json({
       success:true,
       msg:'Imagen actualizada',
@@ -132,4 +145,28 @@ exports.fileUpload = (req, res)=>{
 
   
  
+}
+
+
+
+/**
+ * ======================================
+ * Retornar imagen
+ * ======================================
+ */
+exports.fileUpload = (req, res)=>{
+  const tabla = req.params.tabla;
+  const imagen = req.params.imagen;
+
+  const pathImg = path.join(__dirname, `../../../uploads/${tabla}/${imagen}`);
+  //imagen por defecto
+  if (fs.existsSync(pathImg)) {
+    
+    res.sendFile(pathImg);
+  }else{
+    const pathImg = path.join(__dirname, `../../../uploads/noIMG.png`);
+    res.sendFile(pathImg);
+  }
+  
+
 }
