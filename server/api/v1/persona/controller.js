@@ -47,7 +47,11 @@ exports.signup = async(req, res, next)=>{
     next(new Error(error));
   }
 }
-
+/**
+ * ================================================================
+ * LOGIN
+ * ================================================================
+ */
 exports.signin = async(req, res, next)=>{
   const {body = {}} = req;
   const {email='',password=''} = body;
@@ -87,11 +91,48 @@ exports.signin = async(req, res, next)=>{
     return next(new Error(error));
   }
 }
+/**
+ * ==================================================
+ * Renovar Token
+ * ================================================== 
+ */
+ exports.renewToken = async(req, res) => {
+  const {decoded} = req;
+  const {_id}=decoded;
 
+  // Generar el TOKEN - JWT
+  const token = await signToken({_id });
+
+  // Obtener el usuario por id
+  const usuario = await Model.findById( _id );
+
+  
+  res.json({
+    success:true,
+    ok:"singin",
+    data:usuario,
+    meta:{token}
+  });
+  
+  
+
+  
+
+}
+
+
+
+/**
+ *==================================================
+ * Crear Persona
+ *==================================================
+ */
 exports.create = async (req, res, next)=>{
   const {body={}, params= {}, decoded={}} = req;
   const {_id=null}=decoded;
   console.log("ID:"+_id);
+  const {email}=body;
+
   if (_id) {
     body.addedUser=_id;
   }
@@ -101,8 +142,16 @@ exports.create = async (req, res, next)=>{
   const document = new Model(body);
 
   try {
+    const existeEmail= await Model.findOne({email});
+    if (existeEmail) {
+      return res.status(400).json({
+        success:false,
+        message:'El correo electronico ya existe'
+      });
+    }
     const doc = await document.save();
     res.status(201);
+    /** Envio de correo de verificacion */
     email.transporter.sendMail({
       from: "pruebaenvio@charlotteenglishschool.com",
       to: "davidtamayoromo@gmail.com",

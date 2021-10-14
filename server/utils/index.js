@@ -54,7 +54,7 @@ const actualizarImagenPersona = async (id,atributo,nombreArchivo)=>{
 
 
 const actualizarImagen = async(tabla,atributo, id, nombreArchivo)=>{
-  
+
   switch (tabla) {
     case 'personas':
       actualizarImagenPersona(id, atributo,nombreArchivo);

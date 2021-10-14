@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { auth } = require('../auth');
 const controller = require('./controller');
 
 /**
@@ -179,6 +180,8 @@ router.route('/signup')
 router.route('/signin')
   .post(controller.signin); 
 
+router.route('/renew')
+  .get(auth,controller.renewToken); 
 
 router
   .route('/:id')

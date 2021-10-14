@@ -86,7 +86,8 @@ exports.busquedaEspecifica = async (req, res = response)=>{
  * ======================================
  */
 exports.fileUpload = (req, res)=>{
-  
+  console.log('DAVID');
+
   const tabla = req.params.tabla;
   const atributo = req.params.atributo;
   const id = req.params.id;
@@ -148,13 +149,12 @@ exports.fileUpload = (req, res)=>{
 }
 
 
-
 /**
  * ======================================
  * Retornar imagen
  * ======================================
  */
-exports.fileUpload = (req, res)=>{
+exports.returnfileUpload = (req, res)=>{
   const tabla = req.params.tabla;
   const imagen = req.params.imagen;
 
