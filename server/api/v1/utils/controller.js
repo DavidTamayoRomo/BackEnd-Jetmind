@@ -86,7 +86,6 @@ exports.busquedaEspecifica = async (req, res = response)=>{
  * ======================================
  */
 exports.fileUpload = (req, res)=>{
-  console.log('DAVID');
 
   const tabla = req.params.tabla;
   const atributo = req.params.atributo;

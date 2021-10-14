@@ -20,7 +20,7 @@ router
       .put(controller.fileUpload)
 
 router
-    .route('/uploads/:tabla/:atributo/:imagen')
+    .route('/uploads/:tabla/:imagen')
       .get(controller.returnfileUpload)
 
 module.exports = router;
