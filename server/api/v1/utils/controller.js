@@ -53,7 +53,10 @@ exports.busquedaEspecifica = async (req, res = response)=>{
     switch (tabla) {
       case 'personas':
         try {
-          data = await  Persona.find({nombresApellidos:regex});
+          data = await  Persona.find({nombresApellidos:regex})
+          .populate('idCiudad')
+          .populate('idMarca')
+          .populate('idSucursal');
           break;
         } catch (error) {
           next(new Error(error));

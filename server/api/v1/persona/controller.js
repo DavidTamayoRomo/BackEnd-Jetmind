@@ -189,28 +189,53 @@ exports.enviar = async (req, res, next)=>{
   }
 };
 
+
+
 exports.all = async (req, res, next)=>{
   const { query = {} } = req;
   const {limit , page, skip }=paginar(query);
   
   
   try { 
-    const docs = await Model.find({})
     
+    const docs = await Model.find({})
+    .populate('idCiudad')
+    .populate('idMarca')
+    .populate('idSucursal')
     .skip(skip).limit(limit).exec();
+    const totalUsuarios = await Model.countDocuments();
+
     res.json({
       success:true,
       ok:"all",
       data:docs,
+      totalUsuarios
     });
+
   } catch (err) {
       next(new Error(err));
   }
   
 };
 
+function transformarFecha(fecha) {
+  date = new Date(fecha);
+  year = date.getFullYear();
+  month = date.getMonth()+1;
+  dt = date.getDate();
+  if (dt < 10) {
+    dt = '0' + dt;
+  }
+  if (month < 10) {
+    month = '0' + month;
+  }
+  return year+'-' + month + '-'+dt;
+}
+
 exports.read = async (req, res, next)=>{
-  const {doc = {}} = req;
+  const {doc = {}} = await req;
+  const fecha1 = transformarFecha(doc.fechaNacimiento);
+  
   res.json({
     success:true,
     ok:"read",

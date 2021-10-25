@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const {hash, compare} = require("bcryptjs");
+const mongooseDateFormat = require('mongoose-date-format');
 
 const {Schema} = mongoose;
 
@@ -132,6 +133,8 @@ persona.methods.verifyPassword = function verifyPassword(password) {
   return compare(password,this.password);
 }
 
+//Cambiar formato de fecha formato solo fecha formato YYYY-MM-DD || si se desea cambiar debemos hacer clic + control en mongooseDateFormat 
+persona.plugin(mongooseDateFormat);
 
 module.exports =  mongoose.model('persona', persona);
 
