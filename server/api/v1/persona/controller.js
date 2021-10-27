@@ -8,7 +8,7 @@ const { fields } = require('./model');
 const { verify } = require('jsonwebtoken');
 const {signToken}= require('./../auth');
 
-const email = require('../../../email');
+const envioEmail = require('../../../email');
 
 exports.id = async (req, res, next, id)=>{
   try {
@@ -152,7 +152,7 @@ exports.create = async (req, res, next)=>{
     const doc = await document.save();
     res.status(201);
     /** Envio de correo de verificacion */
-    email.transporter.sendMail({
+    envioEmail.transporter.sendMail({
       from: "pruebaenvio@charlotteenglishschool.com",
       to: "davidtamayoromo@gmail.com",
       subject: "Prueba email NODEJS",
@@ -218,23 +218,10 @@ exports.all = async (req, res, next)=>{
   
 };
 
-function transformarFecha(fecha) {
-  date = new Date(fecha);
-  year = date.getFullYear();
-  month = date.getMonth()+1;
-  dt = date.getDate();
-  if (dt < 10) {
-    dt = '0' + dt;
-  }
-  if (month < 10) {
-    month = '0' + month;
-  }
-  return year+'-' + month + '-'+dt;
-}
+
 
 exports.read = async (req, res, next)=>{
   const {doc = {}} = await req;
-  const fecha1 = transformarFecha(doc.fechaNacimiento);
   
   res.json({
     success:true,
