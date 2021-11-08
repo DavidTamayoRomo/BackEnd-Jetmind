@@ -114,9 +114,6 @@ exports.signin = async(req, res, next)=>{
     meta:{token}
   });
   
-  
-
-  
 
 }
 

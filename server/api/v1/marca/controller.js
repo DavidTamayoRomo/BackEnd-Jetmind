@@ -53,9 +53,13 @@ exports.all = async (req, res, next)=>{
     .populate('addedUser', 'nombresApellidos tipo email estado')
     .populate('modifiedUser', 'nombresApellidos tipo email estado')
     .skip(skip).limit(limit).exec();
+
+    const totalMarcas = await Model.countDocuments();
     res.json({
       success:true,
+      ok:"all",
       data:docs,
+      totalMarcas
     });
   } catch (err) {
       next(new Error(err));

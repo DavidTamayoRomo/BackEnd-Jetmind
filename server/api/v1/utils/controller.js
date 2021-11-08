@@ -7,6 +7,7 @@ const fs = require('fs')
 
 const Persona = require('../persona/model');
 const Ciudad = require('../ciudad/model');
+const Marca = require('../marca/model');
 const Contrato = require('../contrato/model');
 const Estudiante = require('../estudiante/model');
 const Representante = require('../representante/model');
@@ -66,6 +67,14 @@ exports.busquedaEspecifica = async (req, res = response)=>{
       case 'ciudades':
         try {
           data = await  Ciudad.find({nombre:regex})
+          break;
+        } catch (error) {
+          next(new Error(error));
+          break;
+        }
+      case 'marcas':
+        try {
+          data = await  Marca.find({nombre:regex})
           break;
         } catch (error) {
           next(new Error(error));
