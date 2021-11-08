@@ -12,11 +12,14 @@ let tiposValidos = {
 
 
 const fields = {
-  tipo:{
-    type : String,
-    require:true,
-    enum: tiposValidos
-  },
+  tipo:[
+    {
+      type : Schema.Types.ObjectId,
+      ref: 'role',
+      require:true
+      //enum: tiposValidos
+    }
+  ],
   idMarca:[
     {
       type: Schema.Types.ObjectId,
@@ -55,67 +58,53 @@ const fields = {
     },
   },
   password:{
-    type : String,
-    require:true,
+    type : String
   },
   cedula:{
     type : String,
     require:true,
-    maxlength:10
+    //maxlength:10
   },
   telefono:{
-    type : String,
-    require:false
+    type : String
   },
   telefonoDomicilio:{
-    type : String,
-    require:false
+    type : String
   },
   fechaNacimiento:{
-    type : Date,
-    require:false
+    type : Date
   },
   direccion:{
-    type : String,
-    require:false
+    type : String
   },
   genero:{
-    type : String,
-    require:false
+    type : String
   },
   estado:{
-    type : String,
-    require:false
+    type : String
   },
   fotoPerfil:{
-    type : String,
-    require:false
+    type : String
   },
   fotoCedula1:{
-    type : String,
-    require:false
+    type : String
   },
   fotoCedula2:{
-    type : String,
-    require:false
+    type : String
   },
   fechaIngresoEmpresa:{
-    type : Date,
-    require:false
+    type : Date
   },
   numeroCuenta:{
-    type : String,
-    require:false
+    type : String
   },
   addedUser:{
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
   },
   modifiedUser:{
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
   },
 };
 
