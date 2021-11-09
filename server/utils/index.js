@@ -6,6 +6,7 @@ const {pagination, sort} = config;
 const fs = require('fs');
 //Modelos que se requiere para poder guardar
 const Persona = require('../api/v1/persona/model');
+const Marca = require('../api/v1/marca/model');
 
 
 
@@ -28,6 +29,9 @@ const borrarImagen = (path)=>{
   }
 }
 
+/**
+ * Persona
+ */
 const actualizarImagenPersona = async (id,atributo,nombreArchivo)=>{
   let pathViejo;
   const persona = await Persona.findById(id);
@@ -51,10 +55,33 @@ const actualizarImagenPersona = async (id,atributo,nombreArchivo)=>{
   }
   await persona.save();
 }
+/**Marca */
+const actualizarImagenMarca = async (id,nombreArchivo,res)=>{
+  let pathViejo;
+  const marca = await Marca.findById(id);
+  if (!marca) {
+    return false;
+  }
+  pathViejo = `./server/uploads/marcas/${marca.logo}`;
+  
+  /**Borra imagen anterior para evitar almacenar informacion no importante */
+  borrarImagen(pathViejo);
+  
+  /**Actualizamos el nombre del archivo en la base de datos */
+  marca.logo = nombreArchivo;
+  
+  await marca.save();
+  res.json({
+    success:true,
+    msg:'Imagen actualizada',
+    nombreArchivo,
+    data:marca
+  });
+}
 
 
-const actualizarImagen = async(tabla,atributo, id, nombreArchivo)=>{
-
+const actualizarImagen = async(tabla,atributo, id, nombreArchivo, res)=>{
+  console.log('Este es un mensaje de actualizar imagen');
   switch (tabla) {
     case 'personas':
       actualizarImagenPersona(id, atributo,nombreArchivo);
@@ -72,7 +99,7 @@ const actualizarImagen = async(tabla,atributo, id, nombreArchivo)=>{
       actualizarImagenPersona(id, nombreArchivo);
       return true;
     case 'marcas':
-      actualizarImagenPersona(id, nombreArchivo);
+      actualizarImagenMarca(id,nombreArchivo,res);
       return true;
     case 'contratos':
       actualizarImagenPersona(id, nombreArchivo);

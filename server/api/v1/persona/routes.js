@@ -167,8 +167,8 @@ router.param('id', controller.id);
 
 router
   .route('/')
-  .post(controller.create)
-  .get(controller.all);
+  .post(auth ,controller.create)
+  .get(auth ,controller.all);
 
 router
   .route('/email')
@@ -185,8 +185,8 @@ router.route('/renew')
 
 router
   .route('/:id')
-  .get(controller.read)
-  .put(controller.update)
-  .delete(controller.delete);
+  .get(auth ,controller.read)
+  .put(auth ,controller.update)
+  .delete(auth ,controller.delete);
 
 module.exports = router;

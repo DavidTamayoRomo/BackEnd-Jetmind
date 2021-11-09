@@ -107,11 +107,9 @@ exports.busquedaEspecifica = async (req, res = response)=>{
  * ======================================
  */
 exports.fileUpload = (req, res)=>{
-
   const tabla = req.params.tabla;
   const atributo = req.params.atributo;
   const id = req.params.id;
-  
   /**Validar tipo */
   const tiposValidos = ['personas','representantes','estudiantes','empresas','sucursales','marcas','contratos','facturas']; //a;adir los tipos validos es decir tablas que se tengan que subir archivos
   if (!tiposValidos.includes(tabla)) {
@@ -155,12 +153,8 @@ exports.fileUpload = (req, res)=>{
       });
     }
     /**Actualizar la ruta en la base de datos */
-    actualizarImagen(tabla, atributo, id, nombreArchivo);
-    res.json({
-      success:true,
-      msg:'Imagen actualizada',
-      nombreArchivo
-    });
+    actualizarImagen(tabla, atributo, id, nombreArchivo,res);
+    
 
   });
 
