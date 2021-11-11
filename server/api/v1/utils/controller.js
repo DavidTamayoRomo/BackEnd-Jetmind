@@ -52,7 +52,7 @@ exports.busquedaEspecifica = async (req, res = response)=>{
   const tabla = req.params.tabla;
   const busqueda = req.params.busqueda;
   const regex = new RegExp(busqueda, 'i');
-
+    
     switch (tabla) {
       case 'personas':
         try {
@@ -95,9 +95,14 @@ exports.busquedaEspecifica = async (req, res = response)=>{
       case 'estudiantes':
         
         break;
-      case 'Representantes':
-        
-        break;
+      case 'representantes':
+        try {
+          data = await  Representante.find({nombresApellidos:regex})
+          break;
+        } catch (error) {
+          next(new Error(error));
+          break;
+        }
       default:
         return res.status(400).json({
           success:false,
