@@ -12,6 +12,7 @@ const Sucursal = require('../sucursal/model');
 const Contrato = require('../contrato/model');
 const Estudiante = require('../estudiante/model');
 const Representante = require('../representante/model');
+const NombrePrograma = require('../nombrePrograma/model');
 
 /**
  * ================================================
@@ -92,12 +93,25 @@ exports.busquedaEspecifica = async (req, res = response)=>{
       case 'contratos':
         
         break;
-      case 'estudiantes':
-        
-        break;
       case 'representantes':
         try {
           data = await  Representante.find({nombresApellidos:regex})
+          break;
+        } catch (error) {
+          next(new Error(error));
+          break;
+        }
+      case 'estudiantes':
+        try {
+          data = await  Estudiante.find({nombresApellidos:regex}).populate('idRepresentante')
+          break;
+        } catch (error) {
+          next(new Error(error));
+          break;
+        }
+      case 'nombreProgramas':
+        try {
+          data = await  NombrePrograma.find({nombre:regex})
           break;
         } catch (error) {
           next(new Error(error));

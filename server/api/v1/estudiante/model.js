@@ -55,11 +55,11 @@ const fields = {
     type : String,
     require:false
   },
-  idRepresentante:{
+  idRepresentante:[{
     type: Schema.Types.ObjectId,
     ref: 'representante',
     require:false
-  },
+  }],
   addedUser:{
     type: Schema.Types.ObjectId,
     ref: 'persona',
