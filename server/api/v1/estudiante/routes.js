@@ -153,4 +153,8 @@ router
   .put(controller.update)
   .delete(controller.delete);
 
+router
+  .route('/:id/:idRepresentante')
+  .get(controller.allByIdRepresentante);
+
 module.exports = router;

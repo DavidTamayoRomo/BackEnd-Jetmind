@@ -69,6 +69,24 @@ exports.all = async (req, res, next)=>{
   
 };
 
+
+exports.allByIdRepresentante = async (req, res, next)=>{
+  const {  doc } = req;
+  const {idRepresentante} = doc;
+  try { 
+    const docs = await Model.find({idRepresentante}).populate('idRepresentante');
+
+    res.json({
+      success:true,
+      ok:"all",
+      data:docs
+    });
+  } catch (err) {
+      next(new Error(err));
+  }
+  
+}; 
+
 exports.read = async (req, res, next)=>{
   const {doc = {}} = req;
   res.json({
@@ -79,6 +97,7 @@ exports.read = async (req, res, next)=>{
 
 exports.update = async (req, res, next)=>{
   const {doc = {}, body = {} }=req;
+  console.log(doc);
   Object.assign(doc,body);
   try {
     const update = await doc.save();
