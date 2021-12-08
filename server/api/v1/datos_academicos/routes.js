@@ -12,10 +12,10 @@ const controller = require('./controller');
 
 /**
  * @swagger
- * /datosacademicos:
+ * /datoscademicos:
  *   get:
  *     tags:
- *     - "datosacademicos"
+ *     - "datosacAdemicos"
  *     summary: Recuperar una lista de datosacademicoss formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:

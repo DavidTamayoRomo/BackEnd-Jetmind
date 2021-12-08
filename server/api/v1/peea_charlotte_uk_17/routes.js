@@ -15,7 +15,7 @@ const controller = require('./controller');
  * /peeacharlotte:
  *   get:
  *     tags:
- *     - "peeacharlotte"
+ *     - "peeacharlotte 17"
  *     summary: Recuperar una lista de peeacharlottes formato JSON.
  *     description: Recupere una lista de usuarios de JSONPlaceholder. Se puede usar para completar una lista de usuarios falsos al crear prototipos o probar una API.
  *     responses:

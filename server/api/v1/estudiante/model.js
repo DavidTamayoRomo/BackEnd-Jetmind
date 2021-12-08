@@ -13,7 +13,6 @@ const fields = {
   },
   email:{
     type : String,
-    unique:true,
     lowecase:true,
     validator:{
       validator(value){
@@ -26,6 +25,9 @@ const fields = {
     type : String,
     require:true,
     maxlength:10
+  },
+  estado:{
+    type : String
   },
   telefono:{
     type : String,

@@ -76,22 +76,23 @@ exports.all = async (req, res, next)=>{
   
   try { 
     const docs = await Model.find({})
-    .populate('idRepresentante', 'nombresApellidos email estado')
-    .populate('addedUser', 'nombresApellidos tipo email estado')
-    .populate('modifiedUser', 'nombresApellidos tipo email estado')
+    //.populate('idRepresentante', 'nombresApellidos email estado')
+    //.populate('addedUser', 'nombresApellidos tipo email estado')
+    //.populate('modifiedUser', 'nombresApellidos tipo email estado')
     .skip(skip).limit(limit).exec();
+
+    const totalContratos = await Model.countDocuments();
+
     res.json({
       success:true,
+      ok:"all",
       data:docs,
+      totalContratos
     });
   } catch (err) {
       next(new Error(err));
   }
 
-
-
-  
-  
 };
 
 exports.read = async (req, res, next)=>{

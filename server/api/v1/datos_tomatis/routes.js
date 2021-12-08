@@ -1,13 +1,7 @@
 const router = require('express').Router();
 const controller = require('./controller');
 
-/**
- * /api/datostomatis/ POST - CREATE
- * /api/datostomatis/ GET - READ ALL
- * /api/datostomatis/:id GET - READ ONE
- * /api/datostomatis/:id PUT - UPDATE
- * /api/datostomatis/:id DELETE - DELETE 
- */
+
 
 
 /**
@@ -138,6 +132,14 @@ const controller = require('./controller');
  *          description: "Invalid ID supplied"
  *       "404":
  *          description: "Task not found"
+ */
+
+/**
+ * /api/datostomatis/ POST - CREATE
+ * /api/datostomatis/ GET - READ ALL
+ * /api/datostomatis/:id GET - READ ONE
+ * /api/datostomatis/:id PUT - UPDATE
+ * /api/datostomatis/:id DELETE - DELETE 
  */
 
 router

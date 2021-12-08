@@ -28,6 +28,7 @@ const fields = {
     type : Boolean,
     require:false,
   },
+  //TODO: aumentar atributo: Modalidad [virtual, presencial]
   pdf:{
     type : String,
     require:false,

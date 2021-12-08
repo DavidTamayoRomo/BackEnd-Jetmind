@@ -13,7 +13,7 @@ const fields = {
   idContrato:{
     type: Schema.Types.ObjectId,
     ref: 'contrato',
-    require:true,
+    //require:true,
   },
   programa:[{
     type: Schema.Types.ObjectId,

@@ -6,39 +6,40 @@ const {Schema} = mongoose;
 
 
 const fields = {
-  idMarca:{
+  idMarca:[{
     type: Schema.Types.ObjectId,
     ref: 'marca',
     require:true,
-  },
-  idCiudad:{
+  }],
+  idCiudad:[{
     type: Schema.Types.ObjectId,
     ref: 'ciudad',
     require:true,
-  },
-  idSucursal:{
+  }],
+  idSucursal:[{
     type: Schema.Types.ObjectId,
     ref: 'sucursal',
     require:true,
-  },
-  idNombrePrograma:{
+  }],
+  idNombrePrograma:[{
     type: Schema.Types.ObjectId,
     ref: 'nombrePrograma',
     require:true,
-  },
+  }],
   tipo:{
     type : String,
     require:true,
   },
+  //TODO: ver si se quita modalidad
   modalidad:{
     type : String,
     require:true,
   },
-  idEstudiante:{
+  idEstudiante:[{
     type: Schema.Types.ObjectId,
     ref: 'estudiante',
     require:false,
-  },
+  }],
   addedUser:{
     type: Schema.Types.ObjectId,
     ref: 'persona',
