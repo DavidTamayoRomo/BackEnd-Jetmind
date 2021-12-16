@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 /*
 const sanitizers = [
   body.apply(title).escape()
@@ -10,84 +10,85 @@ const sanitizers = [
 */
 
 const fields = {
-  nombresApellidos:{
-    type : String,
-    require:true,
-    maxlength:128
+  nombresApellidos: {
+    type: String,
+    require: true,
+    maxlength: 128
   },
-  email:{
-    type : String,
-    lowecase:true,
-    validator:{
-      validator(value){
+  email: {
+    type: String,
+    lowecase: true,
+    validator: {
+      validator(value) {
         return validator.isEmail(value);
       },
-      message:(props)=>`${props.value} no es un email valido`,
+      message: (props) => `${props.value} no es un email valido`,
     },
   },
-  cedula:{
-    type : String,
-    require:true,
-    maxlength:10
+  cedula: {
+    type: String,
+    require: true,
+    maxlength: 10
   },
-  telefono:{
-    type : String,
-    require:false
+  telefono: {
+    type: String,
+    require: false
   },
-  fechaNacimiento:{
-    type : Date,
-    require:false
+  fechaNacimiento: {
+    type: Date,
+    require: false
   },
-  direccion:{
-    type : String,
-    require:false
+  direccion: {
+    type: String,
+    require: false
   },
-  genero:{
-    type : String,
-    require:false
+  genero: {
+    type: String,
+    require: false
   },
-  estado:{
-    type : String,
-    require:false
+  //Activo, Espera, Rechazado
+  estado: {
+    type: String,
+    require: false
   },
-  fotoCedula1:{
-    type : String,
-    require:false
+  fotoCedula1: {
+    type: String,
+    require: false
   },
-  fotoCedula2:{
-    type : String,
-    require:false
+  fotoCedula2: {
+    type: String,
+    require: false
   },
-  lugarTrabajo:{
-    type : String,
-    require:false
+  lugarTrabajo: {
+    type: String,
+    require: false
   },
-  numeroEmergencia:{
-    type : String,
-    require:false
+  numeroEmergencia: {
+    type: String,
+    require: false
   },
-  telefonoOficina:{
-    type : String,
-    require:false
+  telefonoOficina: {
+    type: String,
+    require: false
   },
-  telefonoDomicilio:{
-    type : String,
-    require:false
+  telefonoDomicilio: {
+    type: String,
+    require: false
   },
-  addedUser:{
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
-  modifiedUser:{
+  modifiedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const representante = new Schema(fields, {timestamps:true});
+const representante = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('representante', representante);
+module.exports = mongoose.model('representante', representante);
 

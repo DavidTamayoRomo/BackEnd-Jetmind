@@ -31,6 +31,9 @@ exports.busquedaGeneral = async (req, res = response) => {
       Representante.find({ nombresApellidos: regex }),
     ]);
 
+
+
+
     res.json({
       success: true,
       data: {
@@ -53,8 +56,8 @@ exports.busquedaGeneral = async (req, res = response) => {
 exports.busquedaEspecifica = async (req, res = response) => {
   const tabla = req.params.tabla;
   const busqueda = req.params.busqueda;
+  const campos = req.params.campos;
   const regex = new RegExp(busqueda, 'i');
-
   switch (tabla) {
     case 'personas':
       try {
@@ -91,9 +94,7 @@ exports.busquedaEspecifica = async (req, res = response) => {
         next(new Error(error));
         break;
       }
-    case 'contratos':
 
-      break;
     case 'representantes':
       try {
         data = await Representante.find({ nombresApellidos: regex })
@@ -126,6 +127,30 @@ exports.busquedaEspecifica = async (req, res = response) => {
         next(new Error(error));
         break;
       }
+    case 'contratos':
+      try {
+        console.log(campos);
+        if (campos != '[object Object]') {
+
+          camposSplit = campos.split(',');
+          let array = [];
+          for (let index = 0; index < camposSplit.length; index++) {
+            array.push({ [camposSplit[index]]: regex });
+          }
+          let objeto = {};
+          Object.assign(objeto, ...array);
+          console.log(objeto);
+          data = await Contrato.find(objeto);
+          break;
+
+        } else {
+          console.log('Entre');
+        }
+
+      } catch (error) {
+        next(new Error(error));
+        break;
+      }
     default:
       return res.status(400).json({
         success: false,
@@ -143,6 +168,37 @@ exports.busquedaEspecifica = async (req, res = response) => {
  * Uploads Archivos
  * ======================================
  */
+
+exports.fileUploadVouchers = (req, res) => {
+  const tabla = req.params.tabla; //contrato
+  const atributo = req.params.atributo; //voucher
+  const id = req.params.id; //id del contrato
+  const imagen64 = req.params.imagen64;
+
+  console.log('imagen64', imagen64);
+  console.log('id', id);
+
+  /* var data = fs.readFileSync('base64', 'utf8'),
+    base64Data,
+    binaryData;
+
+  base64Data = data.replace(/^data:image\/png;base64,/, "");
+  base64Data += base64Data.replace('+', ' ');
+  binaryData = new Buffer(base64Data, 'base64').toString('binary');
+  console.log('base64Data: ', base64Data);
+  console.log('binaryData: ', binaryData);
+
+  
+  const nombreArchivo = `${v4()}.png`;
+
+  fs.writeFile(nombreArchivo, binaryData, "binary", function (err) {
+    console.log(err); // writes out file without error, but it's not a valid image
+  }); */
+
+
+
+}
+
 exports.fileUpload = (req, res) => {
   const tabla = req.params.tabla;
   const atributo = req.params.atributo;

@@ -6,21 +6,25 @@ const controller = require('./controller');
 
 router
   .route('/busquedageneral/:busqueda')
-    .get(controller.busquedaGeneral);
+  .get(controller.busquedaGeneral);
 
 router
-  .route('/busquedaespecifica/coleccion/:tabla/:busqueda')
-    .get(controller.busquedaEspecifica);
+  .route('/busquedaespecifica/coleccion/:tabla/:busqueda/:campos')
+  .get(controller.busquedaEspecifica);
+
+
 
 /**Midleware acceso a imagen */
 router.use(expressFileUpload());
 
 router
-    .route('/uploads/:tabla/:atributo/:id')
-      .put(controller.fileUpload)
+  .route('/uploads/:tabla/:atributo/:id')
+  .put(controller.fileUpload)
+
+
 
 router
-    .route('/uploads/:tabla/:imagen')
-      .get(controller.returnfileUpload)
+  .route('/uploads/:tabla/:imagen')
+  .get(controller.returnfileUpload)
 
 module.exports = router;

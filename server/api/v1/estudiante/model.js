@@ -1,81 +1,82 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 
 const fields = {
-  nombresApellidos:{
-    type : String,
-    require:true,
-    maxlength:128
+  nombresApellidos: {
+    type: String,
+    require: true,
+    maxlength: 128
   },
-  email:{
-    type : String,
-    lowecase:true,
-    validator:{
-      validator(value){
+  email: {
+    type: String,
+    lowecase: true,
+    validator: {
+      validator(value) {
         return validator.isEmail(value);
       },
-      message:(props)=>`${props.value} no es un email valido`,
+      message: (props) => `${props.value} no es un email valido`,
     },
   },
-  cedula:{
-    type : String,
-    require:true,
-    maxlength:10
+  cedula: {
+    type: String,
+    require: true,
+    maxlength: 10
   },
-  estado:{
-    type : String
+  //Activo, Congelado, Incorporado, Retirado, Espera, Rechazado
+  estado: {
+    type: String
   },
-  telefono:{
-    type : String,
-    require:false
+  telefono: {
+    type: String,
+    require: false
   },
-  fechaNacimiento:{
-    type : Date,
-    require:false
+  fechaNacimiento: {
+    type: Date,
+    require: false
   },
-  direccion:{
-    type : String,
-    require:false
+  direccion: {
+    type: String,
+    require: false
   },
-  genero:{
-    type : String,
-    require:false
+  genero: {
+    type: String,
+    require: false
   },
-  estado:{
-    type : String,
-    require:false
+  estado: {
+    type: String,
+    require: false
   },
-  fotoCedula1:{
-    type : String,
-    require:false
+  fotoCedula1: {
+    type: String,
+    require: false
   },
-  fotoCedula2:{
-    type : String,
-    require:false
+  fotoCedula2: {
+    type: String,
+    require: false
   },
-  idRepresentante:[{
+  idRepresentante: [{
     type: Schema.Types.ObjectId,
     ref: 'representante',
-    require:false
+    require: false
   }],
-  addedUser:{
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
-  modifiedUser:{
+  modifiedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const estudiante = new Schema(fields, {timestamps:true});
+const estudiante = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('estudiante', estudiante);
+module.exports = mongoose.model('estudiante', estudiante);
 

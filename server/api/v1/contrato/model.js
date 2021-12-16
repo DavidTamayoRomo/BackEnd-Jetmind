@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const { body } = require('express-validator');
+const mongooseDateFormat = require('mongoose-date-format');
 
 const { Schema } = mongoose;
 /*
@@ -18,13 +19,23 @@ const fields = {
     type: Date,
     require: true,
   },
+  //Espera, Aprobado, Rechazado
   estado: {
+    type: String,
+    require: true,
+  },
+  //entrevista realizada
+  estadoPrograma: {
     type: String,
     require: true,
   },
   idRepresentante: {
     type: Schema.Types.ObjectId,
     ref: 'representante',
+  },
+  personaAprueba: {
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
   },
   tipoPago: {
     type: String,
@@ -67,7 +78,7 @@ const fields = {
     require: false,
   },
   fechaAprobacion: {
-    type: String,
+    type: Date,
     require: false,
   },
   voucher: [{
@@ -88,6 +99,9 @@ const fields = {
 
 //timestamps es created at - updated at
 const contrato = new Schema(fields, { timestamps: true });
+
+//Cambiar formato de fecha formato solo fecha formato YYYY-MM-DD || si se desea cambiar debemos hacer clic + control en mongooseDateFormat 
+contrato.plugin(mongooseDateFormat);
 
 module.exports = mongoose.model('contrato', contrato);
 

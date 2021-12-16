@@ -101,6 +101,27 @@ const actualizarImagenContrato = async (id, nombreArchivo, res) => {
   }); */
 }
 
+/**Contrato */
+const actualizarImagenContratoVoucher = async (id, nombreArchivo, res) => {
+  let pathViejo;
+  const contrato = await Contrato.findById(id);
+  if (!contrato) {
+    return false;
+  }
+  //pathViejo = `./server/uploads/contratos/${contrato.voucher}`;
+
+  /**Borra imagen anterior para evitar almacenar informacion no importante */
+  //borrarImagen(pathViejo);
+
+  /**Actualizamos el nombre del archivo en la base de datos */
+  //contrato.voucher = nombreArchivo;
+
+  //await contrato.save();
+  /* res.json({
+    success:true,
+    msg:'Imagen actualizada',
+  }); */
+}
 
 const actualizarImagen = async (tabla, atributo, id, nombreArchivo, res) => {
   console.log('Este es un mensaje de actualizar imagen');
@@ -125,6 +146,9 @@ const actualizarImagen = async (tabla, atributo, id, nombreArchivo, res) => {
       return true;
     case 'contratos':
       actualizarImagenContrato(id, nombreArchivo);
+      return true;
+    case 'contratosVouchers':
+      actualizarImagenContratoVoucher(id, nombreArchivo);
       return true;
     case 'facturas':
       actualizarImagenPersona(id, nombreArchivo);
