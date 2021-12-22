@@ -72,6 +72,7 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'ciudades':
       try {
+        console.log('ciudades');
         data = await Ciudad.find({ nombre: regex })
         break;
       } catch (error) {
@@ -114,6 +115,8 @@ exports.busquedaEspecifica = async (req, res = response) => {
     case 'nombreProgramas':
       try {
         data = await NombrePrograma.find({ nombre: regex })
+          .populate('idMarca')
+          .populate('idCiudad')
         break;
       } catch (error) {
         next(new Error(error));

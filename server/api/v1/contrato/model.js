@@ -22,12 +22,12 @@ const fields = {
   //Espera, Aprobado, Rechazado
   estado: {
     type: String,
-    require: true,
+    require: false,
   },
   //entrevista realizada
   estadoPrograma: {
     type: String,
-    require: true,
+    require: false,
   },
   idRepresentante: {
     type: Schema.Types.ObjectId,
