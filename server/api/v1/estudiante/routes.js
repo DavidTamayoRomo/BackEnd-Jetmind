@@ -154,7 +154,7 @@ router
   .delete(controller.delete);
 
 router
-  .route('/:id/:idRepresentante')
+  .route('/representante/:idRepresentante')
   .get(controller.allByIdRepresentante);
 
 module.exports = router;
