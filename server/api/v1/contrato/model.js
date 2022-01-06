@@ -45,10 +45,22 @@ const fields = {
     type: String,
     require: false,
   },
-  abono: {
-    type: Number,
-    require: false,
-  },
+
+  abono: [{
+    fechaPago: {
+      type: Date,
+      require: false,
+    },
+    monto: {
+      type: String,
+      require: false,
+    },
+    estado: {
+      type: String,
+      require: false,
+    }
+  }],
+
   valorMatricula: {
     type: Number,
     require: false,

@@ -56,6 +56,7 @@ exports.create = async (req, res, next) => {
 
   Object.assign(body, params);
   Object.assign(body, { fechaAprobacion: '1990-01-01' });
+  console.log(body);
 
   const document = new Model(body);
 
@@ -98,6 +99,7 @@ exports.all = async (req, res, next) => {
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
       .populate('personaAprueba', 'nombresApellidos tipo email estado')
+      .sort({ '_id': -1 })//ayuda a ordenar del ultimo registro al primero
       .skip(skip).limit(limit).exec();
 
     const totalContratos = await Model.countDocuments();

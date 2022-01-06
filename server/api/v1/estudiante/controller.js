@@ -72,8 +72,7 @@ exports.all = async (req, res, next) => {
 
 exports.allByIdRepresentante = async (req, res, next) => {
   const { idRepresentante } = req.params;
-  console.log(idRepresentante);
-
+ 
   try {
     const docs = await Model.find({ idRepresentante }).populate('idRepresentante');
 
