@@ -50,6 +50,7 @@ exports.create = async (req, res, next) => {
    */
   const { body = {}, params = {}, decoded = {} } = req;
   const { _id = null } = decoded;
+
   if (_id) {
     body.addedUser = _id;
   }
@@ -95,6 +96,43 @@ exports.all = async (req, res, next) => {
 
   try {
     const docs = await Model.find({})
+      .populate('idRepresentante', 'nombresApellidos cedula email estado')
+      .populate('addedUser', 'nombresApellidos tipo email estado')
+      .populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .populate('personaAprueba', 'nombresApellidos tipo email estado')
+      .sort({ '_id': -1 })//ayuda a ordenar del ultimo registro al primero
+      .skip(skip).limit(limit).exec();
+
+    const totalContratos = await Model.countDocuments();
+
+    res.json({
+      success: true,
+      ok: "all",
+      data: docs,
+      totalContratos
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
+exports.allAprobados = async (req, res, next) => {
+
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;//_id persona que esta ingresada en el sistema 
+
+  const { limit, page, skip } = paginar(query);
+
+  const persona = await Persona.findOne({ "_id": _id });
+
+  //TODO:Si soy administrador veo todos los datos
+  //TODO:Si soy marketing solo veo mis contratos
+
+
+
+  try {
+    const docs = await Model.find({ estado: 'Aprobado' })
       .populate('idRepresentante', 'nombresApellidos cedula email estado')
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')

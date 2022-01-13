@@ -1,97 +1,122 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 
 const fields = {
-  revisado:{
-    type : String,
-    require:true,
+  revisado: {
+    type: String,
+    require: true,
   },
-  fecha:{
-    type : Date,
-    require:true,
+  fecha: {
+    type: Date,
+    require: true,
   },
-  idPrograma:{
+  idMarca: [{
     type: Schema.Types.ObjectId,
-    ref: 'programa',
-    require:true,
+    ref: 'marca',
+    require: true,
+  }],
+  estado: {
+    type: String,
+    require: true,
   },
-  estado:{
-    type : String,
-    require:true,
+  nombreApellidoRepresentante: {
+    type: String,
+    require: true,
   },
-  nombres:{
-    type : String,
-    require:true,
+  telefono: {
+    type: String,
+    require: false,
   },
-  edad:{
-    type : Number,
-    require:false,
+  ciudad: {
+    type: String,
+    require: false,
   },
-  observaciones:{
-    type : String,
-    require:false,
+  actividadEconomica: {
+    type: String,
+    require: false,
   },
-  tarjetaCredito:{
-    type : String,
-    require:true,
+  estudiante: [{
+    nombre: {
+      type: String,
+      require: false
+    },
+    edad: {
+      type: Number,
+      require: false
+    },
+    observaciones: {
+      type: String,
+      require: false
+    }
+  }],
+  observaciones: {
+    type: String,
+    require: true,
   },
-  tarjeta:{
-    type : String,
-    require:false,
+  tarjeraCredito: {
+    type: String,
+    require: true,
   },
-  forma:{
-    type : String,
-    require:false,
+  tarjeta: {
+    type: String,
+    require: false,
   },
-  idSucursal:{
+  forma: {
+    type: String,
+    require: false,
+  },
+  idSucursal: [{
     type: Schema.Types.ObjectId,
     ref: 'sucursal',
-    require:false,
+    require: false,
+  }],
+  zoom: {
+    type: String,
+    require: false,
   },
-  zoom:{
-    type : String,
-    require:false,
+  terreno: {
+    type: String,
+    require: false,
   },
-  direccionCita:{
-    type : String,
-    require:false,
+  fechaCita: {
+    type: Date,
+    require: false,
   },
-  fechaCita:{
-    type : Date,
-    require:false,
+  email: {
+    type: String,
+    require: false,
   },
-  idMarketing:{
+  asignado: [{
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
+  }],
+  codigoLead: {
+    type: String,
+    require: false,
   },
-  observacionesAsesor:{
-    type : String,
-    require:false,
+  observacionesAsesor: {
+    type: String,
+    require: false,
   },
-  idTelemarketing:{
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
-  addedUser:{
+  modifiedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
-  },
-  modifiedUser:{
-    type: Schema.Types.ObjectId,
-    ref: 'persona',
-    require:false,
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const citastelemarketing = new Schema(fields, {timestamps:true});
+const citastelemarketing = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('citastelemarketing', citastelemarketing);
+module.exports = mongoose.model('citastelemarketing', citastelemarketing);
 

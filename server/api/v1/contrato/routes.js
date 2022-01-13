@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const controller = require('./controller');
-const {auth, me, owner} = require('../auth');
+const { auth, me, owner } = require('../auth');
 const { check } = require('express-validator');
 
 /**
@@ -145,14 +145,18 @@ const { check } = require('express-validator');
 router
   .route('/')
   .post(auth, controller.create)
-  .get(auth,controller.all);
+  .get(auth, controller.all);
+
+router
+  .route('/contratosAprobados')
+  .get(auth, controller.allAprobados);
 
 router.param('id', controller.id);
 
 router
   .route('/:id')
   .get(auth, controller.read)
-  .put(auth,controller.update)
-  .delete(auth,controller.delete);
+  .put(auth, controller.update)
+  .delete(auth, controller.delete);
 
 module.exports = router;

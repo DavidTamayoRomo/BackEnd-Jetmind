@@ -148,6 +148,10 @@ router
 router.param('id', controller.id);
 
 router
+  .route('/idEstudiante/:idEstudiante')
+  .get(controller.programabyIdEstudiante)
+
+router
   .route('/:id')
   .get(controller.read)
   .put(controller.update)

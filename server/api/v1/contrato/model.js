@@ -24,7 +24,7 @@ const fields = {
     type: String,
     require: false,
   },
-  //entrevista realizada
+  //Entrevista realizada, Entrevista Agendada, Cliente no atendido, Primero ILVEM, Primero TOMATIS, Primero CHARLOTTE 
   estadoPrograma: {
     type: String,
     require: false,
@@ -81,10 +81,14 @@ const fields = {
     type: String,
     require: false,
   },
-  directorAsignado: {
-    type: String,
-    require: false,
-  },
+  directorAsignado: [{
+    item_id: {
+      type: String
+    },
+    nombre: {
+      type: String
+    },
+  }],
   estadoPrograma: {
     type: String,
     require: false,

@@ -14,6 +14,7 @@ const Estudiante = require('../estudiante/model');
 const Representante = require('../representante/model');
 const NombrePrograma = require('../nombrePrograma/model');
 const Facturar = require('../facturar/model');
+const CitasTelemarketing = require('../citas_telemarketing/model');
 
 /**
  * ================================================
@@ -117,6 +118,19 @@ exports.busquedaEspecifica = async (req, res = response) => {
         data = await NombrePrograma.find({ nombre: regex })
           .populate('idMarca')
           .populate('idCiudad')
+        break;
+      } catch (error) {
+        next(new Error(error));
+        break;
+      }
+    case 'citas':
+      try {
+        data = await CitasTelemarketing.find({ nombreApellidoRepresentante: regex })
+          .populate('idMarca')
+          .populate('idSucursal')
+          .populate('asignado')
+          .populate('addedUser', 'nombresApellidos tipo email estado')
+          .populate('modifiedUser', 'nombresApellidos tipo email estado')
         break;
       } catch (error) {
         next(new Error(error));

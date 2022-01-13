@@ -74,6 +74,38 @@ exports.all = async (req, res, next) => {
 
 };
 
+exports.programabyIdEstudiante = async (req, res, next) => {
+
+
+  const { query = {} } = req;
+  const { limit, page, skip } = paginar(query);
+
+
+  try {
+    const docs = await Model.find({ idEstudiante: req.idEstudiante })
+      .populate('idMarca')
+      .populate('idCiudad')
+      .populate('idSucursal')
+      .populate('idNombrePrograma')
+      .populate('idEstudiante')
+      .populate('addedUser', 'nombresApellidos tipo email estado')
+      .populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .skip(skip).limit(limit).exec();
+
+    const totalPrograma = await Model.countDocuments();
+
+    res.json({
+      success: true,
+      ok: "programaEstudiante",
+      data: docs,
+      totalPrograma
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
 exports.read = async (req, res, next) => {
   const { doc = {} } = req;
   res.json({
