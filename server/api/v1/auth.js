@@ -1,13 +1,13 @@
 
 
-const {sign, verify}= require('jsonwebtoken');
+const { sign, verify } = require('jsonwebtoken');
 
 const config = require('../../config');
 
-const { secret, expires}= config.token;
+const { secret, expires } = config.token;
 
-const signToken = (payload, expiresIn = 14440 )=>
-  sign(payload, secret,{
+const signToken = (payload, expiresIn = 14440) =>
+  sign(payload, secret, {
     algorithm: 'HS256',
     expiresIn,
   });
@@ -15,8 +15,8 @@ const signToken = (payload, expiresIn = 14440 )=>
 
 /**
  * Autentificacion por token
- *  */  
-const auth = (req, res, next)=>{
+ *  */
+const auth = (req, res, next) => {
   let token = req.headers.authorization || req.query.token || '';
   if (token.startsWith('Bearer ')) {
     token = token.substring(7);
@@ -26,20 +26,20 @@ const auth = (req, res, next)=>{
     next({
       success: false,
       message,
-      statusCode:401,
-      level:'info'
+      statusCode: 401,
+      level: 'info'
     });
-  }else{
-    verify(token, config.token.secret, (err, decoded)=>{
+  } else {
+    verify(token, config.token.secret, (err, decoded) => {
       if (err) {
-        const message =  'Unauthorized';
+        const message = 'Unauthorized';
         next({
           success: false,
           message,
-          statusCode:401,
-          level:'info'
+          statusCode: 401,
+          level: 'info'
         })
-      }else {
+      } else {
         req.decoded = decoded;
         next();
       }
@@ -51,39 +51,40 @@ const auth = (req, res, next)=>{
 /**
  * Control sobre sus datos
  */
-const me =  (req, res, next)=>{
-  const {decoded = {}, params = {} }=req;
-  const {_id} = decoded;
-  const {id}= params;
+const me = (req, res, next) => {
+  const { decoded = {}, params = {} } = req;
+  const { _id } = decoded;
+  const { id } = params;
   if (_id !== id) {
     const message = 'Forbidden';
     next({
-      success:false,
+      success: false,
       message,
-      statusCode:403,
-      type:'warn',
+      statusCode: 403,
+      type: 'warn',
     });
-  }else {
+  } else {
     next();
   };
 }
- /**
-  * Datos propios 
-  */
-const owner = (req, res, next)=>{
-  const {decoded = {}, doc = {} }=req;
-  const {_id} = decoded;
-  //const {id}= doc.addedUser;
-  const {id}= doc.userId;//cambiar nombre userid
+/**
+ * Datos propios 
+ */
+const owner = (req, res, next) => {
+  const { decoded = {}, doc = {} } = req;
+  const { _id } = decoded;
+  const { id } = doc.addedUser;
+  //const {id}= doc.userId;//cambiar nombre userid
   if (_id !== id) {
     const message = 'Forbidden';
     next({
-      success:false,
+      success: false,
       message,
-      statusCode:403,
-      type:'warn',
+      statusCode: 403,
+      type: 'warn',
     });
-  }else {
+  } else {
+
     next();
   };
 }
@@ -92,7 +93,7 @@ const owner = (req, res, next)=>{
 
 module.exports = {
   signToken,
-  auth, 
+  auth,
   me,
   owner
 };

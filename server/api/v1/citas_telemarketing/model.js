@@ -91,10 +91,20 @@ const fields = {
     require: false,
   },
   asignado: [{
+    item_id: {
+      type: String
+    },
+    nombre: {
+      type: String
+    },
+  }],
+
+  /*asignado: [{
     type: Schema.Types.ObjectId,
     ref: 'persona',
     require: false,
-  }],
+  }], */
+
   codigoLead: {
     type: String,
     require: false,

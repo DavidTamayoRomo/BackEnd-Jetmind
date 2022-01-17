@@ -167,8 +167,8 @@ router.param('id', controller.id);
 
 router
   .route('/')
-  .post(auth ,controller.create)
-  .get(auth ,controller.all);
+  .post(auth, controller.create)
+  .get(auth, controller.all);
 
 router
   .route('/email')
@@ -178,15 +178,19 @@ router.route('/signup')
   .post(controller.signup);
 
 router.route('/signin')
-  .post(controller.signin); 
+  .post(controller.signin);
 
 router.route('/renew')
-  .get(auth,controller.renewToken); 
+  .get(auth, controller.renewToken);
 
 router
   .route('/:id')
-  .get(auth ,controller.read)
-  .put(auth ,controller.update)
-  .delete(auth ,controller.delete);
+  .get(auth, controller.read)
+  .put(auth, controller.update)
+  .delete(auth, controller.delete);
+
+router
+  .route('/byroleciudadmarca/:role/:ciudad/:marca')
+  .get(auth, controller.allByRoleCiudadMarca)
 
 module.exports = router;

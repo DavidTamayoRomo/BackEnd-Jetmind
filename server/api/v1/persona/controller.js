@@ -216,6 +216,32 @@ exports.all = async (req, res, next) => {
 
 };
 
+exports.allByRoleCiudadMarca = async (req, res, next) => {
+  const { query = {} } = req;
+  const { limit, page, skip } = paginar(query);
+  const { role, ciudad, marca } = req.params;
+
+  try {
+
+    const docs = await Model.find({ tipo: role, idCiudad: ciudad, idMarca: marca })
+      .populate('idCiudad')
+      .populate('idMarca')
+      .populate('idSucursal')
+      .populate('tipo')
+      .exec();
+
+    res.json({
+      success: true,
+      ok: "allByRole",
+      data: docs
+    });
+
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
 
 
 exports.read = async (req, res, next) => {
