@@ -15,12 +15,12 @@ const fields = {
   email: {
     type: String,
     lowecase: true,
-    validator: {
+    /* validator: {
       validator(value) {
         return validator.isEmail(value);
       },
       message: (props) => `${props.value} no es un email valido`,
-    },
+    }, */
   },
   cedula: {
     type: String,
