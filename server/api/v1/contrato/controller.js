@@ -5,6 +5,8 @@ const Persona = require('../persona/model');
 const Representante = require('../representante/model');
 const Estudiante = require('../estudiante/model');
 const Programa = require('../programa/model');
+const Ciudad = require('../ciudad/model');
+const Marca = require('../marca/model');
 
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
@@ -53,18 +55,26 @@ exports.create = async (req, res, next) => {
 
   if (_id) {
     body.addedUser = _id;
+    //Encontrar con la ciudad de la persona que crea el contrato
+    const persona = await Persona.findOne({ "_id": _id }).exec();
+    const ciudad = await Ciudad.findOne({ "_id": persona.idCiudad[0] }).exec();
+    //Generar Numero de contrato (Dependiendo de la ciudad generar codigo de contrato)
+    const totalContratos = await Model.countDocuments();
+    const codigoContrato = `${ciudad.nombre.charAt(0).toUpperCase()} - ${totalContratos + 9000}`;
+    Object.assign(body, { codigo: codigoContrato });
   }
+
+
+  //TODO:Agregar ciudad del contrato (agregar el atributo idCiudad)
 
   Object.assign(body, params);
   Object.assign(body, { fechaAprobacion: '1990-01-01' });
+
   console.log(body);
 
   const document = new Model(body);
 
-  //TODO:Generar Numero de contrato (Dependiendo de la ciudad generar codigo de contrato)
 
-
-  //TODO:Agregar ciudad del contrato (agregar el atributo idCiudad)
 
 
   try {
