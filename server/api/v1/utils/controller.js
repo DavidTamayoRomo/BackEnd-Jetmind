@@ -62,10 +62,48 @@ exports.busquedaEspecifica = async (req, res = response) => {
   switch (tabla) {
     case 'personas':
       try {
-        data = await Persona.find({ nombresApellidos: regex })
-          .populate('idCiudad')
-          .populate('idMarca')
-          .populate('idSucursal');
+        const ciudad = await Ciudad.findOne({ nombre: regex });
+        const sucursal = await Sucursal.findOne({ nombre: regex });
+        const marca = await Marca.findOne({ nombre: regex });
+
+        if (ciudad == null && sucursal == null && marca == null) {
+          data = await Persona.find({
+            $or: [{ email: regex }, { nombresApellidos: regex }, { cedula: regex }, { estado: regex }]
+          })
+            .populate('idCiudad')
+            .populate('idMarca')
+            .populate('idSucursal');
+        } else {
+          if (ciudad != null) {
+            data = await Persona.find(
+              { idCiudad: ciudad._id }
+            )
+              .populate('idCiudad')
+              .populate('idMarca')
+              .populate('idSucursal');
+          } else
+            if (sucursal != null) {
+              data = await Persona.find({ idSucursal: sucursal._id })
+                .populate('idCiudad')
+                .populate('idMarca')
+                .populate('idSucursal');
+            } else
+              if (marca != null) {
+                data = await Persona.find({
+                  idMarca: marca._id
+                })
+                  .populate('idCiudad')
+                  .populate('idMarca')
+                  .populate('idSucursal');
+              } else {
+                data = await Persona.find({
+                  $or: [{ email: regex }, { nombresApellidos: regex }, { cedula: regex }, { estado: regex }]
+                })
+                  .populate('idCiudad')
+                  .populate('idMarca')
+                  .populate('idSucursal');
+              }
+        }
         break;
       } catch (error) {
         next(new Error(error));
@@ -90,7 +128,15 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'sucursales':
       try {
-        data = await Sucursal.find({ nombre: regex })
+        const marca = await Marca.findOne({ nombre: regex });
+        if (marca == null) {
+          data = await Sucursal.find({ $or: [{ nombre: regex }, { sector: regex }] }).
+            populate('idMarcas');
+        } else {
+          data = await Sucursal.find({ idMarcas: marca._id }).
+            populate('idMarcas');
+        }
+
         break;
       } catch (error) {
         next(new Error(error));
@@ -99,7 +145,7 @@ exports.busquedaEspecifica = async (req, res = response) => {
 
     case 'representantes':
       try {
-        data = await Representante.find({ nombresApellidos: regex })
+        data = await Representante.find({ $or: [{ nombresApellidos: regex }, { cedula: regex }, { email: regex }, { genero: regex }] })
         break;
       } catch (error) {
         next(new Error(error));
@@ -107,7 +153,8 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'estudiantes':
       try {
-        data = await Estudiante.find({ nombresApellidos: regex }).populate('idRepresentante')
+        data = await Estudiante.find({ nombresApellidos: regex })
+          .populate('idRepresentante')
         break;
       } catch (error) {
         next(new Error(error));
@@ -115,9 +162,24 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'nombreProgramas':
       try {
-        data = await NombrePrograma.find({ nombre: regex })
-          .populate('idMarca')
-          .populate('idCiudad')
+        const ciudad = await Ciudad.findOne({ nombre: regex });
+        const marca = await Marca.findOne({ nombre: regex });
+        if (ciudad == null && marca == null) {
+          data = await NombrePrograma.find({ nombre: regex })
+            .populate('idMarca')
+            .populate('idCiudad')
+        } else {
+          if (ciudad != null) {
+            data = await NombrePrograma.find({ idCiudad: ciudad._id })
+              .populate('idMarca')
+              .populate('idCiudad')
+          } else
+            if (marca != null) {
+              data = await NombrePrograma.find({ idMarca: marca._id })
+                .populate('idMarca')
+                .populate('idCiudad')
+            }
+        }
         break;
       } catch (error) {
         next(new Error(error));
@@ -157,11 +219,17 @@ exports.busquedaEspecifica = async (req, res = response) => {
           let objeto = {};
           Object.assign(objeto, ...array);
           console.log(objeto);
-          data = await Contrato.find(objeto);
+          //data = await Contrato.find(objeto) //funciona para la busqueda con campo especifico
+          data = await Contrato.find({ $or: [{ codigo: regex }, { estado: regex }] })
+            .populate('idRepresentante', 'nombresApellidos cedula email estado')
+            .populate('addedUser', 'nombresApellidos tipo email estado')
+            .populate('modifiedUser', 'nombresApellidos tipo email estado')
+            .populate('personaAprueba', 'nombresApellidos tipo email estado');
           break;
 
         } else {
           console.log('Entre');
+          break;
         }
 
       } catch (error) {

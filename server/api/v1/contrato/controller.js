@@ -60,7 +60,7 @@ exports.create = async (req, res, next) => {
     const ciudad = await Ciudad.findOne({ "_id": persona.idCiudad[0] }).exec();
     //Generar Numero de contrato (Dependiendo de la ciudad generar codigo de contrato)
     const totalContratos = await Model.countDocuments();
-    const codigoContrato = `${ciudad.nombre.charAt(0).toUpperCase()} - ${totalContratos + 9000}`;
+    const codigoContrato = `${ciudad.nombre.charAt(0).toUpperCase()}-${totalContratos + 9000}`;
     Object.assign(body, { codigo: codigoContrato });
   }
 
