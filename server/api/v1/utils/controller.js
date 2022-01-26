@@ -15,6 +15,7 @@ const Representante = require('../representante/model');
 const NombrePrograma = require('../nombrePrograma/model');
 const Facturar = require('../facturar/model');
 const CitasTelemarketing = require('../citas_telemarketing/model');
+const Verificacion = require('../verificacion/model');
 
 /**
  * ================================================
@@ -153,8 +154,14 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'estudiantes':
       try {
-        data = await Estudiante.find({ nombresApellidos: regex })
-          .populate('idRepresentante')
+        const representante = await Representante.findOne({ nombresApellidos: regex });
+        if (representante == null) {
+          data = await Estudiante.find({ $or: [{ nombresApellidos: regex }, { cedula: regex }, { email: regex }, { genero: regex }] })
+            .populate('idRepresentante')
+        } else {
+          data = await Estudiante.find({ idRepresentante: representante._id })
+            .populate('idRepresentante')
+        }
         break;
       } catch (error) {
         next(new Error(error));
@@ -187,12 +194,28 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'citas':
       try {
-        data = await CitasTelemarketing.find({ nombreApellidoRepresentante: regex })
-          .populate('idMarca')
-          .populate('idSucursal')
-          .populate('asignado')
-          .populate('addedUser', 'nombresApellidos tipo email estado')
-          .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        const telemercadista = await Persona.findOne({ nombresApellidos: regex });
+        if (telemercadista == null) {
+          data = await CitasTelemarketing.find({
+            $or: [{ nombreApellidoRepresentante: regex }, { estado: regex }, { telefono: regex }, { ciudad: regex }, { 'estudiante.nombre': regex }
+              , { 'asignado[0].nombre': regex }, { telefono: regex }, { telefono: regex }]
+          })
+            .populate('idMarca')
+            .populate('idSucursal')
+            .populate('asignado')
+            .populate('addedUser', 'nombresApellidos tipo email estado')
+            .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        } else {
+          console.log('Entre - ', telemercadista);
+          data = await CitasTelemarketing.find({ addedUser: telemercadista._id })
+            .populate('idMarca')
+            .populate('idSucursal')
+            .populate('asignado')
+            .populate('addedUser', 'nombresApellidos tipo email estado')
+            .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        }
+
+
         break;
       } catch (error) {
         next(new Error(error));
@@ -200,7 +223,24 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'facturas':
       try {
-        data = await Facturar.find({ nombre: regex })
+        const contrato = await Contrato.findOne({ codigo: regex });
+        console.log(contrato);
+
+        if (contrato == null) {
+          data = await Facturar.find({ $or: [{ nombre: regex }, { correo: regex }] })
+            .populate('idContrato')
+            .populate('programa')
+            .populate('addedUser', 'nombresApellidos tipo email estado')
+            .populate('modifiedUser', 'nombresApellidos tipo email estado');
+        } else {
+          data = await Facturar.find({ idContrato: contrato._id })
+            .populate('idContrato')
+            .populate('programa')
+            .populate('addedUser', 'nombresApellidos tipo email estado')
+            .populate('modifiedUser', 'nombresApellidos tipo email estado');
+        }
+
+
         break;
       } catch (error) {
         next(new Error(error));
@@ -220,11 +260,34 @@ exports.busquedaEspecifica = async (req, res = response) => {
           Object.assign(objeto, ...array);
           console.log(objeto);
           //data = await Contrato.find(objeto) //funciona para la busqueda con campo especifico
-          data = await Contrato.find({ $or: [{ codigo: regex }, { estado: regex }] })
-            .populate('idRepresentante', 'nombresApellidos cedula email estado')
-            .populate('addedUser', 'nombresApellidos tipo email estado')
-            .populate('modifiedUser', 'nombresApellidos tipo email estado')
-            .populate('personaAprueba', 'nombresApellidos tipo email estado');
+
+          const representante = await Representante.findOne({ $or: [{ nombresApellidos: regex }, { cedula: regex }, { email: regex }] });
+          const asesor = await Persona.findOne({ nombresApellidos: regex });
+
+          if (representante == null && asesor == null) {
+            data = await Contrato.find({ $or: [{ codigo: regex }, { estado: regex }] })
+              .populate('idRepresentante', 'nombresApellidos cedula email estado')
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado')
+              .populate('personaAprueba', 'nombresApellidos tipo email estado');
+          } else {
+            if (representante != null) {
+              data = await Contrato.find({ idRepresentante: representante._id })
+                .populate('idRepresentante', 'nombresApellidos cedula email estado')
+                .populate('addedUser', 'nombresApellidos tipo email estado')
+                .populate('modifiedUser', 'nombresApellidos tipo email estado')
+                .populate('personaAprueba', 'nombresApellidos tipo email estado');
+            }
+            if (asesor != null) {
+              data = await Contrato.find({ addedUser: asesor._id })
+                .populate('idRepresentante', 'nombresApellidos cedula email estado')
+                .populate('addedUser', 'nombresApellidos tipo email estado')
+                .populate('modifiedUser', 'nombresApellidos tipo email estado')
+                .populate('personaAprueba', 'nombresApellidos tipo email estado');
+            }
+          }
+
+
           break;
 
         } else {
@@ -232,6 +295,63 @@ exports.busquedaEspecifica = async (req, res = response) => {
           break;
         }
 
+      } catch (error) {
+        next(new Error(error));
+        break;
+      }
+    case 'contratosAporbados':
+      try {
+
+        const representante = await Representante.findOne({ $or: [{ nombresApellidos: regex }, { cedula: regex }, { email: regex }] });
+        const asesor = await Persona.findOne({ nombresApellidos: regex });
+        if (representante == null && asesor == null) {
+          data = await Contrato.find({ $and: [{ $or: [{ codigo: regex }, { estadoPrograma: regex }] }, { estado: 'Aprobado' }] })
+            .populate('idRepresentante', 'nombresApellidos cedula email estado')
+            .populate('addedUser', 'nombresApellidos tipo email estado')
+            .populate('modifiedUser', 'nombresApellidos tipo email estado')
+            .populate('personaAprueba', 'nombresApellidos tipo email estado');
+        } else {
+          if (representante != null) {
+            data = await Contrato.find({ $and: [{ idRepresentante: representante._id }, { estado: 'Aprobado' }] })
+              .populate('idRepresentante', 'nombresApellidos cedula email estado')
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado')
+              .populate('personaAprueba', 'nombresApellidos tipo email estado');
+          }
+          if (asesor != null) {
+            data = await Contrato.find({ $and: [{ 'directorAsignado.nombre': regex }, { estado: 'Aprobado' }] })
+              .populate('idRepresentante', 'nombresApellidos cedula email estado')
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado')
+              .populate('personaAprueba', 'nombresApellidos tipo email estado');
+          }
+        }
+
+        break;
+      } catch (error) {
+        next(new Error(error));
+        break;
+      }
+    case 'verificaciones':
+
+      try {
+        const contrato = await Contrato.findOne({ codigo: regex });
+
+
+        if (contrato == null) {
+          data = await Verificacion.find({ $or: [{ estado: regex }, { tipo: regex }] })
+            .populate({ path: 'idContrato', populate: { path: 'idRepresentante' } })
+            .populate('addedUser', 'nombresApellidos tipo email estado')
+            .populate('modifiedUser', 'nombresApellidos tipo email estado');
+        } else {
+
+          data = await Verificacion.find({ idContrato: contrato._id })
+            .populate({ path: 'idContrato', populate: { path: 'idRepresentante' } })
+            .populate('addedUser', 'nombresApellidos tipo email estado')
+            .populate('modifiedUser', 'nombresApellidos tipo email estado');
+
+        }
+        break;
       } catch (error) {
         next(new Error(error));
         break;
