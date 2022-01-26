@@ -206,7 +206,6 @@ exports.busquedaEspecifica = async (req, res = response) => {
             .populate('addedUser', 'nombresApellidos tipo email estado')
             .populate('modifiedUser', 'nombresApellidos tipo email estado')
         } else {
-          console.log('Entre - ', telemercadista);
           data = await CitasTelemarketing.find({ addedUser: telemercadista._id })
             .populate('idMarca')
             .populate('idSucursal')
