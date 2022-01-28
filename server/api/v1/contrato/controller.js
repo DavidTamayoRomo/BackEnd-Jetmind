@@ -18,7 +18,9 @@ const envioEmail = require('../../../email');
 
 const path = require('path');
 
-
+const { v4 } = require('uuid');
+const fs = require('fs');
+const dbPath = path.join(__dirname, '../../../uploads/contratos/');
 
 
 /**
@@ -315,6 +317,68 @@ exports.update = async (req, res, next) => {
     next(new Error(error));
   }
 };
+//actualizar el voucher por primera vez
+exports.updateVoucher = async (req, res, next) => {
+  console.log("entre a voucher");
+  const { doc = {}, body = {}, decoded = {} } = req;
+  const { voucher } = body;
+
+
+  /**
+   * Saber quien creo el contrato
+   */
+  const { _id = null } = decoded;
+  if (_id) {
+    body.modifiedUser = _id;
+  }
+  Object.assign(doc, body);
+  //console.log(doc);
+
+
+  let voucherJpg;
+  let voucherNuevoNombreRandom;
+  let voucherSlice;
+  let arregloImg = [];
+  let arregloImgT = [];
+
+  if (voucher === null) {
+    console.log('No hay voucher');
+  } else {
+    voucher.map(item => (
+      item = item.toString(),
+      voucherJpg = item.slice(22),
+      voucherSlice = voucherJpg,
+      voucherJpg = v4() + '.jpg',
+      voucherNuevoNombreRandom = voucherJpg,
+      arregloImg.push(voucherNuevoNombreRandom),
+      arregloImgT.push(voucherSlice)
+    ))
+  }
+  try {
+    let pathRandom;
+    let fileSliceBase64;
+    let arrToSaveInDb = [];
+
+    for (var i = 0; i < arregloImg.length; i++) {
+      pathRandom = arregloImg[i],
+        fileSliceBase64 = arregloImgT[i];
+      fs.writeFileSync(dbPath + pathRandom, fileSliceBase64, 'base64')
+      arrToSaveInDb.push(pathRandom)
+    }
+
+    doc.voucher = arrToSaveInDb;
+    console.log(doc);
+    const update = await doc.save();
+    res.json({
+      success: true,
+      data: update
+    });
+  } catch (error) {
+    next(new Error(error));
+  }
+
+};
+
 
 exports.delete = async (req, res, next) => {
   const { doc = {} } = req;

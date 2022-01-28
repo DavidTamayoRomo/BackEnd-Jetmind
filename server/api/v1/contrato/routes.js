@@ -154,6 +154,10 @@ router
 router.param('id', controller.id);
 
 router
+  .route('/vouchercontrato/:id')
+  .put(controller.updateVoucher);
+
+router
   .route('/:id')
   .get(auth, controller.read)
   .put(auth, controller.update)

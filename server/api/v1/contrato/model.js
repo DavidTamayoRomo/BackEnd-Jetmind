@@ -98,7 +98,7 @@ const fields = {
     require: false,
   },
   voucher: [{
-    type: String,
+    type: Object,
     require: false,
   }],
   addedUser: {

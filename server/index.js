@@ -1,7 +1,7 @@
 const express = require('express');
-const morgan =  require('morgan');
+const morgan = require('morgan');
 const requestId = require('express-request-id')();
-const bodyParser =  require('body-parser');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const swaggerUI = require('swagger-ui-express');
 const logger = require('./config/logger');
@@ -12,16 +12,19 @@ const docs = require('./api/v1/docs')
 const app = express();
 
 //Documentacion
-app.use('/docs', swaggerUI.serve , swaggerUI.setup(docs) );
+app.use('/docs', swaggerUI.serve, swaggerUI.setup(docs));
 
 //setup CORS
 app.use(
   cors({
-    origin:'*',
-    methods:['GET','PUT','POST','DELETE'],
-    allowedHeaders:['Accept', 'Content-Type','Authorization'],
+    origin: '*',
+    methods: ['GET', 'PUT', 'POST', 'DELETE'],
+    allowedHeaders: ['Accept', 'Content-Type', 'Authorization'],
   })
 );
+
+//para que las ruta que contiene imagenes pase
+app.use(express.json({ limit: '50mb' }));
 
 
 // Setup middleware
@@ -30,40 +33,40 @@ app.use(logger.requests);
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
-  extended:false
+  extended: false
 }));
 //parse application/json
 app.use(bodyParser.json());
 
 //Setup router and routes
-app.use('/api',api);
-app.use('/api/v1',api);
+app.use('/api', api);
+app.use('/api/v1', api);
 
 // Cuando no encuentra la ruta
 // No route found handler
-app.use((req, res, next)=>{
+app.use((req, res, next) => {
   next({
-    message:'Route not found',
-    statusCode:404,
-    level:'warn',
+    message: 'Route not found',
+    statusCode: 404,
+    level: 'warn',
   })
 });
 
 //Error handler
-app.use((err, req, res, next)=>{
-  const { message, level = 'error'}= err;
-  let {statusCode = 500} = err;
+app.use((err, req, res, next) => {
+  const { message, level = 'error' } = err;
+  let { statusCode = 500 } = err;
   const log = `${logger.header(req)} ${statusCode} ${message}`;
   logger[level](log);
 
   //Valdation Errors
   if (err.message.startsWith('ValidationErorr')) {
-    statusCode=422;
+    statusCode = 422;
   }
 
   res.status(statusCode);
   res.json({
-    error:true,
+    error: true,
     statusCode,
     message,
   });
