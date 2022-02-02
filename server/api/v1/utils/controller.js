@@ -11,6 +11,7 @@ const Marca = require('../marca/model');
 const Sucursal = require('../sucursal/model');
 const Contrato = require('../contrato/model');
 const Estudiante = require('../estudiante/model');
+const Horario = require('../horario/model');
 const Representante = require('../representante/model');
 const NombrePrograma = require('../nombrePrograma/model');
 const Facturar = require('../facturar/model');
@@ -355,6 +356,41 @@ exports.busquedaEspecifica = async (req, res = response) => {
         next(new Error(error));
         break;
       }
+    case 'horarios':
+      try {
+
+        const ciudad = await Ciudad.findOne({ nombre: regex });
+        const marca = await Marca.findOne({ nombre: regex });
+
+        if (ciudad == null && marca == null) {
+          data = await Horario.find({ $or: [{ nombre: regex }, { modalidad: regex }, { horaInicio: regex }, { horaFin: regex }] })
+            .populate('idMarca')
+            .populate('idCiudad')
+            .populate('addedUser', 'nombresApellidos tipo email estado')
+            .populate('modifiedUser', 'nombresApellidos tipo email estado');
+        } else {
+          if (ciudad != null) {
+            data = await Horario.find({ idCiudad: ciudad._id })
+              .populate('idMarca')
+              .populate('idCiudad')
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado');
+          }
+          if (marca != null) {
+            data = await Horario.find({ idMarca: marca._id })
+              .populate('idMarca')
+              .populate('idCiudad')
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado');
+          }
+        }
+
+
+        const horario = await Horario.findOne({ codigo: regex });
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
     default:
       return res.status(400).json({
         success: false,

@@ -1,56 +1,58 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 
 const fields = {
-  idCiudad:{
+  estado: {
+    type: String,
+  },
+  idCiudad: {
     type: Schema.Types.ObjectId,
     ref: 'ciudad',
-    require:true,
+    require: true,
   },
-  idMarca:{
+  idMarca: {
     type: Schema.Types.ObjectId,
     ref: 'marca',
-    require:true,
+    require: true,
   },
-  idPrograma:{
-    type: Schema.Types.ObjectId,
-    ref: 'programa',
-    require:true,
+  nombre: {
+    type: String,
+    require: true,
   },
-  nombre:{
-    type : String,
-    require:true,
-  },
-  dias:[{
-    type : String,
-    require:false,
+  dias: [{
+    type: String,
+    require: false,
   }],
-  horaInicio:{
-    type : Date,
-    require:false,
+  //Presencial - Online
+  modalidad: {
+    type: String,
   },
-  horaFin:{
-    type : Date,
-    require:false,
+  horaInicio: {
+    type: String,
+    require: false,
   },
-  addedUser:{
+  horaFin: {
+    type: String,
+    require: false,
+  },
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
-  modifiedUser:{
+  modifiedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const horario = new Schema(fields, {timestamps:true});
+const horario = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('horario', horario);
+module.exports = mongoose.model('horario', horario);
 

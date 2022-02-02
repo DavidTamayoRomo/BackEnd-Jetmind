@@ -217,8 +217,9 @@ exports.update = async (req, res, next) => {
 
         let index = 0;
         estudiantes.forEach(async (estudiante) => {
+          /* Se modifica para que cada director active los estudiantes
           estudiante.estado = "Activo";
-          estudiante.save();
+          estudiante.save(); */
           const programa = await Programa.findOne({ "idEstudiante": estudiante._id });
 
           //consulta de Director general (617c24f99f60c044346e3ffa) y Director (617c25009f60c044346e3ffc) 
@@ -378,6 +379,7 @@ exports.updateVoucher = async (req, res, next) => {
   }
 
 };
+
 
 
 exports.delete = async (req, res, next) => {
