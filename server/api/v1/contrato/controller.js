@@ -220,6 +220,30 @@ exports.update = async (req, res, next) => {
           /* Se modifica para que cada director active los estudiantes
           estudiante.estado = "Activo";
           estudiante.save(); */
+
+          //Enviar link de llenar peea del estudiante
+          //El peea lo realiza el representante
+          //TODO: Controlar link para enviar el peea q corresponda solo hay q mover al apartado de programa que esta en las lineas siguientes
+          //de codigo, ahi esta el programa del estudiante
+          try {
+
+            const esperar = await envioEmail.transporter.sendMail({
+              from: "pruebaenvio@charlotteenglishschool.com",
+              to: representante.email,
+              subject: `PEEA ${estudiante.nombresApellidos}`,
+              html: `<h1>Para llenar PEEA debe ingresar al siguiente link</h1>
+              <a href="http://localhost:4200/peea-17-ch-uk/nuevo/${doc._id}">Clic aqui para Llenar PEEA</a>`
+            });
+            //If necesario para esperar la respuesta del envio del email
+            if (esperar != null) {
+              console.log('Esperando respuesta del envio del email');
+            } else {
+              console.log('Enviado email');
+            }
+          } catch (error) {
+
+          }
+
           const programa = await Programa.findOne({ "idEstudiante": estudiante._id });
 
           //consulta de Director general (617c24f99f60c044346e3ffa) y Director (617c25009f60c044346e3ffc) 
