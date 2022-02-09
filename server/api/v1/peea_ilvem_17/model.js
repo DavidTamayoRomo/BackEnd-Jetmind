@@ -128,8 +128,14 @@ const fields = {
     require: false,
   },
   pregunta22: {
-    type: String,
-    require: false,
+    respuesta: {
+      type: String,
+      require: false
+    },
+    observacion: {
+      type: String,
+      require: false
+    }
   },
   pregunta23: {
     type: String,
