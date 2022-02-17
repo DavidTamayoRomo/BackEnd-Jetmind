@@ -171,6 +171,10 @@ router
   .get(auth, controller.all);
 
 router
+  .route('/all')
+  .get(auth, controller.allSinLimite);
+
+router
   .route('/email')
   .get(controller.enviar)
 

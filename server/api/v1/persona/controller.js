@@ -188,6 +188,33 @@ exports.enviar = async (req, res, next) => {
 
 
 
+exports.allSinLimite = async (req, res, next) => {
+  const { query = {} } = req;
+  const { limit, page, skip } = paginar(query);
+
+
+  try {
+
+    const docs = await Model.find({})
+      .populate('idCiudad')
+      .populate('idMarca')
+      .populate('idSucursal')
+      .populate('tipo').exec();
+    const totalUsuarios = await Model.countDocuments();
+
+    res.json({
+      success: true,
+      ok: "all",
+      data: docs,
+      totalUsuarios
+    });
+
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
 exports.all = async (req, res, next) => {
   const { query = {} } = req;
   const { limit, page, skip } = paginar(query);

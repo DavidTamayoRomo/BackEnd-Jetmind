@@ -1,52 +1,66 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const fields = {
-  idDocente:{
+  idDocente: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:true,
+    require: true,
   },
-  idAsignarHorarioEstudiante:{
+  idAsignarHorarioEstudiante: {
     type: Schema.Types.ObjectId,
     ref: 'asignarhorario',
-    require:true,
+    require: true,
   },
-  temaTratado:{
-    type : String,
-    require:false,
+  temaTratado: {
+    type: String,
+    require: false,
   },
-  fecha:{
-    type : Date,
-    require:false,
+  fecha: {
+    type: Date,
+    require: false,
   },
-  ausentes:[{
-    type: Schema.Types.ObjectId,
-    ref: 'estudiante',
-    require:false,
-  }],
-  presentes:[{
-    type: Schema.Types.ObjectId,
-    ref: 'estudiante',
-    require:false,
-  }],
-  addedUser:{
+  ausentes: [
+    {
+      estudiante: {
+        type: Schema.Types.ObjectId,
+        ref: 'estudiante',
+        require: false,
+      },
+      comentario: {
+        type: String
+      }
+    }
+  ],
+  presentes: [
+    {
+      estudiante: {
+        type: Schema.Types.ObjectId,
+        ref: 'estudiante',
+        require: false,
+      },
+      comentario: {
+        type: String
+      }
+    }
+  ],
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
-  modifiedUser:{
+  modifiedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const asistencia = new Schema(fields, {timestamps:true});
+const asistencia = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('asistencia', asistencia);
+module.exports = mongoose.model('asistencia', asistencia);
 

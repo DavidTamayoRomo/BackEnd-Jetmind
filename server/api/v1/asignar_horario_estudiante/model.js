@@ -1,39 +1,43 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 
 const fields = {
-  idDocente:{
+  idDocente: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:true,
+    require: true,
   },
-  idHorario:{
+  idHorario: {
     type: Schema.Types.ObjectId,
     ref: 'horario',
-    require:true,
+    require: true,
   },
-  idEstudiantes:[{
+  idEstudiantes: [{
     type: Schema.Types.ObjectId,
     ref: 'estudiante',
-    require:true,
+    require: true,
   }],
-  addedUser:{
-    type: Schema.Types.ObjectId,
-    ref: 'persona',
-    require:false,
+  estado: {
+    type: Boolean,
+    require: false,
   },
-  modifiedUser:{
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
+  },
+  modifiedUser: {
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const asignarhorario = new Schema(fields, {timestamps:true});
+const asignarhorario = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('asignarhorario', asignarhorario);
+module.exports = mongoose.model('asignarhorario', asignarhorario);
 

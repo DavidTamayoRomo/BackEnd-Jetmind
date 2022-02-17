@@ -145,6 +145,10 @@ router
   .post(controller.create)
   .get(controller.all);
 
+router
+  .route('/all')
+  .get(controller.allSinLimite)
+
 router.param('id', controller.id);
 
 router

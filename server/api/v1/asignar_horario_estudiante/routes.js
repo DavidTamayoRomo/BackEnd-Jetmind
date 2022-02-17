@@ -153,4 +153,8 @@ router
   .put(controller.update)
   .delete(controller.delete);
 
+router
+  .route('/buscar/:idDocente/:idHorario')
+  .get(controller.buscarDocenteHorario)
+
 module.exports = router;
