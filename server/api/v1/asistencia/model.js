@@ -10,9 +10,9 @@ const fields = {
     ref: 'persona',
     require: true,
   },
-  idAsignarHorarioEstudiante: {
+  idHorario: {
     type: Schema.Types.ObjectId,
-    ref: 'asignarhorario',
+    ref: 'horario',
     require: true,
   },
   temaTratado: {
@@ -23,12 +23,33 @@ const fields = {
     type: Date,
     require: false,
   },
+  prueba: [
+    {
+      idEstudiante: {
+        type: Schema.Types.ObjectId,
+        ref: 'estudiante',
+      },
+      estudiante: {
+        type: String
+      },
+      estado: {
+        type: Boolean
+      },
+      comentario: {
+        type: String
+      }
+    }
+  ],
   ausentes: [
     {
       estudiante: {
-        type: Schema.Types.ObjectId,
-        ref: 'estudiante',
-        require: false,
+        idEstudiante: {
+          type: Schema.Types.ObjectId,
+          ref: 'estudiante',
+        },
+        nombre: {
+          type: String
+        },
       },
       comentario: {
         type: String
@@ -38,9 +59,13 @@ const fields = {
   presentes: [
     {
       estudiante: {
-        type: Schema.Types.ObjectId,
-        ref: 'estudiante',
-        require: false,
+        idEstudiante: {
+          type: Schema.Types.ObjectId,
+          ref: 'estudiante',
+        },
+        nombre: {
+          type: String
+        },
       },
       comentario: {
         type: String
