@@ -2,9 +2,11 @@ const router = require('express').Router();
 
 const tasks = require('./tasks/routes');
 const persona = require('./persona/routes');
+const agenda = require('./agenda_entrega_informes/routes');
 const asesor = require('./asesor/routes');
 const asignarhorarioestudiante = require('./asignar_horario_estudiante/routes');
 const asistencia = require('./asistencia/routes');
+const campania = require('./campaña/routes');
 const citastelemarketing = require('./citas_telemarketing/routes');
 const ciudad = require('./ciudad/routes');
 const contrato = require('./contrato/routes');
@@ -47,9 +49,11 @@ const utils = require('./utils/routes');
 
 router.use('/tasks', tasks);
 router.use('/persona', persona);
+router.use('/agenda', agenda);
 router.use('/asesor', asesor);
 router.use('/asignarhorarioestudiante', asignarhorarioestudiante);
 router.use('/asistencia', asistencia);
+router.use('/campania', campania);
 router.use('/citastelemarketing', citastelemarketing);
 router.use('/ciudad', ciudad);
 router.use('/contrato', contrato);
