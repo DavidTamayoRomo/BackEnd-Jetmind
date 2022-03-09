@@ -197,4 +197,8 @@ router
   .route('/byroleciudadmarca/:role/:ciudad/:marca')
   .get(auth, controller.allByRoleCiudadMarca)
 
+router
+  .route('/byroleciudadmarca2/:role/:ciudad/:marca')
+  .get(auth, controller.allByRoleCiudadMarca2)
+
 module.exports = router;

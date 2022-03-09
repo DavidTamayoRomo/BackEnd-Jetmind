@@ -143,15 +143,19 @@ const controller = require('./controller');
 
 router
   .route('/')
-  .post(auth,controller.create)
-  .get(auth,controller.all);
+  .post(auth, controller.create)
+  .get(auth, controller.all);
+
+router
+  .route('/aggregate')
+  .get(auth, controller.allAggregate);
 
 router.param('id', controller.id);
 
 router
   .route('/:id')
-  .get(auth,controller.read)
-  .put(auth,controller.update)
-  .delete(auth,controller.delete);
+  .get(auth, controller.read)
+  .put(auth, controller.update)
+  .delete(auth, controller.delete);
 
 module.exports = router;

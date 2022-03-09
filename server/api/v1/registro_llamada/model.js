@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 /*
 const sanitizers = [
   body.apply(title).escape()
@@ -10,44 +10,38 @@ const sanitizers = [
 */
 
 const fields = {
-  idDocente:{
-    type: Schema.Types.ObjectId,
-    ref: 'persona',
-    require:true,
-  },
-  idHorario:{
-    type: Schema.Types.ObjectId,
-    ref: 'horario',
-    require:true,
-  },
-  idEstudiante:{
+
+  idEstudiante: {
     type: Schema.Types.ObjectId,
     ref: 'estudiante',
-    require:true,
+    require: true,
   },
-  idTipoPlataforma:{
-    type: Schema.Types.ObjectId,
-    ref: 'tipoplataforma',
-    require:false,
+  fecha: {
+    type: Date,
+    require: false,
   },
-  comentario:{
-    type : Date,
-    require:false,
+  comenterio: {
+    type: String,
+    require: false,
   },
-  addedUser:{
-    type: Schema.Types.ObjectId,
-    ref: 'persona',
-    require:false,
+  numeroTelefonico: {
+    type: String,
+    require: false,
   },
-  modifiedUser:{
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
+  },
+  modifiedUser: {
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const registrollamada = new Schema(fields, {timestamps:true});
+const registrollamada = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('registrollamada', registrollamada);
+module.exports = mongoose.model('registrollamada', registrollamada);
 

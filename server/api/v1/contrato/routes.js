@@ -151,6 +151,10 @@ router
   .route('/contratosAprobados')
   .get(auth, controller.allAprobados);
 
+router
+  .route('/contratosAprobados2')
+  .get(auth, controller.allByAprobadosCiudadMarca);
+
 router.param('id', controller.id);
 
 router

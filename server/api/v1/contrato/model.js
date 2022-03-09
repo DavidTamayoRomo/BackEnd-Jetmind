@@ -111,6 +111,17 @@ const fields = {
     ref: 'persona',
     require: false,
   },
+  //A;ado nuevos campos
+  idCiudad: {
+    type: Schema.Types.ObjectId,
+    ref: 'ciudad',
+    require: false,
+  },
+  idMarca: {
+    type: Schema.Types.ObjectId,
+    ref: 'marca',
+    require: false,
+  },
 };
 
 //timestamps es created at - updated at

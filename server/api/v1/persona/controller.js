@@ -10,6 +10,8 @@ const { signToken } = require('./../auth');
 
 const envioEmail = require('../../../email');
 
+const mongoose = require("mongoose");
+
 exports.id = async (req, res, next, id) => {
   try {
     const doc = await Model.findById(id).exec();
@@ -251,6 +253,36 @@ exports.allByRoleCiudadMarca = async (req, res, next) => {
   try {
 
     const docs = await Model.find({ tipo: role, idCiudad: ciudad, idMarca: marca })
+      .populate('idCiudad')
+      .populate('idMarca')
+      .populate('idSucursal')
+      .populate('tipo')
+      .exec();
+
+    res.json({
+      success: true,
+      ok: "allByRole",
+      data: docs
+    });
+
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
+exports.allByRoleCiudadMarca2 = async (req, res, next) => {
+  const { query = {} } = req;
+  const { limit, page, skip } = paginar(query);
+  const { role, ciudad, marca } = req.params;
+
+  //Para obteneer los elementos de un string separados por comas
+  let arrayCiudad = ciudad.split(',');
+  let arrayCiudadObjectID = [];
+  arrayCiudad.map(x => arrayCiudadObjectID.push(mongoose.Types.ObjectId(x)));
+
+  try {
+    const docs = await Model.find({ tipo: role, idCiudad: { $in: arrayCiudadObjectID }, idMarca: marca })
       .populate('idCiudad')
       .populate('idMarca')
       .populate('idSucursal')

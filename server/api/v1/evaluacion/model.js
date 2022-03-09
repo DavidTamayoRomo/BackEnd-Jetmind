@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 /*
 const sanitizers = [
   body.apply(title).escape()
@@ -10,33 +10,44 @@ const sanitizers = [
 */
 
 const fields = {
-  idEstudiante:{
+  idDocente: {
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
+    require: true,
+  },
+  idHorario: {
+    type: Schema.Types.ObjectId,
+    ref: 'horario',
+    require: true,
+  },
+  idEstudiante: {
     type: Schema.Types.ObjectId,
     ref: 'estudiante',
-    require:true,
+    require: true,
   },
-  nivel:{
-    type : String,
-    require:false,
+  idTipoPlataforma: {
+    type: Schema.Types.ObjectId,
+    ref: 'tipoplataforma',
+    require: false,
   },
-  fechaEntrega:{
-    type : String,
-    require:false,
+  comentario: {
+    type: Date,
+    require: false,
   },
-  addedUser:{
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
-  modifiedUser:{
+  modifiedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const evaluacion = new Schema(fields, {timestamps:true});
+const evaluacion = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('evaluacion', evaluacion);
+module.exports = mongoose.model('evaluacion', evaluacion);
 

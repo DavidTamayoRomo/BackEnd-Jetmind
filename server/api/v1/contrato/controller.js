@@ -20,6 +20,7 @@ const path = require('path');
 
 const { v4 } = require('uuid');
 const fs = require('fs');
+const model = require("../marca/model");
 const dbPath = path.join(__dirname, '../../../uploads/contratos/');
 
 
@@ -97,6 +98,8 @@ exports.all = async (req, res, next) => {
   const { query = {}, decoded = {} } = req;
   const { _id = null } = decoded;//_id persona que esta ingresada en el sistema 
 
+
+
   const { limit, page, skip } = paginar(query);
 
   const persona = await Persona.findOne({ "_id": _id });
@@ -151,6 +154,71 @@ exports.allAprobados = async (req, res, next) => {
       .populate('personaAprueba', 'nombresApellidos tipo email estado')
       .sort({ '_id': -1 })//ayuda a ordenar del ultimo registro al primero
       .skip(skip).limit(limit).exec();
+
+    const totalContratos = await Model.countDocuments();
+
+    res.json({
+      success: true,
+      ok: "all",
+      data: docs,
+      totalContratos
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
+
+exports.allByAprobadosCiudadMarca = async (req, res, next) => {
+
+  //TODO: Prueba para ver como ordenamos los datos
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;//_id persona que esta ingresada en el sistema 
+
+  const { ciudad, marca } = req.params;
+
+  const { limit, page, skip } = paginar(query);
+
+  const persona = await Persona.findOne({ "_id": _id });
+
+
+  /* let arrayCiudad = ciudad.split(',');
+  let arrayCiudadObjectID = [];
+  arrayCiudad.map(x => arrayCiudadObjectID.push(mongoose.Types.ObjectId(x)));
+
+  let arrayMarca = marca.split(',');
+  let arrayMarcaObjectID = [];
+  arrayMarca.map(x => arrayMarcaObjectID.push(mongoose.Types.ObjectId(x))); */
+
+  //TODO:Si soy administrador veo todos los datos
+  //TODO:Si soy ventas solo veo mis contratos
+
+
+  try {
+    const docs = await model
+      .aggregate([
+        {
+          $match: {
+            estado: 'Aprobado'
+          }
+        },
+        {
+          $lookup: {
+            from: 'representantes',
+            localField: '_id',
+            foreignField: 'idRepresentante',
+            as: 'Representantes'
+          }
+        }
+      ])
+      /* .populate('idRepresentante', 'nombresApellidos cedula email estado')
+      .populate('addedUser', 'nombresApellidos tipo email estado')
+      .populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .populate('personaAprueba', 'nombresApellidos tipo email estado')
+      .sort({ '_id': -1 })//ayuda a ordenar del ultimo registro al primero
+      .skip(skip).limit(limit) */
+      .exec();
 
     const totalContratos = await Model.countDocuments();
 
