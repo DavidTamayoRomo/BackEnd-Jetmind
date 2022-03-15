@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 /*
 const sanitizers = [
   body.apply(title).escape()
@@ -10,69 +10,80 @@ const sanitizers = [
 */
 
 const fields = {
-  IdTelemarketing:{
-    type :Schema.Types.ObjectId,
-    ref: 'persona',
-    require:true,
+
+  idCitaTelemarketing: {
+    type: Schema.Types.ObjectId,
+    ref: 'citastelemarketing',
+    require: true,
   },
-  estado:{
-    type : Boolean,
-    require:true,
+  estado: {
+    //Re agendar - OK - Rechazado - Re negociacion - Cliente no atendido
+    nombre: {
+      type: String,
+    },
+    fecha: {
+      type: Date,
+    },
+    tipoPago: {
+      type: String,
+    },
+    cantidad: {
+      type: String,
+    },
   },
-  fecha:{
-    type : Date,
-    require:true,
+
+  observaciones: {
+    type: String,
+    require: false,
   },
-  tipoPago:{
-    type : Number,
-    require:false,
+  pregunta1: {
+    respuesta: {
+      type: String
+    },
+    detalle: {
+      type: String
+    }
   },
-  fechaPago:{
-    type : Date,
-    require:false,
+  pregunta2: {
+    type: String,
+    require: false,
   },
-  cantidaPago:{
-    type : Number,
-    require:false,
+  pregunta3: {
+    marcas: [
+      {
+        item_id: {
+          type: Schema.Types.ObjectId,
+          ref: 'marca',
+        },
+        nombre: {
+          type: String
+        }
+      }
+    ],
+    ninguna: {
+      type: String
+    },
+    motivo: {
+      type: String
+    },
+    codigoContrato: {
+      type: String
+    },
   },
-  observaciones:{
-    type : String,
-    require:false,
-  },
-  pregunta1:{
-    type : String,
-    require:false,
-  },
-  pregunta2:{
-    type : String,
-    require:false,
-  },
-  pregunta3:{
-    type : String,
-    require:false,
-  },
-  pregunta4:{
-    type : String,
-    require:false,
-  },
-  pregunta5:{
-    type : String,
-    require:false,
-  },
-  addedUser:{
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
-  modifiedUser:{
+  modifiedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const controlcalidad = new Schema(fields, {timestamps:true});
+const controlcalidad = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('controlcalidad', controlcalidad);
+module.exports = mongoose.model('controlcalidad', controlcalidad);
 
