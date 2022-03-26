@@ -391,11 +391,11 @@ async function crearPDF(contrato, representante, estudiantes) {
             {
               text: 'Contrato Digital'
             },
-            /*  {
-               image: this.imagenJetmind,
-               width: 200,
-               alignment: 'center',
-             }, */
+            {
+              image: path.join(__dirname, '../../../uploads/marcas/f195494a-22dd-4d02-bfae-faf07e35d3f6.png'),
+              width: 200,
+              alignment: 'center',
+            },
             {
               text: 'CÓDIGO: ' + contrato.codigo,
               //bold: true,
@@ -475,41 +475,41 @@ async function crearPDF(contrato, representante, estudiantes) {
         },
 
         '\n\n',
-        /* {
-          image: this.imagenIL,
+        {
+          image: path.join(__dirname, '../../../uploads/marcas/fd7edbb9-936f-4289-9969-b821047cde61.png'),
           width: 150,
           alignment: 'center',
-        }, */
+        },
         '\n',
         {
           text: cuartaIL
         },
         '\n\n',
-        /* {
-          image: this.imagenCH,
+        {
+          image: path.join(__dirname, '../../../uploads/marcas/d89863d0-f162-4615-b005-c58bdd82648f.png'),
           width: 150,
           alignment: 'center',
-        }, */
+        },
         '\n',
         {
           text: cuartaCH
         },
         '\n\n',
-        /* {
-          image: this.imagenTM,
+        {
+          image: path.join(__dirname, '../../../uploads/marcas/3f77e037-c883-4e7f-9a27-ea8f59521128.png'),
           width: 150,
           alignment: 'center',
-        }, */
+        },
         '\n',
         {
           text: cuartaTM
         },
         '\n\n',
-        /* {
-          image: this.imagenUK,
+        {
+          image: path.join(__dirname, '../../../uploads/marcas/5d39ec2a-cc54-47ce-880d-97a071be9a20.png'),
           width: 150,
           alignment: 'center',
-        }, */
+        },
         '\n',
         {
           text: cuartaUK
@@ -524,6 +524,24 @@ async function crearPDF(contrato, representante, estudiantes) {
     pdfDoc.pipe(fs.createWriteStream('documentoContrato.pdf'));
     pdfDoc.end();
 
+
+    //TODO: revisar envvio de correo
+    setTimeout(() => {
+      //Enviar correo electronico al representante
+      envioEmail.transporter.sendMail({
+        from: "pruebaenvio@charlotteenglishschool.com",
+        to: 'david95tamayo@hotmail.es',
+        subject: `Prueba envio contrato`,
+        attachments: [
+          {
+            //TODO:Enviar archivo pdf del contrato
+            filename: 'redes.pdf', // <= Here: made sure file name match
+            path: path.join(__dirname, '../../../../documentoContrato.pdf'), // <= Here
+            contentType: 'application/pdf'
+          }
+        ]
+      })
+    }, 4000);
 
 
 
