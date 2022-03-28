@@ -525,23 +525,7 @@ async function crearPDF(contrato, representante, estudiantes) {
     pdfDoc.end();
 
 
-    //TODO: revisar envvio de correo
-    setTimeout(() => {
-      //Enviar correo electronico al representante
-      envioEmail.transporter.sendMail({
-        from: "pruebaenvio@charlotteenglishschool.com",
-        to: 'david95tamayo@hotmail.es',
-        subject: `Prueba envio contrato`,
-        attachments: [
-          {
-            //TODO:Enviar archivo pdf del contrato
-            filename: 'redes.pdf', // <= Here: made sure file name match
-            path: path.join(__dirname, '../../../../documentoContrato.pdf'), // <= Here
-            contentType: 'application/pdf'
-          }
-        ]
-      })
-    }, 4000);
+
 
 
 
@@ -549,6 +533,30 @@ async function crearPDF(contrato, representante, estudiantes) {
 
 
   }, 1500);
+
+  //TODO: revisar envvio de correo
+  setTimeout(async () => {
+    console.log('entre envio correo correo');
+    //Enviar correo electronico al representante
+    const esperar = await envioEmail.transporter.sendMail({
+      from: 'pruebaenvio@clicbro.org',
+      to: 'davidtamayoromo@gmail.com',
+      subject: `Prueba envio contrato`,
+      attachments: [
+        {
+          //TODO:Enviar archivo pdf del contrato
+          filename: 'redes.pdf', // <= Here: made sure file name match
+          path: path.join(__dirname, '../../../../documentoContrato.pdf'), // <= Here
+          contentType: 'application/pdf'
+        }
+      ]
+    })
+    if (esperar != null) {
+      console.log('Esperando');
+    } else {
+      console.log('Enviado');
+    }
+  }, 2500);
 
 
 }
