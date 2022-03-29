@@ -521,32 +521,26 @@ async function crearPDF(contrato, representante, estudiantes) {
 
 
     const pdfDoc = printer.createPdfKitDocument(pdfDefinition);
-    pdfDoc.pipe(fs.createWriteStream('documentoContrato.pdf'));
+    pdfDoc.pipe(fs.createWriteStream(`contratoDigital${contrato.codigo}.pdf`));
     pdfDoc.end();
-
-
-
-
-
-
+    //TODO: Eliminar archivo cuando pase 1 hora
 
 
 
   }, 1500);
 
-  //TODO: revisar envvio de correo
+
   setTimeout(async () => {
     console.log('entre envio correo correo');
     //Enviar correo electronico al representante
     const esperar = await envioEmail.transporter.sendMail({
       from: 'pruebaenvio@clicbro.org',
       to: 'davidtamayoromo@gmail.com',
-      subject: `Prueba envio contrato`,
+      subject: `CONTRATO DIGITAL  -  ${contrato.codigo}`,
       attachments: [
         {
-          //TODO:Enviar archivo pdf del contrato
-          filename: 'redes.pdf', // <= Here: made sure file name match
-          path: path.join(__dirname, '../../../../documentoContrato.pdf'), // <= Here
+          filename: `contratoDigital${contrato.codigo}.pdf`,
+          path: path.join(__dirname, `../../../../contratoDigital${contrato.codigo}.pdf`),
           contentType: 'application/pdf'
         }
       ]
