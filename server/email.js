@@ -6,7 +6,7 @@ exports.transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     user: 'pruebaenvio@clicbro.org',
-    pass: '=c7~[F(.*y_u'
+    pass: 'KtjZB&I3?HQd'
   },
   tls: {
     rejectUnauthorized: false

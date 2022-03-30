@@ -6,6 +6,7 @@ const { singToken } = require('./../auth');
 
 
 const { fields } = require('./model');
+const Persona = require('../persona/model');
 
 exports.id = async (req, res, next, id) => {
   try {
@@ -145,4 +146,40 @@ exports.delete = async (req, res, next) => {
   } catch (error) {
     next(new Error(error));
   }
+};
+
+
+exports.reporte_diario = async (req, res, next) => {
+
+  const { query = {}, body = {} } = req;
+  const { fechainicio } = body;
+  const { fechafin } = body;
+  try {
+    const docs = await Model
+      .aggregate([
+        { $match: { createdAt: { $gte: new Date(fechainicio), $lt: new Date(fechafin) } } },
+        {
+          $group: {
+            _id: '$addedUser',
+            //mostrar todos los datos del documento
+            //datos: { $push: '$$ROOT' }
+            //mostrar solo los datos que quiero
+            data: { $push: { id: '$_id', fechaHoraCreacion: '$createdAt', nombreApellidoRepresentante: '$nombreApellidoRepresentante' } },
+            total: { $sum: 1 },
+          }
+        },
+      ]).exec();
+    //inner join --- importante asi se une tablas 
+    await Persona.populate(docs, { path: '_id' });
+
+    res.json({
+      success: true,
+      data: docs,
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+
+
 };
