@@ -155,6 +155,10 @@ router
   .route('/contratosAprobados2')
   .get(auth, controller.allByAprobadosCiudadMarca);
 
+router
+  .route('/reporte-ventas')
+  .post(controller.reporte_ventas);
+
 router.param('id', controller.id);
 
 router

@@ -962,3 +962,49 @@ exports.delete = async (req, res, next) => {
     next(new Error(error));
   }
 };
+
+
+exports.reporte_ventas = async (req, res, next) => {
+
+  const { query = {}, body = {} } = req;
+  const { fechainicio, fechafin, TipoPago = ["Plan", "Contado"], EstadoVenta = ["Ok", "Abono", "Saldo"] } = body;
+  console.log(TipoPago);
+  console.log(EstadoVenta);
+  try {
+    const docs = await Model
+      .aggregate([
+        //preguntar si el reporte debe ser de aprobados o de todos
+        //{ $match: { createdAt: { $gte: new Date(fechainicio), $lt: new Date(fechafin) }, estado: 'Aprobado' } },
+        {
+          $match:
+          {
+            createdAt: {
+              $gte: new Date(fechainicio), $lt: new Date(fechafin)
+            },
+            tipoPago: { $in: TipoPago },
+            estadoVenta: { $in: EstadoVenta }
+          }
+        },
+        {
+          $group: {
+            _id: '$addedUser',
+            totalVentas: { $sum: 1 },
+            montoAsesortotal: { $sum: '$valorTotal' },
+            montoAsesorMatriculas: { $sum: '$valorMatricula' },
+            datos: { $push: '$$ROOT' },
+          },
+        },
+        //sumar el montoAsesortotal
+
+      ]).exec();
+    //inner join --- importante asi se une tablas 
+    await Persona.populate(docs, { path: '_id' });
+
+    res.json({
+      success: true,
+      data: docs,
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+};

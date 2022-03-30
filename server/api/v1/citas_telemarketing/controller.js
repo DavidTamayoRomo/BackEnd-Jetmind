@@ -179,7 +179,5 @@ exports.reporte_diario = async (req, res, next) => {
   } catch (err) {
     next(new Error(err));
   }
-
-
-
 };
+
