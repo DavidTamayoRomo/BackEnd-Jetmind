@@ -978,11 +978,19 @@ exports.reporte_ventas = async (req, res, next) => {
         {
           $match:
           {
-            createdAt: {
-              $gte: new Date(fechainicio), $lt: new Date(fechafin)
-            },
-            tipoPago: { $in: TipoPago },
-            estadoVenta: { $in: EstadoVenta }
+            $and: [
+              {
+                createdAt: {
+                  $gte: new Date(fechainicio), $lt: new Date(fechafin)
+                },
+              },
+              {
+                tipoPago: { $in: TipoPago }
+              },
+              {
+                estadoVenta: { $in: EstadoVenta }
+              }
+            ]
           }
         },
         {
