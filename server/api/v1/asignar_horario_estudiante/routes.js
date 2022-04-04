@@ -157,4 +157,8 @@ router
   .route('/buscar/:idDocente/:idHorario')
   .get(controller.buscarDocenteHorario)
 
+router
+  .route('/docente-horarios/:dia/:estado/:sucursal')
+  .get(controller.buscarHorariosPorDia)
+
 module.exports = router;

@@ -1,4 +1,4 @@
-
+const mongoose = require("mongoose");
 
 const Model = require('./model');
 const { paginar } = require('../../../utils');
@@ -118,6 +118,129 @@ exports.buscarDocenteHorario = async (req, res, next) => {
       success: true,
       data: docs,
     });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
+
+exports.buscarHorariosPorDia = async (req, res, next) => {
+
+  const { query = {} } = req;
+  const { dia, estado = true, sucursal } = req.params;
+
+  //convertir estado a boolean
+  const estadoBool = estado === 'true' ? true : false;
+
+
+
+
+  try {
+    if (sucursal != 'todas') {
+      const docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'horarios',
+            localField: 'idHorario',
+            foreignField: '_id',
+            as: 'horario'
+          }
+        },
+        {
+          $lookup: {
+            from: 'marcas',
+            localField: 'horario.0.idMarca',
+            foreignField: '_id',
+            as: 'marca'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              {
+                'horario.0.dias': { $in: [dia] },
+              },
+              {
+                estado: estadoBool
+              }
+            ]
+          }
+        },
+        {
+          $group: {
+            _id: '$idDocente',
+            datos: { $push: '$$ROOT' }
+          }
+        },
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'datos.idDocente',
+            foreignField: '_id',
+            as: 'docente'
+          }
+        },
+        {
+          $match: {
+            'docente.0.idSucursal': { $in: [mongoose.Types.ObjectId(sucursal)] }
+          }
+        },
+      ]).exec();
+      res.json({
+        success: true,
+        data: docs,
+      });
+    } else {
+      //Todas
+      const docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'horarios',
+            localField: 'idHorario',
+            foreignField: '_id',
+            as: 'horario'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              {
+                'horario.0.dias': { $in: [dia] },
+              },
+              {
+                estado: estadoBool
+              }
+            ]
+          }
+        },
+        {
+          $group: {
+            _id: '$idDocente',
+            datos: { $push: '$$ROOT' }
+          }
+        },
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'datos.idDocente',
+            foreignField: '_id',
+            as: 'docente'
+          }
+        },
+
+
+      ]).exec();
+      res.json({
+        success: true,
+        data: docs,
+      });
+    }
+
+
+
+
+
   } catch (err) {
     next(new Error(err));
   }
