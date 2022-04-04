@@ -1,4 +1,5 @@
 
+const mongoose = require("mongoose");
 
 const Model = require('./model');
 const { paginar } = require('../../../utils');
@@ -112,4 +113,62 @@ exports.delete = async (req, res, next) => {
   } catch (error) {
     next(new Error(error));
   }
+};
+
+
+exports.asistenciaByEstudiante = async (req, res, next) => {
+  const { query = {} } = req;
+  const { idEstudiante } = req.params;
+  const ciudad = 'Quito';
+  console.log(idEstudiante);
+
+  try {
+
+    const docs = await Model.aggregate(
+      [
+        {
+          $unwind: "$prueba"
+        },
+        {
+          $match: {
+            "prueba.idEstudiante": mongoose.Types.ObjectId(idEstudiante)
+          }
+        },
+        {
+          $lookup: {
+            from: "personas",
+            localField: "idDocente",
+            foreignField: "_id",
+            as: "docente"
+          }
+        },
+        {
+          $lookup: {
+            from: "ciudads",
+            localField: "docente.idCiudad",
+            foreignField: "_id",
+            as: "ciudad"
+          }
+        },
+        {
+          $lookup: {
+            from: "horarios",
+            localField: "idHorario",
+            foreignField: "_id",
+            as: "horario"
+          }
+        },
+      ]
+    ).exec();
+
+    res.json({
+      success: true,
+      ok: "asistenciaByEstudiante",
+      data: docs
+    });
+
+  } catch (err) {
+    next(new Error(err));
+  }
+
 };

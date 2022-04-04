@@ -148,6 +148,9 @@ router
 router.param('id', controller.id);
 
 router
+  .route('/byEstudainte/:idEstudiante')
+  .get(controller.asistenciaByEstudiante);
+router
   .route('/:id')
   .get(controller.read)
   .put(controller.update)
