@@ -152,9 +152,9 @@ exports.create = async (req, res, next) => {
     res.status(201);
     /** Envio de correo de verificacion */
     envioEmail.transporter.sendMail({
-      from: "pruebaenvio@charlotteenglishschool.com",
-      to: "davidtamayoromo@gmail.com",
-      subject: "Prueba email NODEJS",
+      from: 'pruebaenvio@clicbro.org',
+      to: 'davidtamayoromo@gmail.com',
+      subject: 'Prueba email NODEJS',
     })
     res.json({
       success: true,
@@ -168,13 +168,21 @@ exports.create = async (req, res, next) => {
 
 exports.enviar = async (req, res, next) => {
   try {
-    for (let index = 1; index < 100; index++) {
+    for (let index = 1; index < 10; index++) {
       //con await esperamos la respuesta del envio del email
-      const esperar = await email.transporter.sendMail({
-        from: "pruebaenvio@charlotteenglishschool.com",
-        to: "davidtamayoromo@gmail.com",
+      const esperar = await envioEmail.transporter.sendMail({
+        from: 'pruebaenvio@clicbro.org',
+        to: 'davidtamayoromo@gmail.com',
         subject: "Prueba email NODEJS" + index,
       });
+
+      /* envioEmail.transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log('Message %s sent: %s', info.messageId, info.response);
+      }); */
+
       //If necesario para esperar la respuesta del envio del email
       if (esperar != null) {
         console.log('Esperando');

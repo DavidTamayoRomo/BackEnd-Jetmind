@@ -4,6 +4,8 @@ const Model = require('./model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
+const mongoose = require("mongoose");
+
 
 const { fields } = require('./model');
 
@@ -58,6 +60,7 @@ exports.all = async (req, res, next) => {
       .populate('idEstudiante')
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .sort({ '_id': -1 })
       .skip(skip).limit(limit).exec();
 
     const totalPrograma = await Model.countDocuments();
@@ -80,9 +83,10 @@ exports.programabyIdEstudiante = async (req, res, next) => {
   const { query = {} } = req;
   const { limit, page, skip } = paginar(query);
 
+  console.log(req.params.idEstudiante);
 
   try {
-    const docs = await Model.find({ idEstudiante: req.idEstudiante })
+    const docs = await Model.find({ idEstudiante: { $in: [mongoose.Types.ObjectId(req.params.idEstudiante)] } })
       .populate('idMarca')
       .populate('idCiudad')
       .populate('idSucursal')

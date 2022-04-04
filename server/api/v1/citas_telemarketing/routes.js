@@ -150,6 +150,10 @@ router
 router.param('id', controller.id);
 
 router
+  .route('/reporteDiario')
+  .post(controller.reporte_diario)
+
+router
   .route('/:id')
   .get(auth, controller.read)
   .put(auth, controller.update)

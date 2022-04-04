@@ -122,6 +122,14 @@ const fields = {
     ref: 'marca',
     require: false,
   },
+  marcasVendidas: [{
+    item_id: {
+      type: String
+    },
+    nombre: {
+      type: String
+    },
+  }],
 };
 
 //timestamps es created at - updated at

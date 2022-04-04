@@ -1,12 +1,19 @@
 
 const mongoose = require("mongoose");
-
 const Model = require('./model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
 
 const { fields } = require('./model');
+
+const Persona = require('../persona/model');
+const Estudiante = require('../estudiante/model');
+const Representante = require('../representante/model');
+const Marca = require('../marca/model');
+const envioEmail = require('../../../email');
+
+const path = require('path');
 
 exports.id = async (req, res, next, id) => {
   try {
@@ -33,6 +40,7 @@ exports.create = async (req, res, next) => {
 
   try {
     const doc = await document.save();
+    envioCorreoAsistencia(doc);
     res.status(201);
     res.json({
       success: true,
@@ -42,6 +50,76 @@ exports.create = async (req, res, next) => {
     next(new Error(err));
   }
 };
+
+async function envioCorreoAsistencia(doc) {
+  let datos = [];
+  const docente = await Persona.findById(doc.idDocente).exec();
+  const marca = await Marca.findById(docente.idMarca[0]).exec();
+  doc.prueba.forEach(async (estudiante) => {
+    const estudiante1 = await Estudiante.findById(estudiante.idEstudiante).exec();
+    const representante = await Representante.findById(estudiante1.idRepresentante[0]).exec();
+    console.log('estudainte : ' + estudiante1);
+    console.log('representante' + representante);
+    datos.push({ estudiante1, representante, 'estado': estudiante.estado });
+  });
+
+  setTimeout(() => {
+    enviar(datos, marca.nombre);
+  }, 6000);
+
+}
+
+const enviar = async (datos, marca) => {
+
+  datos.forEach(async (resp) => {
+    if (resp.estado) {
+      //Asiste
+      const esperar = await envioEmail.transporter.sendMail({
+        from: 'pruebaenvio@clicbro.org',
+        to: resp.representante.email,
+        subject: `REGISTRO DE ASISTENCIA`,
+        html: `<div style='background: #c2c2c2;'><div style='max-width: 600px; margin: auto; display: block;'>
+          <img src='https://ilvemecuador.com/contenido/uploads/2021/02/Header_Mails-02.png' style='max-width: 100%; margin: 0px; 
+          display: block'></img></div><div style='max-width: 600px;background: #fff;margin: auto;padding-top: 50px;
+          padding-bottom: 50px;'><div style='text-align: center;'><h3 style='margin-bottom: 30px;font-size: 28px;'>
+          ¡REGISTRO DE ASISTENCIA!</h3></div><div style='padding: 20px;text-align: justify;font-size: 16px;'><p>Estimado Representante:
+          ${resp.representante.nombresApellidos}</p><br><p>Reciba un cordial saludo de <strong>${marca}</strong>. 
+           Le informamos que el/la estudiante <strong>${resp.estudiante1.nombresApellidos}</strong>, asistió a su clase el día <strong>
+           ${new Date()}</p><br><br><p><i style='font-size: 12px'>Este correo se genera
+            automáticamente, por favor no responder. </i></p><br><br></div></div></div></div>`
+      });
+      if (esperar != null) {
+        console.log('Esperando');
+      } else {
+        console.log('Enviado');
+      }
+    } else {
+      //No asiste
+      const esperar2 = await envioEmail.transporter.sendMail({
+        from: 'pruebaenvio@clicbro.org',
+        to: resp.representante.email,
+        subject: `REGISTRO DE ASISTENCIA`,
+        html: `<div style='background: #c2c2c2;'><div style='max-width: 600px; margin: auto; display: block;'>
+            <img src='https://ilvemecuador.com/contenido/uploads/2021/02/Header_Mails-02.png' style='max-width: 100%; 
+            margin: 0px; display: block'></img></div><div style='max-width: 600px;background: #fff;margin: auto;padding-top: 50px;
+            padding-bottom: 50px;'><div style='text-align: center;'><h3 style='margin-bottom: 30px;font-size: 28px;'>¡REGISTRO DE ASISTENCIA!</h3>
+            </div><div style='padding: 20px;text-align: justify;font-size: 16px;'><p>Estimado Representante:${resp.representante.nombresApellidos}
+            </p><br><p>Reciba un cordial saludo de <strong>${marca}</strong>. Le informamos que el/la estudiante <strong> 
+            ${resp.estudiante1.nombresApellidos}</strong>, no asistió a su clase el día <strong>${new Date()}</strong>, por favor comunicarse con 
+            el Docente, para justificar y recuperar su inasistencia.</p><br><br><p>
+            <i style='font-size: 12px'>Este correo se genera automáticamente, por favor no responder. </i></p><br><br>
+             </div></div><div style='background: #ff4800;max-width: 600px;margin: 0 auto;'>
+             </div></div>`
+      });
+      if (esperar2 != null) {
+        console.log('Esperando');
+      } else {
+        console.log('Enviado');
+      }
+    }
+  });
+
+}
 
 exports.all = async (req, res, next) => {
 
