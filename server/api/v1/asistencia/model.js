@@ -37,7 +37,10 @@ const fields = {
       },
       comentario: {
         type: String
-      }
+      },
+      fase: {
+        type: String
+      },
     }
   ],
   ausentes: [
