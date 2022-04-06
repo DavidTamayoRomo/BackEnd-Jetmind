@@ -15,6 +15,11 @@ const fields = {
     ref: 'contrato',
     require: false,
   },
+  idEstudiante: {
+    type: Schema.Types.ObjectId,
+    ref: 'estudiante',
+    require: false,
+  },
   fecha: {
     type: String,
     require: false,
