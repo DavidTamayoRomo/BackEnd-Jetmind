@@ -130,6 +130,30 @@ const fields = {
       type: String
     },
   }],
+  pea: [
+    {
+      nombreEstudiante: {
+        type: String,
+      },
+      marca: {
+        type: String,
+      },
+      nombrePea: {
+        type: String,
+      },
+    }
+  ],
+  entrevistaInicial: [
+    {
+      marca: {
+        type: String,
+      },
+      estado: {
+        type: String,
+      },
+    }
+  ]
+
 };
 
 //timestamps es created at - updated at
