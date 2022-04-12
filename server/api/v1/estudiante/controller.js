@@ -1,4 +1,5 @@
 
+const mongoose = require("mongoose");
 
 const Model = require('./model');
 const { paginar } = require('../../../utils');
@@ -6,6 +7,7 @@ const { singToken } = require('./../auth');
 
 
 const { fields } = require('./model');
+const Programa = require('../programa/model');
 
 exports.id = async (req, res, next, id) => {
   try {
@@ -112,6 +114,9 @@ exports.allByIdRepresentante = async (req, res, next) => {
   }
 
 };
+
+
+
 
 exports.read = async (req, res, next) => {
   const { doc = {} } = req;

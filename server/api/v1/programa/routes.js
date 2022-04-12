@@ -152,6 +152,10 @@ router
   .get(controller.programabyIdEstudiante)
 
 router
+  .route('/reporte-estudiante')
+  .post(controller.allByCiudadMarcaSucursalNombreprograma);
+
+router
   .route('/:id')
   .get(controller.read)
   .put(controller.update)

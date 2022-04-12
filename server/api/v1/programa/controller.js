@@ -110,6 +110,52 @@ exports.programabyIdEstudiante = async (req, res, next) => {
 
 };
 
+
+exports.allByCiudadMarcaSucursalNombreprograma = async (req, res, next) => {
+  const { body } = req;
+  const { idCiudad, idMarca, idSucursal } = body;
+  let ciudad = [];
+  idCiudad.forEach(element => {
+    ciudad.push(mongoose.Types.ObjectId(element));
+  });
+  let marca = [];
+  idMarca.forEach(element => {
+    marca.push(mongoose.Types.ObjectId(element));
+  });
+  let sucursal = [];
+  idSucursal.forEach(element => {
+    sucursal.push(mongoose.Types.ObjectId(element));
+  });
+
+  try {
+    setTimeout(async () => {
+      const docs = await Model.find({
+        $and: [
+          { idCiudad: { $in: ciudad } },
+          { idMarca: { $in: marca } },
+          { idSucursal: { $in: sucursal } },
+        ]
+      })
+        .populate('idCiudad', 'nombre ')
+        .populate('idMarca', 'nombre')
+        .populate('idSucursal', 'nombre')
+        .populate('idEstudiante', 'nombresApellidos')
+        .exec();
+
+
+      res.json({
+        success: true,
+        ok: "all",
+        data: docs
+      });
+    }, 200);
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
+
 exports.read = async (req, res, next) => {
   const { doc = {} } = req;
   res.json({
