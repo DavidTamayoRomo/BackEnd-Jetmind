@@ -148,6 +148,10 @@ router
 router.param('id', controller.id);
 
 router
+  .route('/verificacion-reporte')
+  .post(controller.allReporte)
+
+router
   .route('/:id')
   .get(controller.read)
   .put(controller.update)

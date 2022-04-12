@@ -1,6 +1,8 @@
 
 const envioEmail = require('../../../email');
 
+
+const mongoose = require("mongoose");
 const Model = require('./model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
@@ -93,6 +95,49 @@ exports.all = async (req, res, next) => {
       data: docs,
       totalCiudades
     });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
+
+exports.allCiudadSucursalMarca = async (req, res, next) => {
+
+
+  const { query = {} } = req;
+  const { idCiudad, idSucursal, idMarca } = req.params;
+  try {
+
+    const docs = await Model.aggregate([
+      {
+        $lookup: {
+          from: 'personas',
+          localField: 'idDocente',
+          foreignField: '_id',
+          as: 'docente'
+        }
+      },
+      {
+        $match: {
+          $and: [
+            { 'docente.0.idCiudad': { $in: [mongoose.Types.ObjectId(idCiudad)] } },
+            { 'docente.0.idSucursal': { $in: [mongoose.Types.ObjectId(idSucursal)] } },
+            { 'docente.0.idMarca': { $in: [mongoose.Types.ObjectId(idMarca)] } }
+          ]
+        }
+      }
+    ]).exec();
+    res.json({
+      success: true,
+      ok: "all",
+      data: docs
+    });
+
+
+
+
+
   } catch (err) {
     next(new Error(err));
   }

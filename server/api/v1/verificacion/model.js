@@ -38,6 +38,19 @@ const fields = {
     numeroComprobante: {
       type: String
     },
+    abono: [
+      {
+        fecha: {
+          type: Date
+        },
+        valor: {
+          type: String
+        },
+        numeroComprobante: {
+          type: String
+        }
+      }
+    ]
   }],
 
   addedUser: {

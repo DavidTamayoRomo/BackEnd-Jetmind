@@ -11,6 +11,10 @@ router
 router.param('id', controller.id);
 
 router
+  .route('/busqueda/:idCiudad/:idSucursal/:idMarca')
+  .get(controller.allCiudadSucursalMarca);
+
+router
   .route('/:id')
   .get(auth, controller.read)
   .put(auth, controller.update)

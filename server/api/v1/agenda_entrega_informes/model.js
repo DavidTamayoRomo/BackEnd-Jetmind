@@ -32,7 +32,8 @@ const fields = {
     }
   ],
   idDocente: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'persona',
     require: false,
   },
   addedUser: {

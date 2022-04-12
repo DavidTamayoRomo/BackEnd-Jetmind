@@ -71,6 +71,53 @@ exports.all = async (req, res, next) => {
 
 };
 
+exports.allReporte = async (req, res, next) => {
+
+
+  const { query = {}, body = {} } = req;
+  const { fechainicio, fechafin } = body;
+
+  try {
+    const docs = await Model.aggregate([
+      {
+        $unwind: {
+          path: '$cobranza',
+        }
+      },
+      {
+        $match: {
+          'cobranza.fechaAcuerdo': {
+            $gte: new Date(fechainicio), $lt: new Date(fechafin)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: '$idContrato',
+          contador: { $sum: 1 },
+          datos: { $push: '$$ROOT' }
+        }
+      },
+      {
+        $lookup: {
+          from: 'contratos',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'contrato'
+        }
+      }
+    ]);
+
+    res.json({
+      success: true,
+      data: docs
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
 exports.read = async (req, res, next) => {
   const { doc = {} } = req;
   res.json({
