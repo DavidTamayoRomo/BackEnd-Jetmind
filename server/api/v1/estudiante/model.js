@@ -47,6 +47,7 @@ const fields = {
     type: String,
     require: false
   },
+  //TODO: revisar q hay dos
   estado: {
     type: String,
     require: false

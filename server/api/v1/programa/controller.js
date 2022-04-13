@@ -156,6 +156,91 @@ exports.allByCiudadMarcaSucursalNombreprograma = async (req, res, next) => {
 };
 
 
+exports.allByCiudadMarcaEstado = async (req, res, next) => {
+  const { body } = req;
+  const { idCiudad, idMarca, estado } = body;
+  let ciudad = [];
+  idCiudad.forEach(element => {
+    ciudad.push(mongoose.Types.ObjectId(element));
+  });
+  let marca = [];
+  idMarca.forEach(element => {
+    marca.push(mongoose.Types.ObjectId(element));
+  });
+
+
+  try {
+    setTimeout(async () => {
+      const docs = await Model.aggregate([
+        {
+          $match: {
+            $and: [
+              { idCiudad: { $in: ciudad } },
+              { idMarca: { $in: marca } },
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: "estudiantes",
+            localField: "idEstudiante",
+            foreignField: "_id",
+            as: "estudiante"
+          }
+        },
+        //solo estudiantes con estado activo
+        {
+          $match: {
+            "estudiante.estado": estado
+          }
+        },
+        {
+          $lookup: {
+            from: "marcas",
+            localField: "idMarca",
+            foreignField: "_id",
+            as: "marca"
+          }
+        },
+        {
+          $lookup: {
+            from: "ciudads",
+            localField: "idCiudad",
+            foreignField: "_id",
+            as: "ciudad"
+          }
+        },
+
+      ]).exec();
+
+
+      /* .find({
+        $and: [
+          { idCiudad: { $in: ciudad } },
+          { idMarca: { $in: marca } },
+          { idSucursal: { $in: sucursal } },
+        ]
+      })
+        .populate('idCiudad', 'nombre ')
+        .populate('idMarca', 'nombre')
+        .populate('idSucursal', 'nombre')
+        .populate('idEstudiante', 'nombresApellidos')
+        .exec(); */
+
+
+      res.json({
+        success: true,
+        ok: "all",
+        data: docs
+      });
+    }, 200);
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
+
 exports.read = async (req, res, next) => {
   const { doc = {} } = req;
   res.json({

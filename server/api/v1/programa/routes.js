@@ -154,6 +154,9 @@ router
 router
   .route('/reporte-estudiante')
   .post(controller.allByCiudadMarcaSucursalNombreprograma);
+router
+  .route('/estudiante-ciudad-marca-estado')
+  .post(controller.allByCiudadMarcaEstado);
 
 router
   .route('/:id')

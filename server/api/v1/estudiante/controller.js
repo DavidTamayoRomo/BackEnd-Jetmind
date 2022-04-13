@@ -71,21 +71,15 @@ exports.all = async (req, res, next) => {
 
 };
 
+
 exports.allSinLimite = async (req, res, next) => {
-
   const { query = {} } = req;
-  const { limit, page, skip } = paginar(query);
-
-
   try {
-    const docs = await Model.find({})
+    const docs = await Model.find({ estado: 'Activo' })
       .populate('idRepresentante')
-      //.populate('addedUser', 'nombresApellidos tipo email estado')
-      //.populate('modifiedUser', 'nombresApellidos tipo email estado')
       .exec();
 
     const totalEstudiantes = await Model.countDocuments();
-
     res.json({
       success: true,
       ok: "all",
@@ -95,8 +89,11 @@ exports.allSinLimite = async (req, res, next) => {
   } catch (err) {
     next(new Error(err));
   }
-
 };
+
+
+
+
 
 exports.allByIdRepresentante = async (req, res, next) => {
   const { idRepresentante } = req.params;
