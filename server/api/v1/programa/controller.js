@@ -214,20 +214,6 @@ exports.allByCiudadMarcaEstado = async (req, res, next) => {
       ]).exec();
 
 
-      /* .find({
-        $and: [
-          { idCiudad: { $in: ciudad } },
-          { idMarca: { $in: marca } },
-          { idSucursal: { $in: sucursal } },
-        ]
-      })
-        .populate('idCiudad', 'nombre ')
-        .populate('idMarca', 'nombre')
-        .populate('idSucursal', 'nombre')
-        .populate('idEstudiante', 'nombresApellidos')
-        .exec(); */
-
-
       res.json({
         success: true,
         ok: "all",

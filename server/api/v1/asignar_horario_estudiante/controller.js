@@ -113,7 +113,76 @@ exports.buscarDocenteHorario = async (req, res, next) => {
       .populate('idDocente')
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit).exec();
+      .skip(skip).limit(limit)
+      .exec();
+    res.json({
+      success: true,
+      data: docs,
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
+exports.buscarbyCiudadMarcaDocenteActivo = async (req, res, next) => {
+
+  const { query = {}, body } = req;
+  const { idCiudad, idMarca, idDocente, estado } = body;
+
+  let ciudad = [];
+  idCiudad.forEach(element => {
+    ciudad.push(mongoose.Types.ObjectId(element));
+  });
+  let marca = [];
+  idMarca.forEach(element => {
+    marca.push(mongoose.Types.ObjectId(element));
+  });
+
+
+  try {
+    const docs = await Model.aggregate([
+      {
+        $match: {
+          $and: [
+            { idDocente: mongoose.Types.ObjectId(idDocente) },
+            { estado },
+          ]
+        }
+      },
+      {
+        $lookup: {
+          from: 'personas',
+          localField: 'addedUser',
+          foreignField: '_id',
+          as: 'addedUser'
+        }
+      },
+      {
+        $match: {
+          $and: [
+            { 'addedUser.idCiudad': { $in: ciudad } },
+            { 'addedUser.idMarca': { $in: marca } },
+          ]
+        }
+      },
+      {
+        $lookup: {
+          from: 'horarios',
+          localField: 'idHorario',
+          foreignField: '_id',
+          as: 'horario'
+        }
+      },
+      {
+        $lookup: {
+          from: 'personas',
+          localField: 'idDocente',
+          foreignField: '_id',
+          as: 'docente'
+        }
+      },
+    ]).exec();
     res.json({
       success: true,
       data: docs,

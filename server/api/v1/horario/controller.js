@@ -4,6 +4,7 @@ const Model = require('./model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
+const mongoose = require("mongoose");
 
 const { fields } = require('./model');
 
@@ -56,6 +57,51 @@ exports.all = async (req, res, next) => {
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
       .skip(skip).limit(limit).exec();
+
+    //total de registros
+    const totalHorario = await Model.countDocuments().exec();
+
+
+    res.json({
+      success: true,
+      data: docs,
+      totalHorario
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
+exports.ByCiudadMarcaEstado = async (req, res, next) => {
+
+  const { query = {}, body } = req;
+  const { idCiudad, idMarca, estado } = body;
+
+  let ciudad = [];
+  idCiudad.forEach(element => {
+    ciudad.push(mongoose.Types.ObjectId(element));
+  });
+  let marca = [];
+  idMarca.forEach(element => {
+    marca.push(mongoose.Types.ObjectId(element));
+  });
+
+  try {
+    const docs = await Model
+      .find({
+        $and:
+          [
+            { idCiudad: { $in: ciudad } },
+            { idMarca: { $in: marca } },
+            { estado: estado }
+          ]
+      })
+      .populate('idMarca')
+      .populate('idCiudad')
+      .populate('addedUser', 'nombresApellidos tipo email estado')
+      .populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .exec();
 
     //total de registros
     const totalHorario = await Model.countDocuments().exec();

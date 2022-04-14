@@ -161,4 +161,8 @@ router
   .route('/docente-horarios/:dia/:estado/:sucursal')
   .get(controller.buscarHorariosPorDia)
 
+router
+  .route('/docente-activo')
+  .post(controller.buscarbyCiudadMarcaDocenteActivo)
+
 module.exports = router;

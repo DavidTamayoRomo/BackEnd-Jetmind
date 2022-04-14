@@ -153,4 +153,8 @@ router
   .put(controller.update)
   .delete(controller.delete);
 
+router
+  .route('/ciudad-marca-estado')
+  .post(controller.ByCiudadMarcaEstado)
+
 module.exports = router;
