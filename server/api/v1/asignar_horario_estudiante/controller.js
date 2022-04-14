@@ -202,7 +202,7 @@ exports.buscarHorariosPorDia = async (req, res, next) => {
   //convertir estado a boolean
   const estadoBool = estado === 'true' ? true : false;
 
-
+  console.log(dia);
 
 
   try {

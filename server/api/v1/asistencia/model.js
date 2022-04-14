@@ -75,6 +75,10 @@ const fields = {
       }
     }
   ],
+  observaciones: {
+    type: String,
+    require: false,
+  },
   addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
