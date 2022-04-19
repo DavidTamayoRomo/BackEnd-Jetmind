@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 /*
 const sanitizers = [
   body.apply(title).escape()
@@ -10,62 +10,66 @@ const sanitizers = [
 */
 
 const fields = {
-  idContrato:{
+  idContrato: {
     type: Schema.Types.ObjectId,
     ref: 'contrato',
     //require:true,
   },
-  programa:[{
+  programa: [{
     type: Schema.Types.ObjectId,
     ref: 'programa',
-    require:false,
+    require: false,
   }],
-  nombre:{
-    type : String,
-    require:false,
+  nombre: {
+    type: String,
+    require: false,
   },
-  cedula_ruc:{
-    type : Number,
-    require:false,
+  cedula_ruc: {
+    type: Number,
+    require: false,
   },
-  telefono:{
-    type : Number,
-    require:false,
+  telefono: {
+    type: Number,
+    require: false,
   },
-  correo:{
-    type : String,
-    require:false,
+  correo: {
+    type: String,
+    require: false,
   },
-  direccion:{
-    type : String,
-    require:false,
+  direccion: {
+    type: String,
+    require: false,
   },
-  total:{
-    type : Number,
-    require:false,
+  total: {
+    type: Number,
+    require: false,
   },
-  tarjetaCredito:{
-    type : Boolean,
-    require:false,
+  tarjetaCredito: {
+    type: Boolean,
+    require: false,
   },
-  voucher:[{
-    type : String,
-    require:false,
+  voucher: [{
+    type: String,
+    require: false,
   }],
-  addedUser:{
+  estado: {
+    type: Boolean,
+    require: false,
+  },
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
-  modifiedUser:{
+  modifiedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const facturar = new Schema(fields, {timestamps:true});
+const facturar = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('facturar', facturar);
+module.exports = mongoose.model('facturar', facturar);
 

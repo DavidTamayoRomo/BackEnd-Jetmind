@@ -6,7 +6,7 @@ const mongooseDateFormat = require('mongoose-date-format');
 const { Schema } = mongoose;
 
 let tiposValidos = {
-  values: ['Admin', 'Marketing', 'Telemarketing', 'DirectorGeneral', 'Director', 'Docente'],
+  values: ['Admin', 'Marketing', 'Telemarketing', 'Ventas', 'DirectorGeneral', 'Director', 'Docente'],
   message: '{VALUE}: no es un valor valido'
 }
 
@@ -44,7 +44,8 @@ const fields = {
   nombresApellidos: {
     type: String,
     require: true,
-    maxlength: 128
+    maxlength: 128,
+    uppercase: true,
   },
   email: {
     type: String,

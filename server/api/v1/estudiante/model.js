@@ -10,7 +10,8 @@ const fields = {
   nombresApellidos: {
     type: String,
     require: true,
-    maxlength: 128
+    maxlength: 128,
+    uppercase: true,
   },
   email: {
     type: String,

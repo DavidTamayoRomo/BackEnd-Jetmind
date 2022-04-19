@@ -23,6 +23,9 @@ const fields = {
     type: String,
     require: true,
   },
+  modulo_nivel: {
+    type: String,
+  },
   dias: [{
     type: String,
     require: false,

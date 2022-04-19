@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
-const {body}= require('express-validator');
+const { body } = require('express-validator');
 
-const {Schema} = mongoose;
+const { Schema } = mongoose;
 /*
 const sanitizers = [
   body.apply(title).escape()
@@ -10,43 +10,44 @@ const sanitizers = [
 */
 
 const fields = {
-  nombre:{
-    type : String,
-    require:false,
+  nombre: {
+    type: String,
+    require: false,
+    uppercase: true,
   },
-  email:{
-    type : String,
-    unique:true,
-    lowecase:true,
-    validator:{
-      validator(value){
+  email: {
+    type: String,
+    unique: true,
+    lowecase: true,
+    validator: {
+      validator(value) {
         return validator.isEmail(value);
       },
-      message:(props)=>`${props.value} no es un email valido`,
+      message: (props) => `${props.value} no es un email valido`,
     },
   },
-  codigoPostal:{
-    type : String,
-    require:false,
+  codigoPostal: {
+    type: String,
+    require: false,
   },
-  estado:{
-    type : Boolean,
-    require:false,
+  estado: {
+    type: Boolean,
+    require: false,
   },
-  addedUser:{
+  addedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
-  modifiedUser:{
+  modifiedUser: {
     type: Schema.Types.ObjectId,
     ref: 'persona',
-    require:false,
+    require: false,
   },
 };
 
 //timestamps es created at - updated at
-const ciudad = new Schema(fields, {timestamps:true});
+const ciudad = new Schema(fields, { timestamps: true });
 
-module.exports =  mongoose.model('ciudad', ciudad);
+module.exports = mongoose.model('ciudad', ciudad);
 
