@@ -209,7 +209,9 @@ exports.allSinLimite = async (req, res, next) => {
       .populate('idCiudad')
       .populate('idMarca')
       .populate('idSucursal')
-      .populate('tipo').exec();
+      .populate('tipo')
+      .sort({ '_id': -1 })
+      .exec();
     const totalUsuarios = await Model.countDocuments();
 
     res.json({
@@ -237,7 +239,9 @@ exports.all = async (req, res, next) => {
       .populate('idMarca')
       .populate('idSucursal')
       .populate('tipo')
-      .skip(skip).limit(limit).exec();
+      .skip(skip).limit(limit)
+      .sort({ '_id': -1 })
+      .exec();
     const totalUsuarios = await Model.countDocuments();
 
     res.json({
@@ -265,6 +269,7 @@ exports.allByRoleCiudadMarca = async (req, res, next) => {
       .populate('idMarca')
       .populate('idSucursal')
       .populate('tipo')
+      .sort({ '_id': -1 })
       .exec();
 
     res.json({
@@ -295,6 +300,7 @@ exports.allByRoleCiudadMarca2 = async (req, res, next) => {
       .populate('idMarca')
       .populate('idSucursal')
       .populate('tipo')
+      .sort({ '_id': -1 })
       .exec();
 
     res.json({

@@ -90,7 +90,9 @@ exports.all = async (req, res, next) => {
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
       .populate('idContrato')
-      .skip(skip).limit(limit).exec();
+      .skip(skip).limit(limit)
+      .sort({ '_id': -1 })
+      .exec();
     res.json({
       success: true,
       data: docs,

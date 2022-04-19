@@ -56,7 +56,9 @@ exports.all = async (req, res, next) => {
       .populate('idCiudad')
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit).exec();
+      .skip(skip).limit(limit)
+      .sort({ '_id': -1 })
+      .exec();
 
     //total de registros
     const totalHorario = await Model.countDocuments().exec();

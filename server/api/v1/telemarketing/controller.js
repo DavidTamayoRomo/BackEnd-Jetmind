@@ -82,7 +82,9 @@ exports.all = async (req, res, next) => {
   totalCitasTelemarketing = await Model.countDocuments();
 
   try {
-    const docs = await Model.find({}).skip(skip).limit(limit).exec();
+    const docs = await Model.find({}).skip(skip).limit(limit)
+      .sort({ '_id': -1 })
+      .exec();
     res.json({
       success: true,
       data: docs,

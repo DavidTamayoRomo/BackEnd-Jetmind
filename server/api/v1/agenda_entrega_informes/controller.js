@@ -84,6 +84,7 @@ exports.all = async (req, res, next) => {
     const docs = await Model.find({})
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .sort({ '_id': -1 })
       //.skip(skip).limit(limit)
       .exec();
 
@@ -127,7 +128,8 @@ exports.allCiudadSucursalMarca = async (req, res, next) => {
           ]
         }
       }
-    ]).exec();
+    ])
+      .exec();
     res.json({
       success: true,
       ok: "all",

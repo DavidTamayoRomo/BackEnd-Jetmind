@@ -7,7 +7,7 @@ const { Schema } = mongoose;
 
 const fields = {
   estado: {
-    type: String,
+    type: Boolean,
   },
   idCiudad: {
     type: Schema.Types.ObjectId,

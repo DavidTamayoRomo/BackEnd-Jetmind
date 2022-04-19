@@ -100,6 +100,7 @@ exports.all = async (req, res, next) => {
       .populate('asignado')
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .sort({ '_id': -1 })
       .skip(skip)
       //.limit(limit)
       .exec();

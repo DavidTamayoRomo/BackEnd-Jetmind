@@ -55,7 +55,9 @@ exports.all = async (req, res, next) => {
       .populate('idEstudiante')
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit).exec();
+      .skip(skip).limit(limit)
+      .sort({ '_id': -1 })
+      .exec();
     const totalPeeas = await Model.countDocuments({}).exec();
     res.json({
       success: true,
