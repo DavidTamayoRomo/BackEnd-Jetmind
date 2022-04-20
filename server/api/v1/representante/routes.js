@@ -150,6 +150,10 @@ router
   .route('/aggregate')
   .get(auth, controller.allAggregate);
 
+router
+  .route('/all')
+  .get(auth, controller.allSinLimite);
+
 router.param('id', controller.id);
 
 router

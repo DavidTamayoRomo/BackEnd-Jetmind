@@ -68,6 +68,31 @@ exports.all = async (req, res, next) => {
   }
 
 };
+exports.allSinLimite = async (req, res, next) => {
+
+  const { query = {} } = req;
+  const { limit, page, skip } = paginar(query);
+
+
+  try {
+    const docs = await Model.find({})
+      .populate('addedUser', 'nombresApellidos tipo email estado')
+      .populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .sort({ '_id': -1 })
+      .exec();
+
+    const totalMarcas = await Model.countDocuments();
+    res.json({
+      success: true,
+      ok: "all",
+      data: docs,
+      totalMarcas
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
 
 exports.read = async (req, res, next) => {
   const { doc = {} } = req;

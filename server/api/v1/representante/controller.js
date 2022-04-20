@@ -71,6 +71,32 @@ exports.all = async (req, res, next) => {
 
 };
 
+exports.allSinLimite = async (req, res, next) => {
+
+
+  const { query = {} } = req;
+
+  try {
+    const docs = await Model.find({})
+      //.populate('addedUser', 'nombresApellidos tipo email estado')
+      //.populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .sort({ '_id': -1 })
+      .exec();
+
+    const totalRepresentantes = await Model.countDocuments();
+
+    res.json({
+      success: true,
+      ok: "all",
+      data: docs,
+      totalRepresentantes
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
 exports.read = async (req, res, next) => {
   const { doc = {} } = req;
   res.json({

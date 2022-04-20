@@ -152,7 +152,12 @@ const fields = {
         type: String,
       },
     }
-  ]
+  ],
+  campania: {
+    type: Schema.Types.ObjectId,
+    ref: 'campania',
+    require: false,
+  },
 
 };
 
