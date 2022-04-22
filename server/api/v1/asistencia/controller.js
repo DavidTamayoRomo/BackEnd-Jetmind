@@ -159,6 +159,53 @@ exports.all = async (req, res, next) => {
   }
 
 };
+exports.findbyCiudadSucursalMarca = async (req, res, next) => {
+
+  const { query = {} } = req;
+  const { ciudad = [], sucursal = [], marca = [], fechaInicio, fechaFin } = req.params;
+
+  let ciudad1 = [];
+  ciudad.forEach((resp) => {
+    ciudad1.push(mongoose.Types.ObjectId(resp));
+  });
+  let sucursal1 = [];
+  sucursal.forEach((resp) => {
+    sucursal1.push(mongoose.Types.ObjectId(resp));
+  });
+  let marca1 = [];
+  marca.forEach((resp) => {
+    marca1.push(mongoose.Types.ObjectId(resp));
+  });
+
+  try {
+    setTimeout(async () => {
+      const docs = await Persona.find(
+
+      ).exec();
+      /* .aggregate([
+        {
+          $match: {
+            $and: [
+              { estado: 'true' },
+              { idCiudad: { $in: ciudad1 } },
+              { idSucursal: { $in: sucursal1 } },
+              { idMarca: { $in: marca1 } },
+            ]
+          },
+        }
+      ]) */
+
+      res.json({
+        success: true,
+        data: docs,
+      });
+    }, 500);
+
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
 
 exports.read = async (req, res, next) => {
   const { doc = {} } = req;

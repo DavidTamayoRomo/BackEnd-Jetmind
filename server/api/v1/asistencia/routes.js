@@ -150,6 +150,12 @@ router.param('id', controller.id);
 router
   .route('/byEstudainte/:idEstudiante')
   .get(controller.asistenciaByEstudiante);
+
+router
+  .route('/findby-ciudad-sucursal-marca')
+  .post(controller.findbyCiudadSucursalMarca);
+
+
 router
   .route('/:id')
   .get(controller.read)

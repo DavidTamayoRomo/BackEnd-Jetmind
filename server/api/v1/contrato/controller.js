@@ -1007,9 +1007,9 @@ exports.reporte_ventas = async (req, res, next) => {
                   addedUser: { $in: personaAsesor }
                 },
                 //descomentar para presentacio jeffry y carlos
-                /* {
+                {
                   campania: { $in: campaniaB }
-                } */
+                }
               ]
             }
           },
