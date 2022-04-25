@@ -148,6 +148,10 @@ router
 router.param('id', controller.id);
 
 router
+  .route('/all')
+  .get(controller.allSinLimite);
+
+router
   .route('/:id')
   .get(controller.read)
   .put(controller.update)
@@ -155,6 +159,8 @@ router
 
 router
   .route('/ciudad-marca-estado')
-  .post(controller.ByCiudadMarcaEstado)
+  .post(controller.ByCiudadMarcaEstado);
+
+
 
 module.exports = router;

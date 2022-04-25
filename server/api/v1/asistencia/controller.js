@@ -11,6 +11,7 @@ const Persona = require('../persona/model');
 const Estudiante = require('../estudiante/model');
 const Representante = require('../representante/model');
 const Marca = require('../marca/model');
+const AsignarHorarioEstudiante = require('../asignar_horario_estudiante/model');
 const envioEmail = require('../../../email');
 
 const path = require('path');
@@ -160,45 +161,128 @@ exports.all = async (req, res, next) => {
 
 };
 exports.findbyCiudadSucursalMarca = async (req, res, next) => {
+  const { body = {} } = req;
+  const { idCiudad = [], idSucursal = [], idMarca = [], rangoFechas } = body;
 
-  const { query = {} } = req;
-  const { ciudad = [], sucursal = [], marca = [], fechaInicio, fechaFin } = req.params;
+  let fecha = rangoFechas.split(' to ');
+
+  let fechaIncio = fecha[0];
+  let fechaFin = fecha[1];
 
   let ciudad1 = [];
-  ciudad.forEach((resp) => {
+  idCiudad.forEach((resp) => {
     ciudad1.push(mongoose.Types.ObjectId(resp));
   });
+  console.log(ciudad1);
   let sucursal1 = [];
-  sucursal.forEach((resp) => {
+  idSucursal.forEach((resp) => {
     sucursal1.push(mongoose.Types.ObjectId(resp));
   });
+  console.log(sucursal1);
   let marca1 = [];
-  marca.forEach((resp) => {
+  idMarca.forEach((resp) => {
     marca1.push(mongoose.Types.ObjectId(resp));
   });
+  console.log(marca1);
 
   try {
     setTimeout(async () => {
-      const docs = await Persona.find(
+      const personas = await Persona
+        .aggregate([
+          {
+            $match: {
+              $and: [
+                { estado: 'Activo' },
+                { idCiudad: { $in: ciudad1 } },
+                { idSucursal: { $in: sucursal1 } },
+                { idMarca: { $in: marca1 } },
+              ]
+            },
+          }
+        ]).exec();
+      let horariosAsigandos = [];
+      let asistencia = [];
+      let datos = [];
+      personas.forEach(async (resp) => {
+        const horariosAsigandos1 = await AsignarHorarioEstudiante
+          .aggregate([
+            {
+              $match: {
+                $and: [
+                  { estado: true },
+                  { idDocente: mongoose.Types.ObjectId(resp._id) },
 
-      ).exec();
-      /* .aggregate([
-        {
-          $match: {
-            $and: [
-              { estado: 'true' },
-              { idCiudad: { $in: ciudad1 } },
-              { idSucursal: { $in: sucursal1 } },
-              { idMarca: { $in: marca1 } },
-            ]
-          },
-        }
-      ]) */
+                ]
+              },
+            },
+            {
+              $lookup: {
+                from: 'horarios',
+                localField: 'idHorario',
+                foreignField: '_id',
+                as: 'idHorario'
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            }
+          ])
+          .exec();
+        //horariosAsigandos.push(horariosAsigandos1);
+        const asistencia1 = await Model
+          .aggregate([
+            {
+              $match: {
+                $and: [
+                  { idDocente: mongoose.Types.ObjectId(resp._id) },
+                  {
+                    fecha: {
+                      $gte: new Date(fechaIncio),
+                      $lte: new Date(fechaFin)
+                    }
+                  }
+                ]
+              },
+            },
+            {
+              $lookup: {
+                from: 'horarios',
+                localField: 'idHorario',
+                foreignField: '_id',
+                as: 'idHorario'
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            }
+          ])
+          .exec();
+        //asistencia.push(asistencia1);
+        datos.push({ asistencia1, horariosAsigandos1 });
 
-      res.json({
-        success: true,
-        data: docs,
       });
+
+      setTimeout(async () => {
+        res.json({
+          success: true,
+          /*  data: {
+             horariosAsigandos,
+             asistencia,
+           }, */
+          data: datos
+        });
+      }, 1000);
+
     }, 500);
 
   } catch (err) {

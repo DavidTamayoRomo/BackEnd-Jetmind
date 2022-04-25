@@ -75,6 +75,31 @@ exports.all = async (req, res, next) => {
 
 };
 
+exports.allSinLimite = async (req, res, next) => {
+
+  const { query = {} } = req;
+
+
+  try {
+    const docs = await Model
+      .find({})
+      .populate('idMarca')
+      .populate('idCiudad')
+      .populate('addedUser', 'nombresApellidos tipo email estado')
+      .populate('modifiedUser', 'nombresApellidos tipo email estado')
+      .sort({ '_id': -1 })
+      .exec();
+
+    res.json({
+      success: true,
+      data: docs
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+};
+
 exports.ByCiudadMarcaEstado = async (req, res, next) => {
 
   const { query = {}, body } = req;
