@@ -164,6 +164,9 @@ router.param('id', controller.id);
 router
   .route('/vouchercontrato/:id')
   .put(controller.updateVoucher);
+router
+  .route('/vouchercontrato2/:id')
+  .put(controller.updateVoucher2);
 
 router
   .route('/:id')

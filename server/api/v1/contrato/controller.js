@@ -948,6 +948,71 @@ exports.updateVoucher = async (req, res, next) => {
 
 };
 
+//actualizar el voucher 
+exports.updateVoucher2 = async (req, res, next) => {
+  const { doc = {}, body = {}, decoded = {} } = req;
+  const { voucher } = body;
+  /**
+   * Saber quien creo el contrato
+   */
+  const { _id = null } = decoded;
+  if (_id) {
+    body.modifiedUser = _id;
+  }
+  Object.assign(doc, { modifiedUser: body.modifiedUser });
+
+  let voucherJpg;
+  let voucherNuevoNombreRandom;
+  let voucherSlice;
+  let arregloImg = [];
+  let arregloImgT = [];
+
+  if (voucher === null) {
+    console.log('No hay voucher');
+  } else {
+    voucher.map(item => (
+      item = item.toString(),
+      voucherJpg = item.slice(22),
+      voucherSlice = voucherJpg,
+      voucherJpg = v4() + '.jpg',
+      voucherNuevoNombreRandom = voucherJpg,
+      arregloImg.push(voucherNuevoNombreRandom),
+      arregloImgT.push(voucherSlice)
+    ))
+  }
+  try {
+    let pathRandom;
+    let fileSliceBase64;
+    let arrToSaveInDb = [];
+
+    for (var i = 0; i < arregloImg.length; i++) {
+      pathRandom = arregloImg[i],
+        fileSliceBase64 = arregloImgT[i];
+      fs.writeFileSync(dbPath + pathRandom, fileSliceBase64, 'base64')
+      arrToSaveInDb.push(pathRandom)
+    }
+    console.log(arrToSaveInDb);
+    console.log(doc);
+    arrToSaveInDb.forEach(element => {
+      doc.voucher.push(element);
+    });
+
+    setTimeout(async () => {
+      const update = await doc.save();
+
+      res.json({
+        success: true,
+        data: update
+      });
+    }, 50);
+
+
+  } catch (error) {
+    next(new Error(error));
+  }
+
+};
+
 
 
 exports.delete = async (req, res, next) => {
