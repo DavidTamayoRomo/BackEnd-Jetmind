@@ -1,6 +1,7 @@
 
 
 const Model = require('./model');
+const Role = require('../role/model');
 const { paginar } = require('../../../utils');
 
 
@@ -11,6 +12,7 @@ const { signToken } = require('./../auth');
 const envioEmail = require('../../../email');
 
 const mongoose = require("mongoose");
+const { getMenuFrontEnd } = require('../../../helper/menu');
 
 exports.id = async (req, res, next, id) => {
   try {
@@ -82,11 +84,15 @@ exports.signin = async (req, res, next) => {
     const { _id } = user;
     const token = signToken({ _id });
 
+
+    const menu = await Role.findById(user.tipo[0]);
+    let menuFrontEnd = await getMenuFrontEnd(menu.nombre);
     return res.json({
       success: true,
       ok: "singin",
       data: user,
-      meta: { token }
+      meta: { token },
+      menuFrontEnd
     });
 
   } catch (error) {

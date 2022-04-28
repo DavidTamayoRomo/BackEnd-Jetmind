@@ -26,7 +26,7 @@ const fields = {
   cedula: {
     type: String,
     require: true,
-    maxlength: 10
+    //maxlength: 10
   },
   //Activo, Congelado, Incorporado, Retirado, Espera, Rechazado
   estado: {

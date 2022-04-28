@@ -6,7 +6,7 @@ const config = require('../../config');
 
 const { secret, expires } = config.token;
 
-const signToken = (payload, expiresIn = 14440) =>
+const signToken = (payload, expiresIn = 86400) =>
   sign(payload, secret, {
     algorithm: 'HS256',
     expiresIn,
@@ -71,6 +71,29 @@ const me = (req, res, next) => {
  * Datos propios 
  */
 const owner = (req, res, next) => {
+  const { decoded = {}, doc = {} } = req;
+  const { _id } = decoded;
+  const { id } = doc.addedUser;
+  //const {id}= doc.userId;//cambiar nombre userid
+  if (_id !== id) {
+    const message = 'Forbidden';
+    next({
+      success: false,
+      message,
+      statusCode: 403,
+      type: 'warn',
+    });
+  } else {
+
+    next();
+  };
+}
+
+
+/**
+ * Datos propios 
+ */
+const roles = (req, res, next) => {
   const { decoded = {}, doc = {} } = req;
   const { _id } = decoded;
   const { id } = doc.addedUser;

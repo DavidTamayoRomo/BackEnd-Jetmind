@@ -30,7 +30,7 @@ const fields = {
   cedula: {
     type: String,
     require: true,
-    maxlength: 10
+    //maxlength: 10
   },
   telefono: {
     type: String,
