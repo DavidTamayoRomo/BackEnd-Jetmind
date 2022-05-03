@@ -92,7 +92,8 @@ exports.signin = async (req, res, next) => {
       ok: "singin",
       data: user,
       meta: { token },
-      menuFrontEnd
+      menuFrontEnd,
+      role: menu.nombre
     });
 
   } catch (error) {
