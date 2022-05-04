@@ -8,10 +8,10 @@ const database = require('./server/database');
 //Connect to database
 database.connect(config.database, {});
 
-const {port} = config.server;
+const { port } = config.server;
 const server = http.createServer(app);
 
-server.listen(port, ()=> {
+server.listen(port, '0.0.0.0', () => {
   console.log(`Server corriendo en el puerto ${port}`);
 });
 
