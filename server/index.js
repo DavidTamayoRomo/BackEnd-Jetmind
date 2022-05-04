@@ -38,6 +38,8 @@ app.use(bodyParser.urlencoded({
 //parse application/json
 app.use(bodyParser.json());
 
+app.use(express.static('public'));
+
 //Setup router and routes
 app.use('/api', api);
 app.use('/api/v1', api);
