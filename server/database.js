@@ -1,54 +1,54 @@
 const mongoose = require('mongoose');
 const logger = require('./config/logger');
 exports.connect = (
-        {
-          protocol = 'mongodb',
-          url,
-          username='',
-          password = ''
-        },
-        options={}
-        )=>{
-        let dburl = '';
+  {
+    protocol = 'mongodb',
+    url,
+    username = '',
+    password = ''
+  },
+  options = {}
+) => {
+  let dburl = '';
 
-        //Required auth
-        if (username && password) {
-          dburl=`${protocol}://${username}:${password}@${url}`;
-        }else{
-          dburl= `${protocol}://${url}`;
-        }
-        
-        mongoose.connect(dburl, {
-          ...options,
-          useNewUrlParser:true,
-          useCreateIndex:true,
-          useUnifiedTopology:true
-        });
+  //Required auth
+  if (username && password) {
+    dburl = `${protocol}://${username}:${password}@${url}`;
+  } else {
+    dburl = `${protocol}://${url}`;
+  }
 
-        mongoose.connection.on('open',()=>{
-          logger.info('Base de datos conectada');
-        });
+  mongoose.connect('mongodb+srv://jetmind:5Vd5e6owkMUgFPB1@cluster0.1plpi.mongodb.net/test', {
+    ...options,
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true
+  });
 
-        mongoose.connection.on('close',()=>{
-          logger.info('Base de datos desconectada');
-        });
+  mongoose.connection.on('open', () => {
+    logger.info('Base de datos conectada');
+  });
 
-        mongoose.connection.on('error',(err)=>{
-          logger.info(`Error en la coneccion de Base de datos: ${err}`);
-        });
+  mongoose.connection.on('close', () => {
+    logger.info('Base de datos desconectada');
+  });
 
-        process.on('SIGINT', ()=>{
-          mongoose.connection.close(()=>{
-            logger.info('Database connection disconnected through app termination');
-            process.exit(0);
-          });
-        });
+  mongoose.connection.on('error', (err) => {
+    logger.info(`Error en la coneccion de Base de datos: ${err}`);
+  });
 
-        exports.disconnect = () =>{
-          mongoose.connection.close(()=>{
-            logger.info('Base de datos desconectada')
-          });
-        };
+  process.on('SIGINT', () => {
+    mongoose.connection.close(() => {
+      logger.info('Database connection disconnected through app termination');
+      process.exit(0);
+    });
+  });
+
+  exports.disconnect = () => {
+    mongoose.connection.close(() => {
+      logger.info('Base de datos desconectada')
+    });
+  };
 
 
-      }
+}
