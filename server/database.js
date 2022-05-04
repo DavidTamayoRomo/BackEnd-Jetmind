@@ -18,7 +18,7 @@ exports.connect = (
     dburl = `${protocol}://${url}`;
   }
 
-  mongoose.connect('mongodb+srv://jetmind:5Vd5e6owkMUgFPB1@cluster0.1plpi.mongodb.net/test', {
+  mongoose.connect('mongodb+srv://jetmind:5Vd5e6owkMUgFPB1@cluster0.1plpi.mongodb.net/jetmind', {
     ...options,
     useNewUrlParser: true,
     useCreateIndex: true,
