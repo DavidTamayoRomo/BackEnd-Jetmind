@@ -11,6 +11,8 @@ const docs = require('./api/v1/docs')
 // Init App
 const app = express();
 
+app.use(express.static(__dirname + '/public'));
+
 //Documentacion
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(docs));
 
@@ -38,7 +40,6 @@ app.use(bodyParser.urlencoded({
 //parse application/json
 app.use(bodyParser.json());
 
-app.use(express.static('public'));
 
 //Setup router and routes
 app.use('/api', api);
