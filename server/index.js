@@ -6,11 +6,13 @@ const cors = require('cors');
 const swaggerUI = require('swagger-ui-express');
 const logger = require('./config/logger');
 const api = require('./api/v1');
-const docs = require('./api/v1/docs')
+const docs = require('./api/v1/docs');
+const path = require('path');
 
 // Init App
 const app = express();
 
+//directorio publico | para mostrar la vista de angular
 app.use(express.static(__dirname + '/public'));
 
 //Documentacion
@@ -44,6 +46,11 @@ app.use(bodyParser.json());
 //Setup router and routes
 app.use('/api', api);
 app.use('/api/v1', api);
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'public/index.html'));
+});
+
 
 // Cuando no encuentra la ruta
 // No route found handler
