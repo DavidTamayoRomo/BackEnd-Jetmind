@@ -85,15 +85,15 @@ exports.signin = async (req, res, next) => {
     const token = signToken({ _id });
 
 
-    //const menu = await Role.findById(user.tipo[0]);
-    //let menuFrontEnd = await getMenuFrontEnd(menu.nombre);
+    const menu = await Role.findById(user.tipo[0]);
+    let menuFrontEnd = await getMenuFrontEnd(menu.nombre);
     return res.json({
       success: true,
       ok: "singin",
       data: user,
       meta: { token },
-      //menuFrontEnd,
-      //role: menu.nombre
+      menuFrontEnd,
+      role: menu.nombre
     });
 
   } catch (error) {
