@@ -1,28 +1,29 @@
 const mongoose = require('mongoose');
 const logger = require('./config/logger');
 exports.connect = (
-  {
+  /* {
     protocol = 'mongodb',
-    url,
-    username = '',
-    password = ''
+    url = 'mongodb+srv://db-mongodb-jetmind-e41a6a59.mongo.ondigitalocean.com',
+    username = 'doadmin',
+    password = '90pjq5Y782QW31ia'
   },
-  options = {}
+  options = {} */
 ) => {
   let dburl = '';
 
   //Required auth
-  if (username && password) {
+  /* if (username && password) {
     dburl = `${protocol}://${username}:${password}@${url}`;
   } else {
     dburl = `${protocol}://${url}`;
-  }
+  } */
 
-  mongoose.connect('mongodb+srv://jetmind:5Vd5e6owkMUgFPB1@cluster0.1plpi.mongodb.net/jetmind', {
-    ...options,
+  mongoose.connect('mongodb+srv://doadmin:90pjq5Y782QW31ia@db-mongodb-jetmind-e41a6a59.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=db-mongodb-jetmind&tls=true', {
+    /* ...options, */
     useNewUrlParser: true,
     useCreateIndex: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    tlsCAFile: __dirname + '/ca-certificate.crt',
   });
 
   mongoose.connection.on('open', () => {

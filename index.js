@@ -6,7 +6,7 @@ const config = require('./server/config');
 const database = require('./server/database');
 
 //Connect to database
-database.connect(config.database, {});
+database.connect();
 
 const { port } = config.server;
 const server = http.createServer(app);
