@@ -29,16 +29,12 @@ exports.id = async (req, res, next, id) => {
 
 exports.create = async (req, res, next) => {
   const { body = {}, params = {}, decoded = {} } = req;
-
-  console.log(decoded);
   /**
    * Saber quien creo el contrato
    */
   const { _id = null } = decoded;
   if (_id) {
     body.addedUser = _id;
-    console.log(body);
-    console.log(_id);
   }
   Object.assign(body, params);
   const document = new Model(body);

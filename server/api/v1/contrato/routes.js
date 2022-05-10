@@ -148,6 +148,10 @@ router
   .get(auth, controller.all);
 
 router
+  .route('/ciudad-marca-aprobado')
+  .get(auth, controller.allByAprobadosCiudadMarca2);
+
+router
   .route('/contratosAprobados')
   .get(auth, controller.allAprobados);
 
@@ -173,5 +177,7 @@ router
   .get(auth, controller.read)
   .put(auth, controller.update)
   .delete(auth, controller.delete);
+
+
 
 module.exports = router;

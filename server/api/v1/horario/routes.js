@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const controller = require('./controller');
+const { auth } = require('../auth');
 
 /**
  * /api/horario/ POST - CREATE
@@ -142,24 +143,24 @@ const controller = require('./controller');
 
 router
   .route('/')
-  .post(controller.create)
-  .get(controller.all);
+  .post(auth, controller.create)
+  .get(auth, controller.all);
 
 router.param('id', controller.id);
 
 router
   .route('/all')
-  .get(controller.allSinLimite);
+  .get(auth, controller.allSinLimite);
 
 router
   .route('/:id')
-  .get(controller.read)
-  .put(controller.update)
-  .delete(controller.delete);
+  .get(auth, controller.read)
+  .put(auth, controller.update)
+  .delete(auth, controller.delete);
 
 router
   .route('/ciudad-marca-estado')
-  .post(controller.ByCiudadMarcaEstado);
+  .post(auth, controller.ByCiudadMarcaEstado);
 
 
 

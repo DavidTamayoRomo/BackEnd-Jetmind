@@ -18,7 +18,7 @@ exports.connect = (
     dburl = `${protocol}://${url}`;
   } */
 
-  mongoose.connect('mongodb+srv://doadmin:90pjq5Y782QW31ia@db-mongodb-jetmind-e41a6a59.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=db-mongodb-jetmind&tls=true', {
+  mongoose.connect('mongodb+srv://doadmin:90pjq5Y782QW31ia@db-mongodb-jetmind-e41a6a59.mongo.ondigitalocean.com/jetmind?authSource=admin&replicaSet=db-mongodb-jetmind&tls=true', {
     /* ...options, */
     useNewUrlParser: true,
     useCreateIndex: true,

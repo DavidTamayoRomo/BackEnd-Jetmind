@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const controller = require('./controller');
+const { auth } = require('../auth');
 
 /**
  * /api/estudiante/ POST - CREATE
@@ -142,24 +143,24 @@ const controller = require('./controller');
 
 router
   .route('/')
-  .post(controller.create)
-  .get(controller.all);
+  .post(auth, controller.create)
+  .get(auth, controller.all);
 
 router
   .route('/all')
-  .get(controller.allSinLimite)
+  .get(auth, controller.allSinLimite)
 
 router.param('id', controller.id);
 
 router
   .route('/:id')
-  .get(controller.read)
-  .put(controller.update)
-  .delete(controller.delete);
+  .get(auth, controller.read)
+  .put(auth, controller.update)
+  .delete(auth, controller.delete);
 
 router
   .route('/representante/:idRepresentante')
-  .get(controller.allByIdRepresentante);
+  .get(auth, controller.allByIdRepresentante);
 
 
 
