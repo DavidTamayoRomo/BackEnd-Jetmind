@@ -1,6 +1,8 @@
 
 
 const Model = require('./model');
+const Role = require('../role/model');
+const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -49,8 +51,63 @@ exports.create = async (req, res, next) => {
 };
 
 exports.all = async (req, res, next) => {
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
+  const { limit, page, skip } = paginar(query);
 
-  const { query = {} } = req;
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
+
+
+  try {
+    let docs;
+    let totalHorario;
+    if (role.nombre.includes('Super')) {
+      docs = await Model
+        .find({})
+        .populate('idMarca')
+        .populate('idCiudad')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+
+      //total de registros
+      totalHorario = await Model.countDocuments().exec();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model
+        .find({
+          $and: [
+            { idMarca: { $in: persona.idMarca } },
+            { idCiudad: { $in: persona.idCiudad } },
+          ]
+        })
+        .populate('idMarca')
+        .populate('idCiudad')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+
+      //total de registros
+      totalHorario = await Model.countDocuments().exec();
+    }
+
+
+
+
+    res.json({
+      success: true,
+      data: docs,
+      totalHorario
+    });
+  } catch (err) {
+    next(new Error(err));
+  }
+
+  /* const { query = {} } = req;
   const { limit, page, skip } = paginar(query);
 
 
@@ -76,7 +133,7 @@ exports.all = async (req, res, next) => {
     });
   } catch (err) {
     next(new Error(err));
-  }
+  } */
 
 };
 

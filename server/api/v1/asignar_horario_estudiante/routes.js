@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const controller = require('./controller');
+const { auth } = require('../auth');
 
 /**
  * /api/asignarhorario/ POST - CREATE
@@ -142,27 +143,27 @@ const controller = require('./controller');
 
 router
   .route('/')
-  .post(controller.create)
-  .get(controller.all);
+  .post(auth, controller.create)
+  .get(auth, controller.all);
 
 router.param('id', controller.id);
 
 router
   .route('/:id')
-  .get(controller.read)
-  .put(controller.update)
-  .delete(controller.delete);
+  .get(auth, controller.read)
+  .put(auth, controller.update)
+  .delete(auth, controller.delete);
 
 router
   .route('/buscar/:idDocente/:idHorario')
-  .get(controller.buscarDocenteHorario)
+  .get(auth, controller.buscarDocenteHorario)
 
 router
   .route('/docente-horarios/:dia/:estado/:sucursal')
-  .get(controller.buscarHorariosPorDia)
+  .get(auth, controller.buscarHorariosPorDia)
 
 router
   .route('/docente-activo')
-  .post(controller.buscarbyCiudadMarcaDocenteActivo)
+  .post(auth, controller.buscarbyCiudadMarcaDocenteActivo)
 
 module.exports = router;

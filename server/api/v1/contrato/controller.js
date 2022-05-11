@@ -600,11 +600,6 @@ exports.all = async (req, res, next) => {
     } else if (role.nombre.includes('Admin')) {
       console.log('entre admin');
       docs = await Model.aggregate([
-        /* {
-          $match: {
-            estado: 'Aprobado'
-          }
-        }, */
         {
           $unwind: '$marcasVendidas'
         },
@@ -675,11 +670,6 @@ exports.all = async (req, res, next) => {
     if (role.nombre.includes('User') || role.nombre.includes('Docente')) {
       console.log('entre User');
       docs = await Model.aggregate([
-        /*  {
-           $match: {
-             estado: 'Aprobado'
-           }
-         }, */
         {
           $unwind: '$marcasVendidas'
         },
@@ -817,7 +807,7 @@ exports.allAprobados = async (req, res, next) => {
     let totalContratos;
     if (role.nombre.includes('Super')) {
       console.log('entre Super');
-      docs = await Model.find({})
+      docs = await Model.find({ estado: 'Aprobado' })
         .populate('idRepresentante', 'nombresApellidos cedula email estado')
         .populate('addedUser', 'nombresApellidos tipo email estado')
         .populate('modifiedUser', 'nombresApellidos tipo email estado')

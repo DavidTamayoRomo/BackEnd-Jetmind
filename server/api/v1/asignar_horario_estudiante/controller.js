@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 
 const Model = require('./model');
+const Role = require('../role/model');
+const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -43,40 +45,106 @@ exports.create = async (req, res, next) => {
 };
 
 exports.all = async (req, res, next) => {
-  /*
-  const { query = {} } = req;
-  const {limit , page, skip }=paginar(query);
-  const {sortBy, direction}=sortParseParams(query,fields);
-  
-  const all =  Model.find({})
-    .sort(sortCompactToStr(sortBy,direction))
-    .skip(skip)
-    .limit(limit);
-  const count = Model.countDocuments();
+
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
+  const { limit, page, skip } = paginar(query);
+
+  const persona = await Persona.findOne({ "_id": _id });
+  console.log(persona);
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
 
   try {
-    const data = await Promise.all([all.exec(), count.exec()]);
-    const [docs, total]= data;
-    const pages = Math.ceil(total / limit);
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('idEstudiantes')
+        .populate('idHorario')
+        .populate('idDocente')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'idDocente',
+            foreignField: '_id',
+            as: 'idDocente'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idDocente'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'idDocente.idMarca': { $in: persona.idMarca } },
+              { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'estudiantes',
+            localField: 'idEstudiantes',
+            foreignField: '_id',
+            as: 'idEstudiantes'
+          }
+        },
+        {
+          $lookup: {
+            from: 'horarios',
+            localField: 'idHorario',
+            foreignField: '_id',
+            as: 'idHorario'
+          }
+        },
+
+        {
+          $unwind: {
+            path: '$idHorario'
+          }
+        }
+
+      ])
+        .skip(skip)
+        .limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+      /* docs = await Model.find({})
+        .populate('idEstudiantes')
+        .populate('idHorario')
+        .populate('idDocente', 'nombresApellidos tipo email estado idMarca idCiudad', {
+          $and: [
+            { idMarca: { $in: persona.idMarca } },
+            { idCiudad: { $in: persona.idCiudad } },
+          ]
+        })
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec(); */
+    }
+
+    console.log(docs);
     res.json({
-      success:true,
-      data:docs,
-      meta: {
-        limit,
-        skip,
-        total,
-        page,
-        pages,
-        sortBy,
-        direction
-      }
+      success: true,
+      data: docs,
     });
+
   } catch (err) {
     next(new Error(err));
   }
-  */
 
-  const { query = {} } = req;
+  /* const { query = {} } = req;
   const { limit, page, skip } = paginar(query);
 
 
@@ -84,7 +152,7 @@ exports.all = async (req, res, next) => {
     const docs = await Model.find({})
       .populate('idEstudiantes')
       .populate('idHorario')
-      .populate('idDocente')
+      .populate('idDocente', 'nombresApellidos tipo email estado', { estado: true })
       .populate('addedUser', 'nombresApellidos tipo email estado')
       .populate('modifiedUser', 'nombresApellidos tipo email estado')
       .skip(skip).limit(limit)
@@ -96,7 +164,7 @@ exports.all = async (req, res, next) => {
     });
   } catch (err) {
     next(new Error(err));
-  }
+  } */
 
 };
 

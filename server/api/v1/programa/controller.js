@@ -1,6 +1,8 @@
 
 
 const Model = require('./model');
+const Role = require('../role/model');
+const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -51,24 +53,56 @@ exports.create = async (req, res, next) => {
 
 exports.all = async (req, res, next) => {
 
-
-  const { query = {} } = req;
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
   const { limit, page, skip } = paginar(query);
 
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
+  let registro = [];
+  const vector = persona.idMarca.forEach(x => {
+    registro.push(x.toString());
+  });
 
   try {
-    const docs = await Model.find({})
-      .populate('idMarca')
-      .populate('idCiudad')
-      .populate('idSucursal')
-      .populate('idNombrePrograma')
-      .populate('idEstudiante')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .sort({ '_id': -1 })
-      .skip(skip).limit(limit).exec();
+    let docs;
+    let totalPrograma;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('idMarca')
+        .populate('idCiudad')
+        .populate('idSucursal')
+        .populate('idNombrePrograma')
+        .populate('idEstudiante')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .sort({ '_id': -1 })
+        .skip(skip).limit(limit).exec();
 
-    const totalPrograma = await Model.countDocuments();
+      totalPrograma = await Model.countDocuments();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.find({
+        $and: [
+          { idMarca: { $in: persona.idMarca } },
+          { idCiudad: { $in: persona.idCiudad } },
+        ]
+      })
+        .populate('idMarca')
+        .populate('idCiudad')
+        .populate('idSucursal')
+        .populate('idNombrePrograma')
+        .populate('idEstudiante')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .sort({ '_id': -1 })
+        .skip(skip).limit(limit).exec();
+
+      totalPrograma = await Model.countDocuments();
+    }
+
+
+
+
 
     res.json({
       success: true,

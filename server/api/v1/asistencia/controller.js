@@ -8,6 +8,7 @@ const { singToken } = require('./../auth');
 const { fields } = require('./model');
 
 const Persona = require('../persona/model');
+const Role = require('../role/model');
 const Estudiante = require('../estudiante/model');
 const Representante = require('../representante/model');
 const Marca = require('../marca/model');
@@ -129,33 +130,196 @@ const enviar = async (datos, marca) => {
 
 exports.all = async (req, res, next) => {
 
-  const { query = {} } = req;
+
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
   const { limit, page, skip } = paginar(query);
 
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
 
   try {
-    const docs = await Model.find({})
-      .populate('idDocente')
-      .populate('idHorario')
-      .populate('ausentes')
-      .populate('presentes')
-      .populate({
-        path: 'prueba',
-        populate: {
-          path: 'idEstudiante',
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('idDocente')
+        .populate('idHorario')
+        .populate('ausentes')
+        .populate('presentes')
+        .populate({
+          path: 'prueba',
           populate: {
-            path: 'idRepresentante',
+            path: 'idEstudiante',
+            populate: {
+              path: 'idRepresentante',
+              //select: 'nombresApellidos'
+            },
             //select: 'nombresApellidos'
           },
-          //select: 'nombresApellidos'
+
+        })
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'idDocente',
+            foreignField: '_id',
+            as: 'idDocente'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idDocente'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'idDocente.idMarca': { $in: persona.idMarca } },
+              { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'horarios',
+            localField: 'idHorario',
+            foreignField: '_id',
+            as: 'idHorario'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idHorario'
+          }
+        },
+        {
+          $unwind: {
+            path: '$prueba'
+          }
+        },
+        {
+          $lookup: {
+            from: 'estudiantes',
+            localField: 'prueba.idEstudiante',
+            foreignField: '_id',
+            as: 'prueba.idEstudiante'
+          }
+        },
+        {
+          $unwind: {
+            path: '$prueba.idEstudiante'
+          }
+        },
+        {
+          $group: {
+            _id: '$_id',
+            idDocente: { $first: '$idDocente' },
+            idHorario: { $first: '$idHorario' },
+            prueba: { $push: '$prueba' },
+            temaTratado: { $first: '$temaTratado' },
+            fecha: { $first: '$fecha' },
+            observaciones: { $first: '$observaciones' },
+            addedUser: { $first: '$addedUser' },
+            modifiedUser: { $first: '$modifiedUser' },
+            createdAt: { $first: '$createdAt' },
+            updatedAt: { $first: '$updatedAt' },
+          }
         },
 
-      })
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
+      ])
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    } else if (role.nombre.includes('Docente')) {
+      docs = await Model.aggregate([
+        {
+          $match: {
+            'addedUser': persona._id
+          }
+        },
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'idDocente',
+            foreignField: '_id',
+            as: 'idDocente'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idDocente'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'idDocente.idMarca': { $in: persona.idMarca } },
+              { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'horarios',
+            localField: 'idHorario',
+            foreignField: '_id',
+            as: 'idHorario'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idHorario'
+          }
+        },
+        {
+          $unwind: {
+            path: '$prueba'
+          }
+        },
+        {
+          $lookup: {
+            from: 'estudiantes',
+            localField: 'prueba.idEstudiante',
+            foreignField: '_id',
+            as: 'prueba.idEstudiante'
+          }
+        },
+        {
+          $unwind: {
+            path: '$prueba.idEstudiante'
+          }
+        },
+        {
+          $group: {
+            _id: '$_id',
+            idDocente: { $first: '$idDocente' },
+            idHorario: { $first: '$idHorario' },
+            prueba: { $push: '$prueba' },
+            temaTratado: { $first: '$temaTratado' },
+            fecha: { $first: '$fecha' },
+            observaciones: { $first: '$observaciones' },
+            addedUser: { $first: '$addedUser' },
+            modifiedUser: { $first: '$modifiedUser' },
+            createdAt: { $first: '$createdAt' },
+            updatedAt: { $first: '$updatedAt' },
+          }
+        },
+
+      ])
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    }
+
+
     res.json({
       success: true,
       data: docs,
