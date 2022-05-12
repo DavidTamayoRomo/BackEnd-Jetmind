@@ -1,6 +1,8 @@
 
 
 const Model = require('./model');
+const Persona = require('../persona/model');
+const Role = require('../role/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -44,22 +46,47 @@ exports.create = async (req, res, next) => {
 
 exports.all = async (req, res, next) => {
 
-
-  const { query = {} } = req;
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
   const { limit, page, skip } = paginar(query);
 
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
+
+  console.log(persona);
 
   try {
-    const docs = await Model.find({})
-      .populate('idEstudiante')
-      .populate('idCiudad')
-      .populate('idMarca')
-      .populate('idDocente')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('idEstudiante')
+        .populate('idCiudad')
+        .populate('idMarca')
+        .populate('idDocente')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.find({
+        $and: [
+          { 'idCiudad': { $in: persona.idCiudad } },
+          { 'idMarca': { $in: persona.idMarca } },
+        ]
+      })
+        .populate('idEstudiante')
+        .populate('idCiudad')
+        .populate('idMarca')
+        .populate('idDocente')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    }
+
+
     res.json({
       success: true,
       data: docs,

@@ -4,6 +4,7 @@ const envioEmail = require('../../../email');
 
 const mongoose = require("mongoose");
 const Model = require('./model');
+const Role = require('../role/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -80,19 +81,72 @@ exports.create = async (req, res, next) => {
 };
 
 exports.all = async (req, res, next) => {
-
-
-  const { query = {} } = req;
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
   const { limit, page, skip } = paginar(query);
+
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
 
 
   try {
-    const docs = await Model.find({})
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .sort({ '_id': -1 })
-      //.skip(skip).limit(limit)
-      .exec();
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .sort({ '_id': -1 })
+        //.skip(skip).limit(limit)
+        .exec();
+
+    } else if (role.nombre.includes('Admin')) {
+      console.log('admin');
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'idDocente',
+            foreignField: '_id',
+            as: 'docente'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'docente.idCiudad': { $in: persona.idCiudad } },
+              { 'docente.idMarca': { $in: persona.idMarca } }
+            ]
+          }
+        }
+      ])
+        .exec();
+
+    } else if (role.nombre.includes('Docente')) {
+      console.log('docente');
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'idDocente',
+            foreignField: '_id',
+            as: 'docente'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'docente.idCiudad': { $in: persona.idCiudad } },
+              { 'docente.idMarca': { $in: persona.idMarca } },
+              { 'addedUser': persona._id },
+            ]
+          }
+        }
+      ])
+        .exec();
+    }
+
+
+
 
     const totalCiudades = await Model.countDocuments();
 

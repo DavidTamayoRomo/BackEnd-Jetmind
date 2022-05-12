@@ -1,6 +1,8 @@
 
 
 const Model = require('./model');
+const Persona = require('../persona/model');
+const Role = require('../role/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -48,20 +50,106 @@ exports.create = async (req, res, next) => {
 };
 
 exports.all = async (req, res, next) => {
-
-
-  const { query = {} } = req;
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
   const { limit, page, skip } = paginar(query);
+
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
 
 
   try {
-    const docs = await Model.find({})
-      .populate('idEstudiante')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('idEstudiante')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+
+    } else if (role.nombre.includes('Admin')) {
+      console.log('entro ADMIN');
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'addedUser',
+            foreignField: '_id',
+            as: 'addedUser'
+          }
+        },
+        {
+          $lookup: {
+            from: 'estudiantes',
+            localField: 'idEstudiante',
+            foreignField: '_id',
+            as: 'idEstudiante'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idEstudiante'
+          }
+        },
+
+        {
+          $match: {
+            $and: [
+              { 'addedUser.idMarca': { $in: persona.idMarca } },
+              { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+            ]
+          }
+        },
+
+      ])
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    } else if (role.nombre.includes('Docente')) {
+      console.log('entro Docente');
+      docs = await Model.aggregate([
+        {
+          $match: {
+            'addedUser': persona._id,
+          }
+        },
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'addedUser',
+            foreignField: '_id',
+            as: 'addedUser'
+          }
+        },
+        {
+          $lookup: {
+            from: 'estudiantes',
+            localField: 'idEstudiante',
+            foreignField: '_id',
+            as: 'idEstudiante'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idEstudiante'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'addedUser.idMarca': { $in: persona.idMarca } },
+              { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+            ]
+          }
+        },
+      ])
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    }
+
     res.json({
       success: true,
       data: docs,
