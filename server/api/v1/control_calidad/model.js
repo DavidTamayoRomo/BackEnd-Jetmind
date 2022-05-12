@@ -45,7 +45,7 @@ const fields = {
     }
   },
   pregunta2: {
-    type: String,
+    type: Number,
     require: false,
   },
   pregunta3: {
@@ -61,7 +61,7 @@ const fields = {
       }
     ],
     ninguna: {
-      type: String
+      type: Boolean
     },
     motivo: {
       type: String

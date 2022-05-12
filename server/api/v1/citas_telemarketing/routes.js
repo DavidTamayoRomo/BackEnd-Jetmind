@@ -145,13 +145,13 @@ const { auth, me, owner } = require('../auth');
 router
   .route('/')
   .post(auth, controller.create)
-  .get(controller.all);
+  .get(auth, controller.all);
 
 router.param('id', controller.id);
 
 router
   .route('/reporteDiario')
-  .post(controller.reporte_diario)
+  .post(auth, controller.reporte_diario)
 
 router
   .route('/:id')

@@ -7,6 +7,7 @@ const { singToken } = require('./../auth');
 
 const { fields } = require('./model');
 const Persona = require('../persona/model');
+const Role = require('../role/model');
 
 exports.id = async (req, res, next, id) => {
   try {
@@ -85,21 +86,117 @@ exports.all = async (req, res, next) => {
   }
   */
 
-  const { query = {} } = req;
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
   const { limit, page, skip } = paginar(query);
+
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
 
 
   try {
-    const docs = await Model.find({})
-      .populate('idMarca')
-      .populate('idSucursal')
-      .populate('asignado')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .sort({ '_id': -1 })
-      .skip(skip)
-      //.limit(limit)
-      .exec();
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('idMarca')
+        .populate('idSucursal')
+        .populate('asignado')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .sort({ '_id': -1 })
+        .skip(skip)
+        //.limit(limit)
+        .exec();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'addedUser',
+            foreignField: '_id',
+            as: 'addedUser'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedUser'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'marcas',
+            localField: 'idMarca',
+            foreignField: '_id',
+            as: 'idMarca'
+          }
+        },
+        {
+          $lookup: {
+            from: 'sucursales',
+            localField: 'idSucursal',
+            foreignField: '_id',
+            as: 'idSucursal'
+          }
+        },
+      ])
+        .sort({ '_id': -1 })
+        .skip(skip)
+    } else if (role.nombre.includes('User')) {
+      docs = await Model.aggregate([
+        {
+          $match: {
+            "addedUser": persona._id
+          }
+        },
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'addedUser',
+            foreignField: '_id',
+            as: 'addedUser'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedUser'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'marcas',
+            localField: 'idMarca',
+            foreignField: '_id',
+            as: 'idMarca'
+          }
+        },
+        {
+          $lookup: {
+            from: 'sucursales',
+            localField: 'idSucursal',
+            foreignField: '_id',
+            as: 'idSucursal'
+          }
+        },
+      ])
+        .sort({ '_id': -1 })
+        .skip(skip)
+    }
+
+
     res.json({
       success: true,
       data: docs,
