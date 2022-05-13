@@ -4,6 +4,8 @@ const { v4 } = require('uuid');
 const { actualizarImagen } = require('../../../utils');
 const fs = require('fs')
 
+const { upload, s3 } = require("../../../helper/multer");
+const { BUCKET_NAME } = process.env;
 
 const Persona = require('../persona/model');
 const Ciudad = require('../ciudad/model');
@@ -17,6 +19,7 @@ const NombrePrograma = require('../nombrePrograma/model');
 const Facturar = require('../facturar/model');
 const CitasTelemarketing = require('../citas_telemarketing/model');
 const Verificacion = require('../verificacion/model');
+const { syncBuiltinESMExports } = require('module');
 
 /**
  * ================================================
@@ -566,5 +569,32 @@ exports.returnfileUpload = (req, res) => {
     res.sendFile(pathImg);
   }
 
+
+}
+
+
+
+exports.fileUploadDigitalOcean = (req, res) => {
+  console.log('Entre a fileUploadDigitalOcean');
+}
+exports.getFilesDigitalOcean = async (req, res) => {
+
+  const data = await s3
+    .getObject({
+      Bucket: BUCKET_NAME,
+      Key: 'auto.png',
+    })
+    .promise();
+
+  console.log(data);
+
+  const file = fs.createWriteStream(
+    path.resolve(path.join(__dirname, `../../../uploads/prueba/auto.png`))
+  );
+  file.write(data.Body);
+  file.end();
+  setTimeout(() => {
+    res.sendFile(path.join(__dirname, `../../../uploads/prueba/auto.png`));
+  }, 1000);
 
 }
