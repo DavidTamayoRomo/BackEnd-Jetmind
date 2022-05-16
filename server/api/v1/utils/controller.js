@@ -574,27 +574,43 @@ exports.returnfileUpload = (req, res) => {
 
 
 
-exports.fileUploadDigitalOcean = (req, res) => {
+exports.fileUploadDigitalOcean = async (req, res) => {
+  const { body } = req;
+  const { idContrato } = body;
+
   console.log('Entre a fileUploadDigitalOcean');
+  // show the uploaded file information
+  console.log(req.files);
+  const contrato = await Contrato.findById(idContrato);
+  if (contrato) {
+    contrato.voucher.push(req.files[0].key);
+    contrato.save();
+  }
+
+  // Saving the Image URL in Database
+  //newImage.url = req.file.location;//para almacenar en la base de datos
+  //await newImage.save();
+
+  res.json({
+    success: true
+  });
 }
 exports.getFilesDigitalOcean = async (req, res) => {
-
+  const { nombreImagen } = req.params;
   const data = await s3
     .getObject({
       Bucket: BUCKET_NAME,
-      Key: 'auto.png',
+      Key: nombreImagen,
     })
     .promise();
 
-  console.log(data);
-
   const file = fs.createWriteStream(
-    path.resolve(path.join(__dirname, `../../../uploads/prueba/auto.png`))
+    path.resolve(path.join(__dirname, `../../../uploads/prueba/${nombreImagen}`))
   );
   file.write(data.Body);
   file.end();
   setTimeout(() => {
-    res.sendFile(path.join(__dirname, `../../../uploads/prueba/auto.png`));
-  }, 1000);
+    res.sendFile(path.join(__dirname, `../../../uploads/prueba/${nombreImagen}`));
+  }, 100);
 
 }

@@ -18,8 +18,9 @@ router
   .post(upload, controller.fileUploadDigitalOcean);
 
 router
-  .route('/getDigitalOCean')
+  .route('/getDigitalOCean/:nombreImagen')
   .get(controller.getFilesDigitalOcean);
+
 
 /**Midleware acceso a imagen */
 router.use(expressFileUpload());

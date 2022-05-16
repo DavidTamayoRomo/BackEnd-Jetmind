@@ -1,6 +1,8 @@
 const aws = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
+const path = require("path");
+const { v4 } = require('uuid');
 
 const { S3_ENDPOINT, BUCKET_NAME } = process.env;
 
@@ -21,11 +23,10 @@ const upload = multer({
       });
     },
     key: (request, file, cb) => {
-      console.log(file);
-      cb(null, file.originalname);
+      cb(null, v4() + path.extname(file.originalname));
     },
   }),
-}).single("upload");
+}).array("upload");
 
 
 module.exports = { upload, s3 };
