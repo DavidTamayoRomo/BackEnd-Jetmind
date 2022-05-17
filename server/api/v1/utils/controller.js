@@ -7,6 +7,7 @@ const fs = require('fs')
 const { upload, s3 } = require("../../../helper/multer");
 const { BUCKET_NAME } = process.env;
 
+const Role = require('../role/model');
 const Persona = require('../persona/model');
 const Ciudad = require('../ciudad/model');
 const Marca = require('../marca/model');
@@ -19,7 +20,8 @@ const NombrePrograma = require('../nombrePrograma/model');
 const Facturar = require('../facturar/model');
 const CitasTelemarketing = require('../citas_telemarketing/model');
 const Verificacion = require('../verificacion/model');
-const { syncBuiltinESMExports } = require('module');
+const Programa = require('../programa/model');
+
 
 /**
  * ================================================
@@ -60,6 +62,14 @@ exports.busquedaGeneral = async (req, res = response) => {
  * ===============================================
  */
 exports.busquedaEspecifica = async (req, res = response) => {
+
+  const { decoded = {} } = req;
+  const { _id = null } = decoded;
+
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
+
+
   const tabla = req.params.tabla;
   const busqueda = req.params.busqueda;
   const campos = req.params.campos;
@@ -173,23 +183,51 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'nombreProgramas':
       try {
-        const ciudad = await Ciudad.findOne({ nombre: regex });
-        const marca = await Marca.findOne({ nombre: regex });
-        if (ciudad == null && marca == null) {
-          data = await NombrePrograma.find({ nombre: regex })
-            .populate('idMarca')
-            .populate('idCiudad')
-        } else {
-          if (ciudad != null) {
-            data = await NombrePrograma.find({ idCiudad: ciudad._id })
+
+        if (role.nombre.includes('Super')) {
+
+          const ciudad = await Ciudad.findOne({ nombre: regex });
+          const marca = await Marca.findOne({ nombre: regex });
+          if (ciudad == null && marca == null) {
+            data = await NombrePrograma.find({ nombre: regex })
               .populate('idMarca')
               .populate('idCiudad')
-          } else
-            if (marca != null) {
-              data = await NombrePrograma.find({ idMarca: marca._id })
+          } else {
+            if (ciudad != null) {
+              data = await NombrePrograma.find({ idCiudad: ciudad._id })
                 .populate('idMarca')
                 .populate('idCiudad')
+            } else
+              if (marca != null) {
+                data = await NombrePrograma.find({ idMarca: marca._id })
+                  .populate('idMarca')
+                  .populate('idCiudad')
+              }
+          }
+        } else if (role.nombre.includes('Admin')) {
+          data = await NombrePrograma.aggregate([
+            {
+              $match: {
+                $and: [
+                  { 'idMarca': { $in: persona.idMarca } },
+                  { 'idCiudad': { $in: persona.idCiudad } }
+                ]
+              }
+            },
+            {
+              $match: {
+                nombre: regex
+              }
+            },
+            {
+              $lookup: {
+                from: 'ciudades',
+                localField: 'idCiudad',
+                foreignField: '_id',
+                as: 'idCiudad'
+              }
             }
+          ])
         }
         break;
       } catch (error) {
@@ -198,26 +236,142 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'citas':
       try {
-        const telemercadista = await Persona.findOne({ nombresApellidos: regex });
-        if (telemercadista == null) {
-          data = await CitasTelemarketing.find({
-            $or: [{ nombreApellidoRepresentante: regex }, { estado: regex }, { telefono: regex }, { ciudad: regex }, { 'estudiante.nombre': regex }
-              , { 'asignado[0].nombre': regex }, { telefono: regex }, { telefono: regex }]
-          })
-            .populate('idMarca')
-            .populate('idSucursal')
-            .populate('asignado')
-            .populate('addedUser', 'nombresApellidos tipo email estado')
-            .populate('modifiedUser', 'nombresApellidos tipo email estado')
-        } else {
-          data = await CitasTelemarketing.find({ addedUser: telemercadista._id })
-            .populate('idMarca')
-            .populate('idSucursal')
-            .populate('asignado')
-            .populate('addedUser', 'nombresApellidos tipo email estado')
-            .populate('modifiedUser', 'nombresApellidos tipo email estado')
-        }
+        if (role.nombre.includes('Super')) {
+          const telemercadista = await Persona.findOne({ nombresApellidos: regex });
+          if (telemercadista == null) {
+            data = await CitasTelemarketing.find({
+              $or: [{ nombreApellidoRepresentante: regex }, { estado: regex }, { telefono: regex }, { ciudad: regex }, { 'estudiante.nombre': regex }
+                , { 'asignado[0].nombre': regex }, { telefono: regex }, { telefono: regex }]
+            })
+              .populate('idMarca')
+              .populate('idSucursal')
+              .populate('asignado')
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado')
+          } else {
+            data = await CitasTelemarketing.find({ addedUser: telemercadista._id })
+              .populate('idMarca')
+              .populate('idSucursal')
+              .populate('asignado')
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado')
+          }
+        } else if (role.nombre.includes('Admin')) {
 
+          data = await CitasTelemarketing.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'marcas',
+                localField: 'idMarca',
+                foreignField: '_id',
+                as: 'idMarca'
+              }
+            },
+            {
+              $lookup: {
+                from: 'sucursales',
+                localField: 'idSucursal',
+                foreignField: '_id',
+                as: 'idSucursal'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { nombreApellidoRepresentante: regex },
+                  { estado: regex },
+                  { telefono: regex },
+                  { ciudad: regex },
+                  { 'estudiante.nombre': regex },
+                  { 'asignado[0].nombre': regex },
+                  { telefono: regex },
+                  { 'addedUser.nombresApellidos': regex }
+                ]
+              }
+            }
+          ])
+            .sort({ '_id': -1 })
+        } else if (role.nombre.includes('User')) {
+
+          data = await CitasTelemarketing.aggregate([
+            {
+              $match: {
+                "addedUser": persona._id
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'marcas',
+                localField: 'idMarca',
+                foreignField: '_id',
+                as: 'idMarca'
+              }
+            },
+            {
+              $lookup: {
+                from: 'sucursales',
+                localField: 'idSucursal',
+                foreignField: '_id',
+                as: 'idSucursal'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'addedUser.nombresApellidos': regex },
+                  { nombreApellidoRepresentante: regex },
+                  { estado: regex },
+                  { telefono: regex },
+                  { ciudad: regex },
+                  { 'estudiante.nombre': regex },
+                  { 'asignado[0].nombre': regex },
+                ]
+              }
+            }
+          ])
+            .sort({ '_id': -1 })
+
+        }
 
         break;
       } catch (error) {
@@ -227,23 +381,65 @@ exports.busquedaEspecifica = async (req, res = response) => {
     case 'facturas':
       try {
         const contrato = await Contrato.findOne({ codigo: regex });
-        console.log(contrato);
-
-        if (contrato == null) {
-          data = await Facturar.find({ $or: [{ nombre: regex }, { correo: regex }] })
-            .populate('idContrato')
-            .populate('programa')
-            .populate('addedUser', 'nombresApellidos tipo email estado')
-            .populate('modifiedUser', 'nombresApellidos tipo email estado');
-        } else {
-          data = await Facturar.find({ idContrato: contrato._id })
-            .populate('idContrato')
-            .populate('programa')
-            .populate('addedUser', 'nombresApellidos tipo email estado')
-            .populate('modifiedUser', 'nombresApellidos tipo email estado');
+        if (role.nombre.includes('Super')) {
+          if (contrato == null) {
+            data = await Facturar.find({ $or: [{ nombre: regex }, { correo: regex }] })
+              .populate('idContrato')
+              .populate('programa')
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado');
+          } else {
+            data = await Facturar.find({ idContrato: contrato._id })
+              .populate('idContrato')
+              .populate('programa')
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado');
+          }
+        } else if (role.nombre.includes('Admin')) {
+          data = await Facturar.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser'
+              }
+            },
+            {
+              $match: {
+                'addedUser.idCiudad': { $in: persona.idCiudad }
+              }
+            },
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { nombre: regex },
+                  { correo: regex },
+                  { 'idContrato.codigo': regex },
+                  { cedula_ruc: regex },
+                ]
+              }
+            }
+          ]);
         }
-
-
         break;
       } catch (error) {
         next(new Error(error));
@@ -338,20 +534,22 @@ exports.busquedaEspecifica = async (req, res = response) => {
     case 'verificaciones':
 
       try {
-        const contrato = await Contrato.findOne({ codigo: regex });
 
+        if (role.nombre.includes('Super')) {
+          const contrato = await Contrato.findOne({ codigo: regex });
+          if (contrato == null) {
+            data = await Verificacion.find({ $or: [{ estado: regex }, { tipo: regex }] })
+              .populate({ path: 'idContrato', populate: { path: 'idRepresentante' } })
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado');
+          } else {
 
-        if (contrato == null) {
-          data = await Verificacion.find({ $or: [{ estado: regex }, { tipo: regex }] })
-            .populate({ path: 'idContrato', populate: { path: 'idRepresentante' } })
-            .populate('addedUser', 'nombresApellidos tipo email estado')
-            .populate('modifiedUser', 'nombresApellidos tipo email estado');
-        } else {
-
-          data = await Verificacion.find({ idContrato: contrato._id })
-            .populate({ path: 'idContrato', populate: { path: 'idRepresentante' } })
-            .populate('addedUser', 'nombresApellidos tipo email estado')
-            .populate('modifiedUser', 'nombresApellidos tipo email estado');
+            data = await Verificacion.find({ idContrato: contrato._id })
+              .populate({ path: 'idContrato', populate: { path: 'idRepresentante' } })
+              .populate('addedUser', 'nombresApellidos tipo email estado')
+              .populate('modifiedUser', 'nombresApellidos tipo email estado');
+          }
+        } else if (role.nombre.includes('Admin')) {
 
         }
         break;
@@ -361,35 +559,178 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'horarios':
       try {
+        if (role.nombre.includes('Super')) {
+          const ciudad = await Ciudad.findOne({ nombre: regex });
+          const marca = await Marca.findOne({ nombre: regex });
 
-        const ciudad = await Ciudad.findOne({ nombre: regex });
-        const marca = await Marca.findOne({ nombre: regex });
-
-        if (ciudad == null && marca == null) {
-          data = await Horario.find({ $or: [{ nombre: regex }, { modalidad: regex }, { horaInicio: regex }, { horaFin: regex }] })
-            .populate('idMarca')
-            .populate('idCiudad')
-            .populate('addedUser', 'nombresApellidos tipo email estado')
-            .populate('modifiedUser', 'nombresApellidos tipo email estado');
-        } else {
-          if (ciudad != null) {
-            data = await Horario.find({ idCiudad: ciudad._id })
+          if (ciudad == null && marca == null) {
+            data = await Horario.find({ $or: [{ nombre: regex }, { modalidad: regex }, { horaInicio: regex }, { horaFin: regex }] })
               .populate('idMarca')
               .populate('idCiudad')
               .populate('addedUser', 'nombresApellidos tipo email estado')
               .populate('modifiedUser', 'nombresApellidos tipo email estado');
+          } else {
+            if (ciudad != null) {
+              data = await Horario.find({ idCiudad: ciudad._id })
+                .populate('idMarca')
+                .populate('idCiudad')
+                .populate('addedUser', 'nombresApellidos tipo email estado')
+                .populate('modifiedUser', 'nombresApellidos tipo email estado');
+            }
+            if (marca != null) {
+              data = await Horario.find({ idMarca: marca._id })
+                .populate('idMarca')
+                .populate('idCiudad')
+                .populate('addedUser', 'nombresApellidos tipo email estado')
+                .populate('modifiedUser', 'nombresApellidos tipo email estado');
+            }
           }
-          if (marca != null) {
-            data = await Horario.find({ idMarca: marca._id })
-              .populate('idMarca')
-              .populate('idCiudad')
-              .populate('addedUser', 'nombresApellidos tipo email estado')
-              .populate('modifiedUser', 'nombresApellidos tipo email estado');
-          }
+        } else if (role.nombre.includes('Admin')) {
+          console.log('Entre');
+          data = await Horario
+            .aggregate([
+              {
+                $match: {
+                  $and: [
+                    { 'idMarca': { $in: persona.idMarca } },
+                    { 'idCiudad': { $in: persona.idCiudad } }
+                  ]
+                }
+              },
+              {
+                $match: {
+                  $or: [
+                    { nombre: regex },
+                    { modalidad: regex },
+                    { horaInicio: regex },
+                    { horaFin: regex },
+                    { dias: { $in: [regex] } }
+                  ]
+                }
+              },
+              {
+                $lookup: {
+                  from: 'ciudades',
+                  localField: 'idCiudad',
+                  foreignField: '_id',
+                  as: 'idCiudad'
+                }
+              }
+            ])
+
         }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'programas':
+      try {
+        if (role.nombre.includes('Super')) {
 
-
-        const horario = await Horario.findOne({ codigo: regex });
+          data = await Programa.aggregate([
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              },
+            },
+            {
+              $match: {
+                'idEstudiante.0.nombresApellidos': regex
+              }
+            },
+            {
+              $lookup: {
+                from: 'ciudads',
+                localField: 'idCiudad',
+                foreignField: '_id',
+                as: 'idCiudad'
+              },
+            },
+            {
+              $lookup: {
+                from: 'marcas',
+                localField: 'idMarca',
+                foreignField: '_id',
+                as: 'idMarca'
+              },
+            },
+            {
+              $lookup: {
+                from: 'sucursals',
+                localField: 'idSucursal',
+                foreignField: '_id',
+                as: 'idSucursal'
+              },
+            },
+            {
+              $lookup: {
+                from: 'nombreprogramas',
+                localField: 'idNombrePrograma',
+                foreignField: '_id',
+                as: 'idNombrePrograma'
+              },
+            },
+          ]);
+        } else if (role.nombre.includes('Admin')) {
+          data = await Programa.aggregate([
+            {
+              $match: {
+                $and: [
+                  { 'idCiudad': { $in: persona.idCiudad } },
+                  { 'idMarca': { $in: persona.idMarca } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              },
+            },
+            {
+              $match: {
+                'idEstudiante.0.nombresApellidos': regex
+              }
+            },
+            {
+              $lookup: {
+                from: 'ciudads',
+                localField: 'idCiudad',
+                foreignField: '_id',
+                as: 'idCiudad'
+              },
+            },
+            {
+              $lookup: {
+                from: 'marcas',
+                localField: 'idMarca',
+                foreignField: '_id',
+                as: 'idMarca'
+              },
+            },
+            {
+              $lookup: {
+                from: 'sucursals',
+                localField: 'idSucursal',
+                foreignField: '_id',
+                as: 'idSucursal'
+              },
+            },
+            {
+              $lookup: {
+                from: 'nombreprogramas',
+                localField: 'idNombrePrograma',
+                foreignField: '_id',
+                as: 'idNombrePrograma'
+              },
+            },
+          ]);
+        }
       } catch (error) {
         next(new Error(error));
       }

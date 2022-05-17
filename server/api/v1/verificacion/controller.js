@@ -1,6 +1,8 @@
 
 
 const Model = require('./model');
+const Role = require('../role/model');
+const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -53,19 +55,69 @@ exports.all = async (req, res, next) => {
 
 
   const { query = {} } = req;
+  const { decoded = {} } = req;
+  const { _id = null } = decoded;
+
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
   const { limit, page, skip } = paginar(query);
 
 
   try {
-    const docs = await Model.find({})
-      .populate({ path: 'idContrato', populate: { path: 'idRepresentante' } })
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
+    let docs;
+    let totalVerficaciones;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate({ path: 'idContrato', populate: { path: 'idRepresentante' } })
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'addedUser',
+            foreignField: '_id',
+            as: 'addedUser'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedUser',
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'contratos',
+            localField: 'idContrato',
+            foreignField: '_id',
+            as: 'idContrato'
+          }
+        },
+        /* {
+          $lookup: {
+            from: 'representantes',
+            localField: 'idContrato.idRepresentante',
+            foreignField: '_id',
+            as: 'idContrato'
+          }
+        }, */
+      ]);
+      console.log(docs);
+    }
 
-    const totalVerficaciones = await Model.countDocuments();
+
+    totalVerficaciones = await Model.countDocuments();
 
     res.json({
       success: true,

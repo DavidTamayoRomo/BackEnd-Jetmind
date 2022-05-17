@@ -4,6 +4,8 @@ const { upload } = require('../../../helper/multer');
 
 const controller = require('./controller');
 
+const { auth } = require('../auth');
+
 
 router
   .route('/busquedageneral/:busqueda')
@@ -11,7 +13,7 @@ router
 
 router
   .route('/busquedaespecifica/coleccion/:tabla/:busqueda/:campos')
-  .get(controller.busquedaEspecifica);
+  .get(auth, controller.busquedaEspecifica);
 
 router
   .route('/uploasDigitalOCean')

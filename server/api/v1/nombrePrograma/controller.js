@@ -1,5 +1,7 @@
 
 const Model = require('./model');
+const Role = require('../role/model');
+const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -49,22 +51,42 @@ exports.create = async (req, res, next) => {
 exports.all = async (req, res, next) => {
 
 
-  const { query = {} } = req;
+  const { decoded = {}, query } = req;
+  const { _id = null } = decoded;
+
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
   const { limit, page, skip } = paginar(query);
 
 
   try {
-    const docs = await Model.find({})
-      .populate('idMarca')
-      .populate('idCiudad')
-      //.populate('addedUser', 'nombresApellidos tipo email estado')
-      //.populate('modifiedUser', 'nombresApellidos tipo email estado')
-      //.skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
 
-    const totalnombreProgramas = await Model.countDocuments();
+    let docs;
+    let totalnombreProgramas;
+    if (role.nombre.includes('Super')) {
+      console.log('super');
+      docs = await Model.find({})
+        .populate('idMarca')
+        .populate('idCiudad')
+        .sort({ '_id': -1 })
+        .exec();
 
+      totalnombreProgramas = await Model.countDocuments();
+    } else if (role.nombre.includes('Admin')) {
+      console.log('admin');
+      docs = await Model.find({
+        $and: [
+          { idCiudad: { $in: persona.idCiudad } },
+          { idMarca: { $in: persona.idMarca } },
+        ]
+      })
+        .populate('idMarca')
+        .populate('idCiudad')
+        .sort({ '_id': -1 })
+        .exec();
+
+      totalnombreProgramas = await Model.countDocuments();
+    }
     res.json({
       success: true,
       ok: "all",
