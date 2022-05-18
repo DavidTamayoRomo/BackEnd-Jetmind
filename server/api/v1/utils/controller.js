@@ -22,6 +22,9 @@ const CitasTelemarketing = require('../citas_telemarketing/model');
 const Verificacion = require('../verificacion/model');
 const Programa = require('../programa/model');
 const Controlcalidad = require('../control_calidad/model');
+const Asignarhorario = require('../asignar_horario_estudiante/model');
+const Asistencia = require('../asistencia/model');
+const Registrollamadas = require('../registro_llamada/model');
 
 
 /**
@@ -902,6 +905,529 @@ exports.busquedaEspecifica = async (req, res = response) => {
                   { 'idCitaTelemarketing.nombreApellidoRepresentante': regex },
                   { 'idCitaTelemarketing.telefono': regex },
                   { 'idCitaTelemarketing.email': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'asignarhorario':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await Asignarhorario.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente'
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiantes',
+                foreignField: '_id',
+                as: 'idEstudiantes'
+              }
+            },
+            {
+              $lookup: {
+                from: 'horarios',
+                localField: 'idHorario',
+                foreignField: '_id',
+                as: 'idHorario'
+              }
+            },
+
+            {
+              $unwind: {
+                path: '$idHorario'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idDocente.nombresApellidos': regex },
+                  { 'idHorario.nombre': regex },
+                  { 'idHorario.dias': regex },
+                  { 'idHorario.modalidad': regex },
+                  { 'idHorario.horaInicio': regex },
+                  {
+                    'idEstudiantes': {
+                      $elemMatch: {
+                        nombresApellidos: regex
+                      }
+                    }
+                  },
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await Asignarhorario.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'idDocente.idMarca': { $in: persona.idMarca } },
+                  { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiantes',
+                foreignField: '_id',
+                as: 'idEstudiantes'
+              }
+            },
+            {
+              $lookup: {
+                from: 'horarios',
+                localField: 'idHorario',
+                foreignField: '_id',
+                as: 'idHorario'
+              }
+            },
+
+            {
+              $unwind: {
+                path: '$idHorario'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idDocente.nombresApellidos': regex },
+                  { 'idHorario.nombre': regex },
+                  { 'idHorario.dias': regex },
+                  { 'idHorario.modalidad': regex },
+                  { 'idHorario.horaInicio': regex },
+                  {
+                    'idEstudiantes': {
+                      $elemMatch: {
+                        nombresApellidos: regex
+                      }
+                    }
+                  },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'asistencias':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await Asistencia.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente'
+              }
+            },
+            {
+              $lookup: {
+                from: 'horarios',
+                localField: 'idHorario',
+                foreignField: '_id',
+                as: 'idHorario'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idHorario'
+              }
+            },
+            {
+              $unwind: {
+                path: '$prueba'
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'prueba.idEstudiante',
+                foreignField: '_id',
+                as: 'prueba.idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$prueba.idEstudiante'
+              }
+            },
+            {
+              $group: {
+                _id: '$_id',
+                idDocente: { $first: '$idDocente' },
+                idHorario: { $first: '$idHorario' },
+                prueba: { $push: '$prueba' },
+                temaTratado: { $first: '$temaTratado' },
+                fecha: { $first: '$fecha' },
+                observaciones: { $first: '$observaciones' },
+                addedUser: { $first: '$addedUser' },
+                modifiedUser: { $first: '$modifiedUser' },
+                createdAt: { $first: '$createdAt' },
+                updatedAt: { $first: '$updatedAt' },
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idDocente.nombresApellidos': regex },
+                  { 'idHorario.nombre': regex },
+                  { 'idHorario.dias': regex },
+                  { 'idHorario.modalidad': regex },
+                  { 'idHorario.horaInicio': regex },
+                  {
+                    'prueba': {
+                      $elemMatch: {
+                        'idEstudiante.nombresApellidos': regex
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await Asistencia.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'idDocente.idMarca': { $in: persona.idMarca } },
+                  { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'horarios',
+                localField: 'idHorario',
+                foreignField: '_id',
+                as: 'idHorario'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idHorario'
+              }
+            },
+            {
+              $unwind: {
+                path: '$prueba'
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'prueba.idEstudiante',
+                foreignField: '_id',
+                as: 'prueba.idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$prueba.idEstudiante'
+              }
+            },
+            {
+              $group: {
+                _id: '$_id',
+                idDocente: { $first: '$idDocente' },
+                idHorario: { $first: '$idHorario' },
+                prueba: { $push: '$prueba' },
+                temaTratado: { $first: '$temaTratado' },
+                fecha: { $first: '$fecha' },
+                observaciones: { $first: '$observaciones' },
+                addedUser: { $first: '$addedUser' },
+                modifiedUser: { $first: '$modifiedUser' },
+                createdAt: { $first: '$createdAt' },
+                updatedAt: { $first: '$updatedAt' },
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idDocente.nombresApellidos': regex },
+                  { 'idHorario.nombre': regex },
+                  { 'idHorario.dias': regex },
+                  { 'idHorario.modalidad': regex },
+                  { 'idHorario.horaInicio': regex },
+                  {
+                    'prueba': {
+                      $elemMatch: {
+                        'idEstudiante.nombresApellidos': regex
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Docente')) {
+          data = await Asistencia.aggregate([
+            {
+              $match: {
+                'addedUser': persona._id
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'idDocente.idMarca': { $in: persona.idMarca } },
+                  { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'horarios',
+                localField: 'idHorario',
+                foreignField: '_id',
+                as: 'idHorario'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idHorario'
+              }
+            },
+            {
+              $unwind: {
+                path: '$prueba'
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'prueba.idEstudiante',
+                foreignField: '_id',
+                as: 'prueba.idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$prueba.idEstudiante'
+              }
+            },
+            {
+              $group: {
+                _id: '$_id',
+                idDocente: { $first: '$idDocente' },
+                idHorario: { $first: '$idHorario' },
+                prueba: { $push: '$prueba' },
+                temaTratado: { $first: '$temaTratado' },
+                fecha: { $first: '$fecha' },
+                observaciones: { $first: '$observaciones' },
+                addedUser: { $first: '$addedUser' },
+                modifiedUser: { $first: '$modifiedUser' },
+                createdAt: { $first: '$createdAt' },
+                updatedAt: { $first: '$updatedAt' },
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idDocente.nombresApellidos': regex },
+                  { 'idHorario.nombre': regex },
+                  { 'idHorario.dias': regex },
+                  { 'idHorario.modalidad': regex },
+                  { 'idHorario.horaInicio': regex },
+                  {
+                    'prueba': {
+                      $elemMatch: {
+                        'idEstudiante.nombresApellidos': regex
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'resgistros':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await Registrollamadas.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.email': regex },
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await Registrollamadas.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante'
+              }
+            },
+
+            {
+              $match: {
+                $and: [
+                  { 'addedUser.idMarca': { $in: persona.idMarca } },
+                  { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.email': regex },
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Docente')) {
+          data = await Registrollamadas.aggregate([
+            {
+              $match: {
+                'addedUser': persona._id,
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'addedUser.idMarca': { $in: persona.idMarca } },
+                  { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.email': regex },
                 ]
               }
             }
