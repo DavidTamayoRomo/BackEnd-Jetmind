@@ -75,7 +75,14 @@ exports.all = async (req, res, next) => {
         .sort({ '_id': -1 })
         .exec();
     } else if (role.nombre.includes('Admin')) {
-      docs = await Model.aggregate([
+      docs = await Model.find({})
+        .populate({ path: 'idContrato', populate: { path: 'idRepresentante' } })
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+      /* docs = await Model.aggregate([
         {
           $lookup: {
             from: 'personas',
@@ -104,16 +111,10 @@ exports.all = async (req, res, next) => {
             as: 'idContrato'
           }
         },
-        /* {
-          $lookup: {
-            from: 'representantes',
-            localField: 'idContrato.idRepresentante',
-            foreignField: '_id',
-            as: 'idContrato'
-          }
-        }, */
+
+
       ]);
-      console.log(docs);
+      console.log(docs); */
     }
 
 

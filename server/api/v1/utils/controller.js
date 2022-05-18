@@ -21,6 +21,7 @@ const Facturar = require('../facturar/model');
 const CitasTelemarketing = require('../citas_telemarketing/model');
 const Verificacion = require('../verificacion/model');
 const Programa = require('../programa/model');
+const Controlcalidad = require('../control_calidad/model');
 
 
 /**
@@ -500,32 +501,116 @@ exports.busquedaEspecifica = async (req, res = response) => {
       }
     case 'contratosAporbados':
       try {
+        let registro = [];
+        const vector = persona.idMarca.forEach(x => {
+          registro.push(x.toString());
+        });
 
-        const representante = await Representante.findOne({ $or: [{ nombresApellidos: regex }, { cedula: regex }, { email: regex }] });
-        const asesor = await Persona.findOne({ nombresApellidos: regex });
-        if (representante == null && asesor == null) {
-          data = await Contrato.find({ $and: [{ $or: [{ codigo: regex }, { estadoPrograma: regex }] }, { estado: 'Aprobado' }] })
-            .populate('idRepresentante', 'nombresApellidos cedula email estado')
-            .populate('addedUser', 'nombresApellidos tipo email estado')
-            .populate('modifiedUser', 'nombresApellidos tipo email estado')
-            .populate('personaAprueba', 'nombresApellidos tipo email estado');
-        } else {
-          if (representante != null) {
-            data = await Contrato.find({ $and: [{ idRepresentante: representante._id }, { estado: 'Aprobado' }] })
+        if (role.nombre.includes('Super')) {
+          const representante = await Representante.findOne({ $or: [{ nombresApellidos: regex }, { cedula: regex }, { email: regex }] });
+          const asesor = await Persona.findOne({ nombresApellidos: regex });
+          if (representante == null && asesor == null) {
+            data = await Contrato.find({ $and: [{ $or: [{ codigo: regex }, { estadoPrograma: regex }] }, { estado: 'Aprobado' }] })
               .populate('idRepresentante', 'nombresApellidos cedula email estado')
               .populate('addedUser', 'nombresApellidos tipo email estado')
               .populate('modifiedUser', 'nombresApellidos tipo email estado')
               .populate('personaAprueba', 'nombresApellidos tipo email estado');
+          } else {
+            if (representante != null) {
+              data = await Contrato.find({ $and: [{ idRepresentante: representante._id }, { estado: 'Aprobado' }] })
+                .populate('idRepresentante', 'nombresApellidos cedula email estado')
+                .populate('addedUser', 'nombresApellidos tipo email estado')
+                .populate('modifiedUser', 'nombresApellidos tipo email estado')
+                .populate('personaAprueba', 'nombresApellidos tipo email estado');
+            }
+            if (asesor != null) {
+              data = await Contrato.find({ $and: [{ 'directorAsignado.nombre': regex }, { estado: 'Aprobado' }] })
+                .populate('idRepresentante', 'nombresApellidos cedula email estado')
+                .populate('addedUser', 'nombresApellidos tipo email estado')
+                .populate('modifiedUser', 'nombresApellidos tipo email estado')
+                .populate('personaAprueba', 'nombresApellidos tipo email estado');
+            }
           }
-          if (asesor != null) {
-            data = await Contrato.find({ $and: [{ 'directorAsignado.nombre': regex }, { estado: 'Aprobado' }] })
-              .populate('idRepresentante', 'nombresApellidos cedula email estado')
-              .populate('addedUser', 'nombresApellidos tipo email estado')
-              .populate('modifiedUser', 'nombresApellidos tipo email estado')
-              .populate('personaAprueba', 'nombresApellidos tipo email estado');
-          }
+        } else if (role.nombre.includes('Admin')) {
+
+          data = await Contrato.aggregate([
+            {
+              $match: {
+                estado: 'Aprobado'
+              }
+            },
+            {
+              $unwind: '$marcasVendidas'
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $match: {
+                $and:
+                  [
+                    { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                    { "marcasVendidas.item_id": { $in: registro } }
+                  ]
+              }
+            },
+            {
+              $group: {
+                _id: '$_id',
+                voucher: { $first: '$voucher' },
+                estado: { $first: '$estado' },
+                idRepresentante: { $first: '$idRepresentante' },
+                tipoPago: { $first: '$tipoPago' },
+                estadoVenta: { $first: '$estadoVenta' },
+                valorTotal: { $first: '$valorTotal' },
+                formaPago: { $first: '$formaPago' },
+                comentario: { $first: '$comentario' },
+                diretorAsignado: { $first: '$diretorAsignado' },
+                estadoPrograma: { $first: '$estadoPrograma' },
+                fechaAprobacion: { $first: '$fechaAprobacion' },
+                campania: { $first: '$campania' },
+                marcasVendidas: { $push: '$marcasVendidas' },
+                addedUser: { $first: '$addedUser' },
+                codigo: { $first: '$codigo' },
+                abono: { $first: '$abono' },
+                pea: { $first: '$pea' },
+                entrevistaInicial: { $first: '$entrevistaInicial' },
+                createdAt: { $first: '$createdAt' },
+                updateAt: { $first: '$updateAt' },
+                fecha: { $first: '$fecha' }
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: '$idRepresentante'
+            },
+            {
+              $unwind: '$addedUser'
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'codigo': regex },
+                ]
+              }
+            }
+          ]);
         }
-
         break;
       } catch (error) {
         next(new Error(error));
@@ -730,6 +815,97 @@ exports.busquedaEspecifica = async (req, res = response) => {
               },
             },
           ]);
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'listaControlCalidad':
+      try {
+        if (role.nombre.includes('Super')) {
+
+          data = await Controlcalidad.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser'
+              }
+            },
+            {
+              $lookup: {
+                from: 'citastelemarketings',
+                localField: 'idCitaTelemarketing',
+                foreignField: '_id',
+                as: 'idCitaTelemarketing'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idCitaTelemarketing'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idCitaTelemarketing.nombreApellidoRepresentante': regex },
+                  { 'idCitaTelemarketing.telefono': regex },
+                  { 'idCitaTelemarketing.email': regex },
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await Controlcalidad.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'citastelemarketings',
+                localField: 'idCitaTelemarketing',
+                foreignField: '_id',
+                as: 'idCitaTelemarketing'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idCitaTelemarketing'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idCitaTelemarketing.nombreApellidoRepresentante': regex },
+                  { 'idCitaTelemarketing.telefono': regex },
+                  { 'idCitaTelemarketing.email': regex },
+                ]
+              }
+            }
+          ])
         }
       } catch (error) {
         next(new Error(error));
