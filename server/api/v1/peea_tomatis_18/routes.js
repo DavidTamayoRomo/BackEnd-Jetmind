@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const { auth } = require('../auth');
 const controller = require('./controller');
 
 /**
@@ -143,14 +144,14 @@ const controller = require('./controller');
 router
   .route('/')
   .post(controller.create)
-  .get(controller.all);
+  .get(auth, controller.all);
 
 router.param('id', controller.id);
 
 router
   .route('/:id')
-  .get(controller.read)
-  .put(controller.update)
-  .delete(controller.delete);
+  .get(auth, controller.read)
+  .put(auth, controller.update)
+  .delete(auth, controller.delete);
 
 module.exports = router;

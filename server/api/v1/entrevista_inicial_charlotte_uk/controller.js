@@ -2,6 +2,8 @@
 const mongoose = require("mongoose");
 
 const Model = require('./model');
+const Role = require('../role/model');
+const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -87,19 +89,114 @@ exports.create = async (req, res, next) => {
 };
 
 exports.all = async (req, res, next) => {
-
-  const { query = {} } = req;
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
   const { limit, page, skip } = paginar(query);
 
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
 
   try {
-    const docs = await Model.find({})
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .populate('idContrato')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'addedUser',
+            foreignField: '_id',
+            as: 'addedUser'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedUser',
+          }
+        },
+        {
+          $lookup: {
+            from: 'contratos',
+            localField: 'idContrato',
+            foreignField: '_id',
+            as: 'idContrato'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idContrato',
+          }
+        },
+        {
+          $lookup: {
+            from: 'representantes',
+            localField: 'idContrato.idRepresentante',
+            foreignField: '_id',
+            as: 'idRepresentante'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idRepresentante',
+          }
+        },
+      ])
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'addedUser',
+            foreignField: '_id',
+            as: 'addedUser'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedUser',
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'contratos',
+            localField: 'idContrato',
+            foreignField: '_id',
+            as: 'idContrato'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idContrato',
+          }
+        },
+        {
+          $lookup: {
+            from: 'representantes',
+            localField: 'idContrato.idRepresentante',
+            foreignField: '_id',
+            as: 'idRepresentante'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idRepresentante',
+          }
+        },
+      ])
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    }
+
     res.json({
       success: true,
       data: docs,

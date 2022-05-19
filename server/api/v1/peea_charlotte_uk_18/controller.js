@@ -1,6 +1,8 @@
 
 
 const Model = require('./model');
+const Role = require('../role/model');
+const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('../auth');
 
@@ -44,25 +46,80 @@ exports.create = async (req, res, next) => {
 
 exports.all = async (req, res, next) => {
 
-
-  const { query = {} } = req;
+  const { query = {}, decoded = {} } = req;
+  const { _id = null } = decoded;
   const { limit, page, skip } = paginar(query);
+
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
 
 
   try {
-    const docs = await Model.find({})
-      .populate('idContrato')
-      .populate('idEstudiante')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
-    const totalPeea18chuk = await Model.countDocuments({}).exec();
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('idContrato')
+        .populate('idEstudiante')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'contratos',
+            localField: 'idContrato',
+            foreignField: '_id',
+            as: 'idContrato'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idContrato',
+          }
+        },
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'idContrato.addedUser',
+            foreignField: '_id',
+            as: 'persona'
+          }
+        },
+        {
+          $unwind: {
+            path: '$persona',
+          }
+        },
+        {
+          $match: {
+            'persona.idCiudad': { $in: persona.idCiudad }
+          }
+        },
+        {
+          $lookup: {
+            from: 'estudiantes',
+            localField: 'idEstudiante',
+            foreignField: '_id',
+            as: 'idEstudiante'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idEstudiante',
+          }
+        },
+
+      ])
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    }
     res.json({
       success: true,
-      data: docs,
-      totalPeea18chuk
+      data: docs
     });
   } catch (err) {
     next(new Error(err));

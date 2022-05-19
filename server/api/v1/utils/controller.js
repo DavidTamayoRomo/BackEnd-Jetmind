@@ -25,6 +25,15 @@ const Controlcalidad = require('../control_calidad/model');
 const Asignarhorario = require('../asignar_horario_estudiante/model');
 const Asistencia = require('../asistencia/model');
 const Registrollamadas = require('../registro_llamada/model');
+const EntrevistaInicialCH = require('../entrevista_inicial_charlotte_uk/model');
+const EntrevistaInicialIL = require('../entrevista_inicial_ilvem/model');
+const EntrevistaInicialTM = require('../entrevista_inicial_tomatis/model');
+const PeeaTomatis17 = require('../peea_tomatis_17/model');
+const PeeaTomatis18 = require('../peea_tomatis_18/model');
+const PeeaIlvem17 = require('../peea_ilvem_17/model');
+const PeeaIlvem18 = require('../peea_ilvem_18/model');
+const PeeaCharlotteUk17 = require('../peea_charlotte_uk_17/model');
+const PeeaCharlotteUk18 = require('../peea_charlotte_uk_18/model');
 
 
 /**
@@ -1428,6 +1437,1062 @@ exports.busquedaEspecifica = async (req, res = response) => {
                   { 'idEstudiante.nombresApellidos': regex },
                   { 'idEstudiante.cedula': regex },
                   { 'idEstudiante.email': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'entrevistasch':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await EntrevistaInicialCH.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser',
+              }
+            },
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idContrato.idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idRepresentante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await EntrevistaInicialCH.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser',
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idContrato.idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idRepresentante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'entrevistasil':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await EntrevistaInicialIL.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser',
+              }
+            },
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idContrato.idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idRepresentante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await EntrevistaInicialIL.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser',
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idContrato.idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idRepresentante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'entrevistastm':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await EntrevistaInicialTM.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser',
+              }
+            },
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idContrato.idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idRepresentante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await EntrevistaInicialTM.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser',
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idContrato.idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idRepresentante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'peeas17tm':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await PeeaTomatis17.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await PeeaTomatis17.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $match: {
+                'persona.idCiudad': { $in: persona.idCiudad }
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'peeastm18':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await PeeaTomatis18.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await PeeaTomatis18.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $match: {
+                'persona.idCiudad': { $in: persona.idCiudad }
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'peeasil17':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await PeeaIlvem17.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await PeeaIlvem17.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $match: {
+                'persona.idCiudad': { $in: persona.idCiudad }
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'peeasil18':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await PeeaIlvem18.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await PeeaIlvem18.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $match: {
+                'persona.idCiudad': { $in: persona.idCiudad }
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'peeasch17':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await PeeaCharlotteUk17.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await PeeaCharlotteUk17.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $match: {
+                'persona.idCiudad': { $in: persona.idCiudad }
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'peeasch18':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await PeeaCharlotteUk18.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
+
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await PeeaCharlotteUk18.aggregate([
+            {
+              $lookup: {
+                from: 'contratos',
+                localField: 'idContrato',
+                foreignField: '_id',
+                as: 'idContrato'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idContrato',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idContrato.addedUser',
+                foreignField: '_id',
+                as: 'persona'
+              }
+            },
+            {
+              $unwind: {
+                path: '$persona',
+              }
+            },
+            {
+              $match: {
+                'persona.idCiudad': { $in: persona.idCiudad }
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.cedula': regex },
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idEstudiante.email': regex },
+                  { 'idContrato.codigo': regex },
                 ]
               }
             }
