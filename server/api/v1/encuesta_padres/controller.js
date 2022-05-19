@@ -85,7 +85,7 @@ exports.all = async (req, res, next) => {
         .sort({ '_id': -1 })
         .exec();
     }
-
+    console.log(docs);
 
     res.json({
       success: true,

@@ -34,6 +34,9 @@ const PeeaIlvem17 = require('../peea_ilvem_17/model');
 const PeeaIlvem18 = require('../peea_ilvem_18/model');
 const PeeaCharlotteUk17 = require('../peea_charlotte_uk_17/model');
 const PeeaCharlotteUk18 = require('../peea_charlotte_uk_18/model');
+const EncuestaPadres = require('../encuesta_padres/model');
+const PlataformaIlvem = require('../plataforma_ilvem/model');
+const PlataformaCharlotte = require('../plataforma_charlotte/model');
 
 
 /**
@@ -618,6 +621,237 @@ exports.busquedaEspecifica = async (req, res = response) => {
                   { 'idRepresentante.cedula': regex },
                   { 'idRepresentante.email': regex },
                   { 'codigo': regex },
+                ]
+              }
+            }
+          ]);
+        }
+        break;
+      } catch (error) {
+        next(new Error(error));
+        break;
+      }
+    case 'contratosBusqueda':
+      //Usando actualmente en vista de contratos
+      try {
+        let registro = [];
+        const vector = persona.idMarca.forEach(x => {
+          registro.push(x.toString());
+        });
+
+        if (role.nombre.includes('Super')) {
+          data = await Contrato.aggregate([
+            {
+              $unwind: '$marcasVendidas'
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $group: {
+                _id: '$_id',
+                voucher: { $first: '$voucher' },
+                estado: { $first: '$estado' },
+                idRepresentante: { $first: '$idRepresentante' },
+                tipoPago: { $first: '$tipoPago' },
+                estadoVenta: { $first: '$estadoVenta' },
+                valorTotal: { $first: '$valorTotal' },
+                formaPago: { $first: '$formaPago' },
+                comentario: { $first: '$comentario' },
+                diretorAsignado: { $first: '$diretorAsignado' },
+                estadoPrograma: { $first: '$estadoPrograma' },
+                fechaAprobacion: { $first: '$fechaAprobacion' },
+                campania: { $first: '$campania' },
+                marcasVendidas: { $push: '$marcasVendidas' },
+                addedUser: { $first: '$addedUser' },
+                codigo: { $first: '$codigo' },
+                abono: { $first: '$abono' },
+                pea: { $first: '$pea' },
+                entrevistaInicial: { $first: '$entrevistaInicial' },
+                createdAt: { $first: '$createdAt' },
+                updateAt: { $first: '$updateAt' },
+                fecha: { $first: '$fecha' }
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: '$idRepresentante'
+            },
+            {
+              $unwind: '$addedUser'
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'codigo': regex },
+                  { 'estado': regex },
+                  { 'addedUser.nombresApellidos': regex },
+                ]
+              }
+            }
+          ]);
+        } else if (role.nombre.includes('Admin')) {
+
+          data = await Contrato.aggregate([
+            {
+              $unwind: '$marcasVendidas'
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $match: {
+                $and:
+                  [
+                    { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                    { "marcasVendidas.item_id": { $in: registro } }
+                  ]
+              }
+            },
+            {
+              $group: {
+                _id: '$_id',
+                voucher: { $first: '$voucher' },
+                estado: { $first: '$estado' },
+                idRepresentante: { $first: '$idRepresentante' },
+                tipoPago: { $first: '$tipoPago' },
+                estadoVenta: { $first: '$estadoVenta' },
+                valorTotal: { $first: '$valorTotal' },
+                formaPago: { $first: '$formaPago' },
+                comentario: { $first: '$comentario' },
+                diretorAsignado: { $first: '$diretorAsignado' },
+                estadoPrograma: { $first: '$estadoPrograma' },
+                fechaAprobacion: { $first: '$fechaAprobacion' },
+                campania: { $first: '$campania' },
+                marcasVendidas: { $push: '$marcasVendidas' },
+                addedUser: { $first: '$addedUser' },
+                codigo: { $first: '$codigo' },
+                abono: { $first: '$abono' },
+                pea: { $first: '$pea' },
+                entrevistaInicial: { $first: '$entrevistaInicial' },
+                createdAt: { $first: '$createdAt' },
+                updateAt: { $first: '$updateAt' },
+                fecha: { $first: '$fecha' }
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: '$idRepresentante'
+            },
+            {
+              $unwind: '$addedUser'
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'codigo': regex },
+                  { 'estado': regex },
+                  { 'addedUser.nombresApellidos': regex },
+                ]
+              }
+            }
+          ]);
+        } else if (role.nombre.includes('User')) {
+          data = await Contrato.aggregate([
+            {
+              $unwind: '$marcasVendidas'
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $match: {
+                $and:
+                  [
+                    { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                    { 'addedUser._id': persona._id },
+                  ]
+              }
+            },
+            {
+              $group: {
+                _id: '$_id',
+                voucher: { $first: '$voucher' },
+                estado: { $first: '$estado' },
+                idRepresentante: { $first: '$idRepresentante' },
+                tipoPago: { $first: '$tipoPago' },
+                estadoVenta: { $first: '$estadoVenta' },
+                valorTotal: { $first: '$valorTotal' },
+                formaPago: { $first: '$formaPago' },
+                comentario: { $first: '$comentario' },
+                diretorAsignado: { $first: '$diretorAsignado' },
+                estadoPrograma: { $first: '$estadoPrograma' },
+                fechaAprobacion: { $first: '$fechaAprobacion' },
+                campania: { $first: '$campania' },
+                marcasVendidas: { $push: '$marcasVendidas' },
+                addedUser: { $first: '$addedUser' },
+                codigo: { $first: '$codigo' },
+                abono: { $first: '$abono' },
+                pea: { $first: '$pea' },
+                entrevistaInicial: { $first: '$entrevistaInicial' },
+                createdAt: { $first: '$createdAt' },
+                updateAt: { $first: '$updateAt' },
+                fecha: { $first: '$fecha' }
+              }
+            },
+            {
+              $lookup: {
+                from: 'representantes',
+                localField: 'idRepresentante',
+                foreignField: '_id',
+                as: 'idRepresentante'
+              }
+            },
+            {
+              $unwind: '$idRepresentante'
+            },
+            {
+              $unwind: '$addedUser'
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idRepresentante.nombresApellidos': regex },
+                  { 'idRepresentante.cedula': regex },
+                  { 'idRepresentante.email': regex },
+                  { 'codigo': regex },
+                  { 'estado': regex },
+                  { 'addedUser.nombresApellidos': regex },
                 ]
               }
             }
@@ -2493,6 +2727,352 @@ exports.busquedaEspecifica = async (req, res = response) => {
                   { 'idEstudiante.nombresApellidos': regex },
                   { 'idEstudiante.email': regex },
                   { 'idContrato.codigo': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'encuestapadres':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await EncuestaPadres.aggregate([
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $lookup: {
+                from: 'ciudads',
+                localField: 'idCiudad',
+                foreignField: '_id',
+                as: 'idCiudad'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idCiudad',
+              }
+            },
+            {
+              $lookup: {
+                from: 'marcas',
+                localField: 'idMarca',
+                foreignField: '_id',
+                as: 'idMarca'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idMarca',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idDocente.nombresApellidos': regex },
+                ]
+              }
+            },
+
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await EncuestaPadres.aggregate([
+            {
+              $match: {
+                $and: [
+                  { 'idCiudad': { $in: persona.idCiudad } },
+                  { 'idMarca': { $in: persona.idMarca } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante',
+              }
+            },
+            {
+              $lookup: {
+                from: 'ciudads',
+                localField: 'idCiudad',
+                foreignField: '_id',
+                as: 'idCiudad'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idCiudad',
+              }
+            },
+            {
+              $lookup: {
+                from: 'marcas',
+                localField: 'idMarca',
+                foreignField: '_id',
+                as: 'idMarca'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idMarca',
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente',
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idDocente.nombresApellidos': regex },
+                ]
+              }
+            },
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'plataformaIlvems':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await PlataformaIlvem.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDirector',
+                foreignField: '_id',
+                as: 'idDirector'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDirector'
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente'
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idDirector.nombresApellidos': regex },
+                  { 'idDocente.nombresApellidos': regex },
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await PlataformaIlvem.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDirector',
+                foreignField: '_id',
+                as: 'idDirector'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDirector'
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+                  { 'idDocente.idMarca': { $in: persona.idMarca } },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.nombresApellidos': regex },
+                  { 'idDirector.nombresApellidos': regex },
+                  { 'idDocente.nombresApellidos': regex },
+                ]
+              }
+            }
+          ])
+        }
+      } catch (error) {
+        next(new Error(error));
+      }
+      break;
+    case 'plataformaCharlottes':
+      try {
+        if (role.nombre.includes('Super')) {
+          data = await PlataformaCharlotte.aggregate([
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante'
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.nombresApellidos': regex },
+                ]
+              }
+            }
+          ])
+        } else if (role.nombre.includes('Admin')) {
+          data = await PlataformaCharlotte.aggregate([
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiante',
+                foreignField: '_id',
+                as: 'idEstudiante'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idEstudiante'
+              }
+            },
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'addedUser',
+                foreignField: '_id',
+                as: 'addedUser'
+              }
+            },
+            {
+              $unwind: {
+                path: '$addedUser'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+                  { 'addedUser.idMarca': { $in: persona.idMarca } },
+                ]
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idEstudiante.nombresApellidos': regex },
                 ]
               }
             }

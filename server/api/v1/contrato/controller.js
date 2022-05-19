@@ -686,8 +686,7 @@ exports.all = async (req, res, next) => {
             $and:
               [
                 { 'addedUser.0._id': persona._id },
-                { 'addedUser.idCiudad': { $in: persona.idCiudad } },
-                { "marcasVendidas.item_id": { $in: registro } }
+                { 'addedUser.idCiudad': { $in: persona.idCiudad } }
               ]
           }
         },

@@ -86,6 +86,16 @@ exports.all = async (req, res, next) => {
         .exec();
 
       totalnombreProgramas = await Model.countDocuments();
+    } else if (role.nombre.includes('User')) {
+      docs = await Model.find({
+        $and: [
+          { idCiudad: { $in: persona.idCiudad } },
+        ]
+      })
+        .populate('idMarca')
+        .populate('idCiudad')
+        .sort({ '_id': -1 })
+        .exec();
     }
     res.json({
       success: true,

@@ -1,6 +1,8 @@
 
 
 const Model = require('./model');
+const Role = require('../role/model');
+const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -48,20 +50,62 @@ exports.create = async (req, res, next) => {
 };
 
 exports.all = async (req, res, next) => {
+  const { decoded = {}, query } = req;
+  const { _id = null } = decoded;
 
-
-  const { query = {} } = req;
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
   const { limit, page, skip } = paginar(query);
 
 
   try {
-    const docs = await Model.find({})
-      .populate('idEstudiante')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('idEstudiante')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'estudiantes',
+            localField: 'idEstudiante',
+            foreignField: '_id',
+            as: 'idEstudiante'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idEstudiante'
+          }
+        },
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'addedUser',
+            foreignField: '_id',
+            as: 'addedUser'
+          }
+        },
+        {
+          $unwind: {
+            path: '$addedUser'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'addedUser.idCiudad': { $in: persona.idCiudad } },
+              { 'addedUser.idMarca': { $in: persona.idMarca } },
+            ]
+          }
+        },
+      ])
+    }
     res.json({
       success: true,
       data: docs,

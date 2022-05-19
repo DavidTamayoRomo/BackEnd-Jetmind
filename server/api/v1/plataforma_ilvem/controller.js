@@ -1,6 +1,8 @@
 
 
 const Model = require('./model');
+const Role = require('../role/model');
+const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
@@ -50,20 +52,77 @@ exports.create = async (req, res, next) => {
 exports.all = async (req, res, next) => {
 
 
-  const { query = {} } = req;
+  const { decoded = {}, query } = req;
+  const { _id = null } = decoded;
+
+  const persona = await Persona.findOne({ "_id": _id });
+  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
   const { limit, page, skip } = paginar(query);
 
 
   try {
-    const docs = await Model.find({})
-      .populate('idEstudiante')
-      .populate('idDirector')
-      .populate('idDocente')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
+    let docs;
+    if (role.nombre.includes('Super')) {
+      docs = await Model.find({})
+        .populate('idEstudiante')
+        .populate('idDirector')
+        .populate('idDocente')
+        .populate('addedUser', 'nombresApellidos tipo email estado')
+        .populate('modifiedUser', 'nombresApellidos tipo email estado')
+        .skip(skip).limit(limit)
+        .sort({ '_id': -1 })
+        .exec();
+    } else if (role.nombre.includes('Admin')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'idDirector',
+            foreignField: '_id',
+            as: 'idDirector'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idDirector'
+          }
+        },
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'idDocente',
+            foreignField: '_id',
+            as: 'idDocente'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idDocente'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+              { 'idDocente.idMarca': { $in: persona.idMarca } },
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'estudiantes',
+            localField: 'idEstudiante',
+            foreignField: '_id',
+            as: 'idEstudiante'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idEstudiante'
+          }
+        }
+      ])
+    }
     res.json({
       success: true,
       data: docs,

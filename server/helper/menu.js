@@ -227,7 +227,7 @@ exports.getMenuFrontEnd = async (role) => {
         icono: 'mdi mdi-basket-fill',
         submenu: [
           { titulo: 'Crear', url: '/platafoma-ilvem/nuevo' },
-          { titulo: 'Lista', url: '/lista-platafoma-charlotte' },
+          { titulo: 'Lista', url: '/lista-platafoma-ilvem' },
         ]
       },
       {
@@ -728,7 +728,7 @@ exports.getMenuFrontEnd = async (role) => {
         icono: 'mdi mdi-basket-fill',
         submenu: [
           { titulo: 'Crear', url: '/platafoma-ilvem/nuevo' },
-          { titulo: 'Lista', url: '/lista-platafoma-charlotte' },
+          { titulo: 'Lista', url: '/lista-platafoma-ilvem' },
         ]
       },
       {
