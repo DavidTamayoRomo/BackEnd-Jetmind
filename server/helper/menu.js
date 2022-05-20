@@ -558,6 +558,13 @@ exports.getMenuFrontEnd = async (role) => {
         ]
       },
       {
+        titulo: 'Asignar Horario',
+        icono: 'mdi mdi-brightness-auto',
+        submenu: [
+          { titulo: 'Lista', url: '/asignarhorariosestudiantes' },
+        ]
+      },
+      {
         titulo: 'Asistencia',
         icono: 'mdi mdi-checkbox-multiple-marked',
         submenu: [
@@ -778,6 +785,13 @@ exports.getMenuFrontEnd = async (role) => {
         ]
       },
       {
+        titulo: 'Asignar Horario',
+        icono: 'mdi mdi-brightness-auto',
+        submenu: [
+          { titulo: 'Lista', url: '/asignarhorariosestudiantes' },
+        ]
+      },
+      {
         titulo: 'Asistencia',
         icono: 'mdi mdi-checkbox-multiple-marked',
         submenu: [
@@ -964,6 +978,13 @@ exports.getMenuFrontEnd = async (role) => {
         submenu: [
           { titulo: 'Lista estudiantes', url: '/listaestudiantes' },
           { titulo: 'Reporte estudiantes', url: '/reporte-estudiantes' },
+        ]
+      },
+      {
+        titulo: 'Asignar Horario',
+        icono: 'mdi mdi-brightness-auto',
+        submenu: [
+          { titulo: 'Lista', url: '/asignarhorariosestudiantes' },
         ]
       },
       {
@@ -1177,6 +1198,13 @@ exports.getMenuFrontEnd = async (role) => {
         submenu: [
           { titulo: 'Lista estudiantes', url: '/listaestudiantes' },
           { titulo: 'Reporte estudiantes', url: '/reporte-estudiantes' },
+        ]
+      },
+      {
+        titulo: 'Asignar Horario',
+        icono: 'mdi mdi-brightness-auto',
+        submenu: [
+          { titulo: 'Lista', url: '/asignarhorariosestudiantes' },
         ]
       },
       {

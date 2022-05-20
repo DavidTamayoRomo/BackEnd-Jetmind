@@ -161,7 +161,8 @@ exports.create = async (req, res, next) => {
     envioEmail.transporter.sendMail({
       from: 'pruebaenvio@clicbro.org',
       to: 'davidtamayoromo@gmail.com',
-      subject: 'Prueba email NODEJS',
+      subject: 'Corporacion JETMIND',
+      html: `<h1>Hola ${doc.nombresApellidos}</h1><span>Bienvenido/a, te hemos agregado al sistema empresarial, necesitamos primero generar tu clave personal para ingresar al sistema.</span><br><br><a href="www.google.com"><button type="button">Click Aqui!</button></a>`
     })
     res.json({
       success: true,

@@ -118,20 +118,58 @@ exports.all = async (req, res, next) => {
         .limit(limit)
         .sort({ '_id': -1 })
         .exec();
-      /* docs = await Model.find({})
-        .populate('idEstudiantes')
-        .populate('idHorario')
-        .populate('idDocente', 'nombresApellidos tipo email estado idMarca idCiudad', {
-          $and: [
-            { idMarca: { $in: persona.idMarca } },
-            { idCiudad: { $in: persona.idCiudad } },
-          ]
-        })
-        .populate('addedUser', 'nombresApellidos tipo email estado')
-        .populate('modifiedUser', 'nombresApellidos tipo email estado')
-        .skip(skip).limit(limit)
+    } else if (role.nombre.includes('Docente')) {
+      docs = await Model.aggregate([
+        {
+          $lookup: {
+            from: 'personas',
+            localField: 'idDocente',
+            foreignField: '_id',
+            as: 'idDocente'
+          }
+        },
+        {
+          $unwind: {
+            path: '$idDocente'
+          }
+        },
+        {
+          $match: {
+            $and: [
+              { 'idDocente.idMarca': { $in: persona.idMarca } },
+              { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+              { 'idDocente._id': persona._id },
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'estudiantes',
+            localField: 'idEstudiantes',
+            foreignField: '_id',
+            as: 'idEstudiantes'
+          }
+        },
+        {
+          $lookup: {
+            from: 'horarios',
+            localField: 'idHorario',
+            foreignField: '_id',
+            as: 'idHorario'
+          }
+        },
+
+        {
+          $unwind: {
+            path: '$idHorario'
+          }
+        }
+
+      ])
+        .skip(skip)
+        .limit(limit)
         .sort({ '_id': -1 })
-        .exec(); */
+        .exec();
     }
 
     console.log(docs);

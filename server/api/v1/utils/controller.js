@@ -1279,6 +1279,71 @@ exports.busquedaEspecifica = async (req, res = response) => {
               }
             }
           ])
+        } else if (role.nombre.includes('Docente')) {
+          data = await Asignarhorario.aggregate([
+            {
+              $lookup: {
+                from: 'personas',
+                localField: 'idDocente',
+                foreignField: '_id',
+                as: 'idDocente'
+              }
+            },
+            {
+              $unwind: {
+                path: '$idDocente'
+              }
+            },
+            {
+              $match: {
+                $and: [
+                  { 'idDocente.idMarca': { $in: persona.idMarca } },
+                  { 'idDocente.idCiudad': { $in: persona.idCiudad } },
+                  { 'idDocente._id': persona._id },
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'estudiantes',
+                localField: 'idEstudiantes',
+                foreignField: '_id',
+                as: 'idEstudiantes'
+              }
+            },
+            {
+              $lookup: {
+                from: 'horarios',
+                localField: 'idHorario',
+                foreignField: '_id',
+                as: 'idHorario'
+              }
+            },
+
+            {
+              $unwind: {
+                path: '$idHorario'
+              }
+            },
+            {
+              $match: {
+                $or: [
+                  { 'idDocente.nombresApellidos': regex },
+                  { 'idHorario.nombre': regex },
+                  { 'idHorario.dias': regex },
+                  { 'idHorario.modalidad': regex },
+                  { 'idHorario.horaInicio': regex },
+                  {
+                    'idEstudiantes': {
+                      $elemMatch: {
+                        nombresApellidos: regex
+                      }
+                    }
+                  },
+                ]
+              }
+            }
+          ])
         }
       } catch (error) {
         next(new Error(error));
@@ -3273,6 +3338,13 @@ exports.fileUploadDigitalOcean = async (req, res) => {
   if (contrato) {
     contrato.voucher.push(req.files[0].key);
     contrato.save();
+  } else {
+    //marca
+    const marca = await Marca.findById(idContrato);
+    if (marca) {
+      marca.logo = req.files[0].key;
+      marca.save();
+    }
   }
 
   // Saving the Image URL in Database

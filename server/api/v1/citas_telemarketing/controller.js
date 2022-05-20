@@ -105,7 +105,7 @@ exports.all = async (req, res, next) => {
         .populate('modifiedUser', 'nombresApellidos tipo email estado')
         .sort({ '_id': -1 })
         .skip(skip)
-        //.limit(limit)
+        .limit(limit)
         .exec();
     } else if (role.nombre.includes('Admin')) {
       docs = await Model.aggregate([
@@ -148,6 +148,7 @@ exports.all = async (req, res, next) => {
       ])
         .sort({ '_id': -1 })
         .skip(skip)
+        .limit(limit)
     } else if (role.nombre.includes('User')) {
       docs = await Model.aggregate([
         {
@@ -194,6 +195,7 @@ exports.all = async (req, res, next) => {
       ])
         .sort({ '_id': -1 })
         .skip(skip)
+        .limit(limit)
     }
 
 
