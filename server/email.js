@@ -1,12 +1,14 @@
 const nodemailer = require('nodemailer');
+const { HOST, USER_EMAIL, USER_PASSWORD } = process.env;
+
 
 exports.transporter = nodemailer.createTransport({
-  host: 'mail.clicbro.org',
+  host: HOST,
   port: 26,
   secure: false,
   auth: {
-    user: 'pruebaenvio@clicbro.org',
-    pass: 'ahYg9XJ-JNAj'
+    user: USER_EMAIL,
+    pass: USER_PASSWORD
   },
   tls: {
     rejectUnauthorized: false

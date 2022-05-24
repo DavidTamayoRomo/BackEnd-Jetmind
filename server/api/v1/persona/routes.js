@@ -178,6 +178,10 @@ router
   .route('/email')
   .get(controller.enviar)
 
+router
+  .route('/recuperar-password/:email')
+  .get(controller.recuperarPassword)
+
 router.route('/signup')
   .post(controller.signup);
 

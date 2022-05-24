@@ -14,6 +14,8 @@ const envioEmail = require('../../../email');
 const mongoose = require("mongoose");
 const { getMenuFrontEnd } = require('../../../helper/menu');
 
+const { USER_EMAIL } = process.env;
+
 exports.id = async (req, res, next, id) => {
   try {
     const doc = await Model.findById(id).exec();
@@ -159,10 +161,11 @@ exports.create = async (req, res, next) => {
     res.status(201);
     /** Envio de correo de verificacion */
     envioEmail.transporter.sendMail({
-      from: 'pruebaenvio@clicbro.org',
+      from: USER_EMAIL,
       to: 'davidtamayoromo@gmail.com',
       subject: 'Corporacion JETMIND',
-      html: `<h1>Hola ${doc.nombresApellidos}</h1><span>Bienvenido/a, te hemos agregado al sistema empresarial, necesitamos primero generar tu clave personal para ingresar al sistema.</span><br><br><a href="www.google.com"><button type="button">Click Aqui!</button></a>`
+      //TODO: poner la ruta global del servidor www.dominio.com/password/doc.id
+      html: `<h1>Hola ${doc.nombresApellidos}</h1><span>Bienvenido/a, te hemos agregado al sistema empresarial, necesitamos primero generar tu clave personal para ingresar al sistema.</span><br><br><a href=${doc._id}><button type="button">Click Aqui!</button></a>`
     })
     res.json({
       success: true,
@@ -174,12 +177,40 @@ exports.create = async (req, res, next) => {
   }
 };
 
+exports.recuperarPassword = async (req, res, next) => {
+  const { email } = req.params;
+  try {
+    const doc = await Model.findOne({ 'email': email });
+    if (doc) {
+      const esperar = await envioEmail.transporter.sendMail({
+        from: USER_EMAIL,
+        to: 'davidtamayoromo@gmail.com',
+        subject: "Recuperar Contraseña",
+        //TODO: poner la ruta global del servidor www.dominio.com/password/doc.id
+        html: `<h1>Hola ${doc.nombresApellidos}</h1><span> Haz clic en el siguiente boton para restablecer tu contraseña</span><br><br><a href=${doc._id}><button type="button">Click Aqui!</button></a>`
+      });
+
+      if (esperar != null) {
+        console.log('Esperando');
+      } else {
+        console.log('Enviado');
+      }
+    }
+    res.json({
+      success: true,
+      ok: "Password actualizado",
+    });
+
+  } catch (err) {
+    next(new Error(err));
+  }
+};
 exports.enviar = async (req, res, next) => {
   try {
     for (let index = 1; index < 10; index++) {
       //con await esperamos la respuesta del envio del email
       const esperar = await envioEmail.transporter.sendMail({
-        from: 'pruebaenvio@clicbro.org',
+        from: USER_EMAIL,
         to: 'davidtamayoromo@gmail.com',
         subject: "Prueba email NODEJS" + index,
       });
