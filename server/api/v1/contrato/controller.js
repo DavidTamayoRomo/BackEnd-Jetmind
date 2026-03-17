@@ -25,6 +25,14 @@ const { listContractsByRole } = require('./query.service');
  */
 exports.id = async (req, res, next, id) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return next({
+        message: 'Id de contrato inválido',
+        statusCode: 400,
+        level: 'warn',
+      });
+    }
+
     const doc = await Model.findById(id).exec();
     if (!doc) {
       const message = `${Model.modelName} not found`;
