@@ -17,6 +17,7 @@ const {
   processContractStatusChange,
   persistVouchers,
 } = require('./service');
+const { listContractsByRole } = require('./query.service');
 
 
 /**
@@ -532,447 +533,47 @@ async function calcularEdad(fecha) {
 
 exports.all = async (req, res, next) => {
   const { query = {}, decoded = {} } = req;
-  const { _id = null } = decoded;
-  const { limit, page, skip } = paginar(query);
-
-  const persona = await Persona.findOne({ "_id": _id });
-  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
-  let registro = [];
-  const vector = persona.idMarca.forEach(x => {
-    registro.push(x.toString());
-  });
+  const { limit, skip } = paginar(query);
 
   try {
-    let docs;
-    let totalContratos;
-    if (role.nombre.includes('Super')) {
-      console.log('entre Super');
-      docs = await Model.find({})
-        .populate('idRepresentante', 'nombresApellidos cedula email estado')
-        .populate('addedUser', 'nombresApellidos tipo email estado')
-        .populate('modifiedUser', 'nombresApellidos tipo email estado')
-        .populate('personaAprueba', 'nombresApellidos tipo email estado')
-        .sort({ '_id': -1 })//ayuda a ordenar del ultimo registro al primero
-        .skip(skip).limit(limit).exec();
-
-      totalContratos = await Model.countDocuments();
-
-    } else if (role.nombre.includes('Admin')) {
-      console.log('entre admin');
-      docs = await Model.aggregate([
-        {
-          $unwind: '$marcasVendidas'
-        },
-        {
-          $lookup: {
-            from: 'personas',
-            localField: 'addedUser',
-            foreignField: '_id',
-            as: 'addedUser'
-          }
-        },
-        {
-          $match: {
-            $and:
-              [
-                { 'addedUser.idCiudad': { $in: persona.idCiudad } },
-                { "marcasVendidas.item_id": { $in: registro } }
-              ]
-          }
-        },
-        {
-          $group: {
-            _id: '$_id',
-            voucher: { $first: '$voucher' },
-            estado: { $first: '$estado' },
-            idRepresentante: { $first: '$idRepresentante' },
-            tipoPago: { $first: '$tipoPago' },
-            estadoVenta: { $first: '$estadoVenta' },
-            valorTotal: { $first: '$valorTotal' },
-            formaPago: { $first: '$formaPago' },
-            comentario: { $first: '$comentario' },
-            diretorAsignado: { $first: '$diretorAsignado' },
-            estadoPrograma: { $first: '$estadoPrograma' },
-            fechaAprobacion: { $first: '$fechaAprobacion' },
-            campania: { $first: '$campania' },
-            marcasVendidas: { $push: '$marcasVendidas' },
-            addedUser: { $first: '$addedUser' },
-            codigo: { $first: '$codigo' },
-            abono: { $first: '$abono' },
-            pea: { $first: '$pea' },
-            entrevistaInicial: { $first: '$entrevistaInicial' },
-            createdAt: { $first: '$createdAt' },
-            updateAt: { $first: '$updateAt' },
-            fecha: { $first: '$fecha' }
-          }
-        },
-        {
-          $lookup: {
-            from: 'representantes',
-            localField: 'idRepresentante',
-            foreignField: '_id',
-            as: 'idRepresentante'
-          }
-        },
-        {
-          $unwind: '$idRepresentante'
-        },
-        {
-          $unwind: '$addedUser'
-        }
-      ])
-        .sort({ '_id': -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec();
-      totalContratos = await Model.countDocuments();
-    }
-    if (role.nombre.includes('User') || role.nombre.includes('Docente')) {
-      console.log('entre User');
-      docs = await Model.aggregate([
-        {
-          $unwind: '$marcasVendidas'
-        },
-        {
-          $lookup: {
-            from: 'personas',
-            localField: 'addedUser',
-            foreignField: '_id',
-            as: 'addedUser'
-          }
-        },
-        {
-          $match: {
-            $and:
-              [
-                { 'addedUser.0._id': persona._id },
-                { 'addedUser.idCiudad': { $in: persona.idCiudad } }
-              ]
-          }
-        },
-        {
-          $group: {
-            _id: '$_id',
-            voucher: { $first: '$voucher' },
-            estado: { $first: '$estado' },
-            idRepresentante: { $first: '$idRepresentante' },
-            tipoPago: { $first: '$tipoPago' },
-            estadoVenta: { $first: '$estadoVenta' },
-            valorTotal: { $first: '$valorTotal' },
-            formaPago: { $first: '$formaPago' },
-            comentario: { $first: '$comentario' },
-            diretorAsignado: { $first: '$diretorAsignado' },
-            estadoPrograma: { $first: '$estadoPrograma' },
-            fechaAprobacion: { $first: '$fechaAprobacion' },
-            campania: { $first: '$campania' },
-            marcasVendidas: { $push: '$marcasVendidas' },
-            addedUser: { $first: '$addedUser' },
-            codigo: { $first: '$codigo' },
-            abono: { $first: '$abono' },
-            pea: { $first: '$pea' },
-            entrevistaInicial: { $first: '$entrevistaInicial' },
-            createdAt: { $first: '$createdAt' },
-            updateAt: { $first: '$updateAt' },
-            fecha: { $first: '$fecha' }
-          }
-        },
-        {
-          $lookup: {
-            from: 'representantes',
-            localField: 'idRepresentante',
-            foreignField: '_id',
-            as: 'idRepresentante'
-          }
-        },
-        {
-          $unwind: '$idRepresentante'
-        },
-        {
-          $unwind: '$addedUser'
-        }
-      ])
-
-        .sort({ '_id': -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec();
-      totalContratos = await Model.countDocuments();
-    }
+    const { docs, totalContratos } = await listContractsByRole({
+      userId: decoded._id,
+      skip,
+      limit,
+    });
 
     res.json({
       success: true,
       ok: "all",
       data: docs,
-      totalContratos
+      totalContratos,
     });
-
   } catch (err) {
     next(new Error(err));
   }
-
-
-  /* const { query = {}, decoded = {} } = req;
-  const { _id = null } = decoded;//_id persona que esta ingresada en el sistema 
-
-  console.log('_id', _id);
-
-  const { limit, page, skip } = paginar(query);
-
-  const persona = await Persona.findOne({ "_id": _id });
-
-  //TODO:Si soy administrador veo todos los datos
-  //TODO:Si soy marketing solo veo mis contratos
-
-
-
-  try {
-    const docs = await Model.find({})
-      .populate('idRepresentante', 'nombresApellidos cedula email estado')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .populate('personaAprueba', 'nombresApellidos tipo email estado')
-      .sort({ '_id': -1 })//ayuda a ordenar del ultimo registro al primero
-      .skip(skip).limit(limit).exec();
-
-    const totalContratos = await Model.countDocuments();
-
-    res.json({
-      success: true,
-      ok: "all",
-      data: docs,
-      totalContratos
-    });
-  } catch (err) {
-    next(new Error(err));
-  } */
-
 };
 
 exports.allAprobados = async (req, res, next) => {
-
   const { query = {}, decoded = {} } = req;
-  const { _id = null } = decoded;
-  const { limit, page, skip } = paginar(query);
-
-  const persona = await Persona.findOne({ "_id": _id });
-  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
-  let registro = [];
-  const vector = persona.idMarca.forEach(x => {
-    registro.push(x.toString());
-  });
+  const { limit, skip } = paginar(query);
 
   try {
-    let docs;
-    let totalContratos;
-    if (role.nombre.includes('Super')) {
-      console.log('entre Super');
-      docs = await Model.find({ estado: 'Aprobado' })
-        .populate('idRepresentante', 'nombresApellidos cedula email estado')
-        .populate('addedUser', 'nombresApellidos tipo email estado')
-        .populate('modifiedUser', 'nombresApellidos tipo email estado')
-        .populate('personaAprueba', 'nombresApellidos tipo email estado')
-        .sort({ '_id': -1 })//ayuda a ordenar del ultimo registro al primero
-        .skip(skip).limit(limit).exec();
-
-      totalContratos = await Model.countDocuments();
-
-    } else if (role.nombre.includes('Admin')) {
-      console.log('entre admin');
-      docs = await Model.aggregate([
-        {
-          $match: {
-            estado: 'Aprobado'
-          }
-        },
-        {
-          $unwind: '$marcasVendidas'
-        },
-        {
-          $lookup: {
-            from: 'personas',
-            localField: 'addedUser',
-            foreignField: '_id',
-            as: 'addedUser'
-          }
-        },
-        {
-          $match: {
-            $and:
-              [
-                { 'addedUser.idCiudad': { $in: persona.idCiudad } },
-                { "marcasVendidas.item_id": { $in: registro } }
-              ]
-          }
-        },
-        {
-          $group: {
-            _id: '$_id',
-            voucher: { $first: '$voucher' },
-            estado: { $first: '$estado' },
-            idRepresentante: { $first: '$idRepresentante' },
-            tipoPago: { $first: '$tipoPago' },
-            estadoVenta: { $first: '$estadoVenta' },
-            valorTotal: { $first: '$valorTotal' },
-            formaPago: { $first: '$formaPago' },
-            comentario: { $first: '$comentario' },
-            diretorAsignado: { $first: '$diretorAsignado' },
-            estadoPrograma: { $first: '$estadoPrograma' },
-            fechaAprobacion: { $first: '$fechaAprobacion' },
-            campania: { $first: '$campania' },
-            marcasVendidas: { $push: '$marcasVendidas' },
-            addedUser: { $first: '$addedUser' },
-            codigo: { $first: '$codigo' },
-            abono: { $first: '$abono' },
-            pea: { $first: '$pea' },
-            entrevistaInicial: { $first: '$entrevistaInicial' },
-            createdAt: { $first: '$createdAt' },
-            updateAt: { $first: '$updateAt' },
-            fecha: { $first: '$fecha' }
-          }
-        },
-        {
-          $lookup: {
-            from: 'representantes',
-            localField: 'idRepresentante',
-            foreignField: '_id',
-            as: 'idRepresentante'
-          }
-        },
-        {
-          $unwind: '$idRepresentante'
-        },
-        {
-          $unwind: '$addedUser'
-        }
-      ])
-        .sort({ '_id': -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec();
-      totalContratos = await Model.countDocuments();
-    }
-    if (role.nombre.includes('User') || role.nombre.includes('Docente')) {
-      console.log('entre User');
-      docs = await Model.aggregate([
-        {
-          $match: {
-            estado: 'Aprobado'
-          }
-        },
-        {
-          $unwind: '$marcasVendidas'
-        },
-        {
-          $lookup: {
-            from: 'personas',
-            localField: 'addedUser',
-            foreignField: '_id',
-            as: 'addedUser'
-          }
-        },
-        {
-          $match: {
-            $and:
-              [
-                { 'addedUser.0._id': persona._id },
-                { 'addedUser.idCiudad': { $in: persona.idCiudad } },
-                { "marcasVendidas.item_id": { $in: registro } }
-              ]
-          }
-        },
-        {
-          $group: {
-            _id: '$_id',
-            voucher: { $first: '$voucher' },
-            estado: { $first: '$estado' },
-            idRepresentante: { $first: '$idRepresentante' },
-            tipoPago: { $first: '$tipoPago' },
-            estadoVenta: { $first: '$estadoVenta' },
-            valorTotal: { $first: '$valorTotal' },
-            formaPago: { $first: '$formaPago' },
-            comentario: { $first: '$comentario' },
-            diretorAsignado: { $first: '$diretorAsignado' },
-            estadoPrograma: { $first: '$estadoPrograma' },
-            fechaAprobacion: { $first: '$fechaAprobacion' },
-            campania: { $first: '$campania' },
-            marcasVendidas: { $push: '$marcasVendidas' },
-            addedUser: { $first: '$addedUser' },
-            codigo: { $first: '$codigo' },
-            abono: { $first: '$abono' },
-            pea: { $first: '$pea' },
-            entrevistaInicial: { $first: '$entrevistaInicial' },
-            createdAt: { $first: '$createdAt' },
-            updateAt: { $first: '$updateAt' },
-            fecha: { $first: '$fecha' }
-          }
-        },
-        {
-          $lookup: {
-            from: 'representantes',
-            localField: 'idRepresentante',
-            foreignField: '_id',
-            as: 'idRepresentante'
-          }
-        },
-        {
-          $unwind: '$idRepresentante'
-        },
-        {
-          $unwind: '$addedUser'
-        }
-      ])
-
-        .sort({ '_id': -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec();
-      totalContratos = await Model.countDocuments();
-    }
+    const { docs, totalContratos } = await listContractsByRole({
+      userId: decoded._id,
+      onlyApproved: true,
+      skip,
+      limit,
+    });
 
     res.json({
       success: true,
       ok: "all",
       data: docs,
-      totalContratos
+      totalContratos,
     });
-
   } catch (err) {
     next(new Error(err));
   }
-
-  /* const { query = {}, decoded = {} } = req;
-  const { _id = null } = decoded;//_id persona que esta ingresada en el sistema 
-
-  const { limit, page, skip } = paginar(query);
-
-  const persona = await Persona.findOne({ "_id": _id });
-
-  //TODO:Si soy administrador veo todos los datos
-  //TODO:Si soy marketing solo veo mis contratos
-
-
-
-  try {
-    const docs = await Model.find({ estado: 'Aprobado' })
-      .populate('idRepresentante', 'nombresApellidos cedula email estado')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .populate('personaAprueba', 'nombresApellidos tipo email estado')
-      .sort({ '_id': -1 })//ayuda a ordenar del ultimo registro al primero
-      .skip(skip).limit(limit).exec();
-
-    const totalContratos = await Model.countDocuments();
-
-    res.json({
-      success: true,
-      ok: "all",
-      data: docs,
-      totalContratos
-    });
-  } catch (err) {
-    next(new Error(err));
-  } */
-
 };
 
 
@@ -1042,108 +643,23 @@ exports.allByAprobadosCiudadMarca = async (req, res, next) => {
 
 exports.allByAprobadosCiudadMarca2 = async (req, res, next) => {
   const { query = {}, decoded = {} } = req;
-  const { _id = null } = decoded;
-  const { limit, page, skip } = paginar(query);
-
-  const persona = await Persona.findOne({ "_id": _id });
-  const role = await Role.findOne({ "_id": { $in: persona.tipo } });
-  let registro = [];
-  const vector = persona.idMarca.forEach(x => {
-    registro.push(x.toString());
-  });
+  const { limit, skip } = paginar(query);
 
   try {
-    let docs;
-    let totalContratos;
-    if (role.nombre.includes('Super')) {
-      docs = await Model.find({})
-        .populate('idRepresentante', 'nombresApellidos cedula email estado')
-        .populate('addedUser', 'nombresApellidos tipo email estado')
-        .populate('modifiedUser', 'nombresApellidos tipo email estado')
-        .populate('personaAprueba', 'nombresApellidos tipo email estado')
-        .sort({ '_id': -1 })//ayuda a ordenar del ultimo registro al primero
-        .skip(skip).limit(limit).exec();
-
-      totalContratos = await Model.countDocuments();
-
-    }
-    if (role.nombre.includes('Admin')) {
-
-      docs = await Model.aggregate([
-        {
-          $match: {
-            estado: 'Aprobado'
-          }
-        },
-        {
-          $unwind: '$marcasVendidas'
-        },
-        {
-          $lookup: {
-            from: 'personas',
-            localField: 'addedUser',
-            foreignField: '_id',
-            as: 'addedUser'
-          }
-        },
-        {
-          $match: {
-            $and:
-              [
-                { 'addedUser.idCiudad': { $in: persona.idCiudad } },
-                { "marcasVendidas.item_id": { $in: registro } }
-              ]
-          }
-        }
-      ])
-        .skip(skip)
-        .limit(limit)
-        .exec();
-      totalContratos = await Model.countDocuments();
-    }
-    if (role.nombre.includes('User') || role.nombre.includes('Docente')) {
-
-      docs = await Model.aggregate([
-        {
-          $match: {
-            estado: 'Aprobado'
-          }
-        },
-        {
-          $unwind: '$marcasVendidas'
-        },
-        {
-          $lookup: {
-            from: 'personas',
-            localField: 'addedUser',
-            foreignField: '_id',
-            as: 'addedUser'
-          }
-        },
-        {
-          $match: {
-            $and:
-              [
-                { 'addedUser.0._id': persona._id },
-                { 'addedUser.idCiudad': { $in: persona.idCiudad } },
-                { "marcasVendidas.item_id": { $in: registro } }
-              ]
-          }
-        }
-      ])
-        .skip(skip)
-        .limit(limit)
-        .exec();
-      totalContratos = await Model.countDocuments();
-    }
+    const { docs, totalContratos } = await listContractsByRole({
+      userId: decoded._id,
+      onlyApproved: true,
+      compact: true,
+      skip,
+      limit,
+    });
 
     res.json({
       success: true,
       ok: "all",
       data: docs,
-      totalContratos
+      totalContratos,
     });
-
   } catch (err) {
     next(new Error(err));
   }
