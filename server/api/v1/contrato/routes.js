@@ -1,7 +1,13 @@
 const router = require('express').Router();
 const controller = require('./controller');
 const { auth, me, owner } = require('../auth');
-const { check } = require('express-validator');
+const { validateFields } = require('../../../middleware/validation');
+const {
+  createContratoValidations,
+  updateContratoValidations,
+  voucherValidations,
+  reporteVentasValidations,
+} = require('./validators');
 
 /**
  * /api/contrato/ POST - CREATE
@@ -144,7 +150,7 @@ const { check } = require('express-validator');
 
 router
   .route('/')
-  .post(auth, controller.create)
+  .post(auth, createContratoValidations, validateFields, controller.create)
   .get(auth, controller.all);
 
 router
@@ -161,21 +167,21 @@ router
 
 router
   .route('/reporte-ventas')
-  .post(auth, controller.reporte_ventas);
+  .post(auth, reporteVentasValidations, validateFields, controller.reporte_ventas);
 
 router.param('id', controller.id);
 
 router
   .route('/vouchercontrato/:id')
-  .put(auth, controller.updateVoucher);
+  .put(auth, voucherValidations, validateFields, controller.updateVoucher);
 router
   .route('/vouchercontrato2/:id')
-  .put(auth, controller.updateVoucher2);
+  .put(auth, voucherValidations, validateFields, controller.updateVoucher2);
 
 router
   .route('/:id')
   .get(auth, controller.read)
-  .put(auth, controller.update)
+  .put(auth, updateContratoValidations, validateFields, controller.update)
   .delete(auth, controller.delete);
 
 

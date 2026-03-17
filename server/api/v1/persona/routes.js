@@ -2,6 +2,13 @@ const router = require('express').Router();
 const { auth } = require('../auth');
 const controller = require('./controller');
 const { createRateLimit } = require('../../../config/security');
+const { validateFields } = require('../../../middleware/validation');
+const {
+  signupValidations,
+  signinValidations,
+  createPersonaValidations,
+  updatePersonaValidations,
+} = require('./validators');
 
 const authLimiter = createRateLimit({
   windowMs: 15 * 60 * 1000,
@@ -174,7 +181,7 @@ router.param('id', controller.id);
 
 router
   .route('/')
-  .post(auth, controller.create)
+  .post(auth, createPersonaValidations, validateFields, controller.create)
   .get(auth, controller.all);
 
 router
@@ -190,10 +197,10 @@ router
   .get(authLimiter, controller.recuperarPassword)
 
 router.route('/signup')
-  .post(authLimiter, controller.signup);
+  .post(authLimiter, signupValidations, validateFields, controller.signup);
 
 router.route('/signin')
-  .post(authLimiter, controller.signin);
+  .post(authLimiter, signinValidations, validateFields, controller.signin);
 
 router.route('/renew')
   .get(auth, controller.renewToken);
@@ -201,7 +208,7 @@ router.route('/renew')
 router
   .route('/:id')
   .get(auth, controller.read)
-  .put(auth, controller.update)
+  .put(auth, updatePersonaValidations, validateFields, controller.update)
   .delete(auth, controller.delete);
 
 router
