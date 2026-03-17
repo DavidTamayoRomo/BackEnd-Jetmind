@@ -28,6 +28,9 @@ const config = {
   token: {
     secret: process.env.TOKEN_SECRET,
     expires: process.env.TOKEN_EXPIRES,
-  }
+  },
+  app: {
+    frontendUrl: process.env.FRONTEND_URL || '',
+  },
 }
 module.exports = config;

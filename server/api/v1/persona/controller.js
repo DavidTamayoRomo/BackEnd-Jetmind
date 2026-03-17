@@ -13,8 +13,18 @@ const envioEmail = require('../../../email');
 
 const mongoose = require("mongoose");
 const { getMenuFrontEnd } = require('../../../helper/menu');
+const config = require('../../../config');
 
 const { USER_EMAIL } = process.env;
+const { frontendUrl } = config.app;
+
+const buildPasswordLink = (userId) => {
+  if (!frontendUrl) {
+    return `${userId}`;
+  }
+
+  return `${frontendUrl.replace(/\/$/, '')}/password/${userId}`;
+};
 
 exports.id = async (req, res, next, id) => {
   try {
@@ -37,6 +47,9 @@ exports.id = async (req, res, next, id) => {
 
 exports.signup = async (req, res, next) => {
   const { body = {} } = req;
+  if (body.email) {
+    body.email = String(body.email).trim().toLowerCase();
+  }
   const document = new Model(body);
   try {
     const doc = await document.save();
@@ -60,7 +73,8 @@ exports.signup = async (req, res, next) => {
  */
 exports.signin = async (req, res, next) => {
   const { body = {} } = req;
-  const { email = '', password = '' } = body;
+  const email = String(body.email || '').trim().toLowerCase();
+  const { password = '' } = body;
   try {
     const user = await Model.findOne({ email }).exec();
     if (!user) {
@@ -139,6 +153,9 @@ exports.create = async (req, res, next) => {
   const { body = {}, params = {}, decoded = {} } = req;
   const { _id = null } = decoded;
   console.log("ID:" + _id);
+  if (body.email) {
+    body.email = String(body.email).trim().toLowerCase();
+  }
   const { email } = body;
 
   if (_id) {
@@ -160,13 +177,15 @@ exports.create = async (req, res, next) => {
     const doc = await document.save();
     res.status(201);
     /** Envio de correo de verificacion */
-    envioEmail.transporter.sendMail({
-      from: USER_EMAIL,
-      to: 'davidtamayoromo@gmail.com',
-      subject: 'Corporacion JETMIND',
-      //TODO: poner la ruta global del servidor www.dominio.com/password/doc.id
-      html: `<h1>Hola ${doc.nombresApellidos}</h1><span>Bienvenido/a, te hemos agregado al sistema empresarial, necesitamos primero generar tu clave personal para ingresar al sistema.</span><br><br><a href=${doc._id}><button type="button">Click Aqui!</button></a>`
-    })
+    if (doc.email) {
+      envioEmail.transporter.sendMail({
+        from: USER_EMAIL,
+        to: doc.email,
+        subject: 'Corporacion JETMIND',
+        //TODO: poner la ruta global del servidor www.dominio.com/password/doc.id
+        html: `<h1>Hola ${doc.nombresApellidos}</h1><span>Bienvenido/a, te hemos agregado al sistema empresarial, necesitamos primero generar tu clave personal para ingresar al sistema.</span><br><br><a href="${buildPasswordLink(doc._id)}"><button type="button">Click Aqui!</button></a>`
+      }).catch((error) => console.log(error));
+    }
     res.json({
       success: true,
       ok: "create",
@@ -178,16 +197,16 @@ exports.create = async (req, res, next) => {
 };
 
 exports.recuperarPassword = async (req, res, next) => {
-  const { email } = req.params;
+  const email = String(req.params.email || '').trim().toLowerCase();
   try {
     const doc = await Model.findOne({ 'email': email });
     if (doc) {
       const esperar = await envioEmail.transporter.sendMail({
         from: USER_EMAIL,
-        to: 'davidtamayoromo@gmail.com',
+        to: doc.email,
         subject: "Recuperar Contraseña",
         //TODO: poner la ruta global del servidor www.dominio.com/password/doc.id
-        html: `<h1>Hola ${doc.nombresApellidos}</h1><span> Haz clic en el siguiente boton para restablecer tu contraseña</span><br><br><a href=${doc._id}><button type="button">Click Aqui!</button></a>`
+        html: `<h1>Hola ${doc.nombresApellidos}</h1><span> Haz clic en el siguiente boton para restablecer tu contraseña</span><br><br><a href="${buildPasswordLink(doc._id)}"><button type="button">Click Aqui!</button></a>`
       });
 
       if (esperar != null) {
@@ -211,7 +230,7 @@ exports.enviar = async (req, res, next) => {
       //con await esperamos la respuesta del envio del email
       const esperar = await envioEmail.transporter.sendMail({
         from: USER_EMAIL,
-        to: 'davidtamayoromo@gmail.com',
+        to: USER_EMAIL,
         subject: "Prueba email NODEJS" + index,
       });
 

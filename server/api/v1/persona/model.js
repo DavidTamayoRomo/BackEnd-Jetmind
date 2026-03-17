@@ -112,8 +112,26 @@ const fields = {
 //timestamps es created at - updated at
 const persona = new Schema(fields, { timestamps: true });
 
+persona.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    return ret;
+  },
+});
+
+persona.set('toObject', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    return ret;
+  },
+});
+
 persona.pre('save', async function save(next) {
-  if (this.isNew || this.isModified('password')) {
+  if (this.email) {
+    this.email = String(this.email).trim().toLowerCase();
+  }
+
+  if ((this.isNew || this.isModified('password')) && this.password) {
     this.password = await hash(this.password, 10);
   }
   next();

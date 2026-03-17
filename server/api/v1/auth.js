@@ -1,6 +1,7 @@
 
 
 const { sign, verify } = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const config = require('../../config');
 
@@ -51,11 +52,13 @@ const auth = (req, res, next) => {
 /**
  * Control sobre sus datos
  */
+const sameId = (left, right) => String(left) === String(right);
+
 const me = (req, res, next) => {
   const { decoded = {}, params = {} } = req;
   const { _id } = decoded;
   const { id } = params;
-  if (_id !== id) {
+  if (!sameId(_id, id)) {
     const message = 'Forbidden';
     next({
       success: false,
@@ -73,9 +76,11 @@ const me = (req, res, next) => {
 const owner = (req, res, next) => {
   const { decoded = {}, doc = {} } = req;
   const { _id } = decoded;
-  const { id } = doc.addedUser;
+  const ownerId = doc && doc.addedUser
+    ? (mongoose.isValidObjectId(doc.addedUser) ? doc.addedUser : doc.addedUser.id || doc.addedUser._id)
+    : undefined;
   //const {id}= doc.userId;//cambiar nombre userid
-  if (_id !== id) {
+  if (!sameId(_id, ownerId)) {
     const message = 'Forbidden';
     next({
       success: false,
@@ -96,9 +101,11 @@ const owner = (req, res, next) => {
 const roles = (req, res, next) => {
   const { decoded = {}, doc = {} } = req;
   const { _id } = decoded;
-  const { id } = doc.addedUser;
+  const ownerId = doc && doc.addedUser
+    ? (mongoose.isValidObjectId(doc.addedUser) ? doc.addedUser : doc.addedUser.id || doc.addedUser._id)
+    : undefined;
   //const {id}= doc.userId;//cambiar nombre userid
-  if (_id !== id) {
+  if (!sameId(_id, ownerId)) {
     const message = 'Forbidden';
     next({
       success: false,
@@ -118,5 +125,6 @@ module.exports = {
   signToken,
   auth,
   me,
-  owner
+  owner,
+  roles,
 };
