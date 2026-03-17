@@ -1,6 +1,13 @@
 const router = require('express').Router();
 const { auth } = require('../auth');
 const controller = require('./controller');
+const { createRateLimit } = require('../../../config/security');
+
+const authLimiter = createRateLimit({
+  windowMs: 15 * 60 * 1000,
+  maxRequests: 10,
+  message: 'Demasiados intentos. Intenta nuevamente en unos minutos.',
+});
 
 /**
  * /api/persona/ POST - CREATE
@@ -176,17 +183,17 @@ router
 
 router
   .route('/email')
-  .get(controller.enviar)
+  .get(auth, controller.enviar)
 
 router
   .route('/recuperar-password/:email')
-  .get(controller.recuperarPassword)
+  .get(authLimiter, controller.recuperarPassword)
 
 router.route('/signup')
-  .post(controller.signup);
+  .post(authLimiter, controller.signup);
 
 router.route('/signin')
-  .post(controller.signin);
+  .post(authLimiter, controller.signin);
 
 router.route('/renew')
   .get(auth, controller.renewToken);

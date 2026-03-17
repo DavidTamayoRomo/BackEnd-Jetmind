@@ -1,4 +1,7 @@
 node_modules/
+.env
+server/uploads/
+contratoDigital*.pdf
 .DS_Store
 .Thumbs.db
 

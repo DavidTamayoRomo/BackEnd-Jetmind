@@ -161,16 +161,16 @@ router
 
 router
   .route('/reporte-ventas')
-  .post(controller.reporte_ventas);
+  .post(auth, controller.reporte_ventas);
 
 router.param('id', controller.id);
 
 router
   .route('/vouchercontrato/:id')
-  .put(controller.updateVoucher);
+  .put(auth, controller.updateVoucher);
 router
   .route('/vouchercontrato2/:id')
-  .put(controller.updateVoucher2);
+  .put(auth, controller.updateVoucher2);
 
 router
   .route('/:id')

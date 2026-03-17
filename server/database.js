@@ -1,33 +1,48 @@
 const mongoose = require('mongoose');
 const logger = require('./config/logger');
-exports.connect = (
-  /* {
+const config = require('./config');
+
+function buildMongoUri() {
+  if (process.env.MONGODB_URI) {
+    return process.env.MONGODB_URI;
+  }
+
+  const {
     protocol = 'mongodb',
-    url = 'mongodb+srv://db-mongodb-jetmind-e41a6a59.mongo.ondigitalocean.com',
-    username = 'doadmin',
-    password = '90pjq5Y782QW31ia'
-  },
-  options = {} */
-) => {
-  let dburl = '';
+    url = 'localhost:27017/jetmind',
+    username,
+    password,
+  } = config.database;
 
-  //Required auth
-  /* if (username && password) {
-    dburl = `${protocol}://${username}:${password}@${url}`;
-  } else {
-    dburl = `${protocol}://${url}`;
-  } */
+  if (username && password) {
+    return `${protocol}://${encodeURIComponent(username)}:${encodeURIComponent(password)}@${url}`;
+  }
 
-  mongoose.connect('mongodb+srv://doadmin:90pjq5Y782QW31ia@db-mongodb-jetmind-e41a6a59.mongo.ondigitalocean.com/jetmind?authSource=admin&replicaSet=db-mongodb-jetmind&tls=true', {
-    /* ...options, */
+  return `${protocol}://${url}`;
+}
+
+function buildMongoOptions(uri) {
+  const options = {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
-    tlsCAFile: __dirname + '/ca-certificate.crt',
-  });
+  };
+
+  if (uri.includes('mongodb+srv://')) {
+    options.tlsCAFile = `${__dirname}/ca-certificate.crt`;
+  }
+
+  return options;
+}
+
+exports.connect = () => {
+  const uri = buildMongoUri();
+  const options = buildMongoOptions(uri);
+
+  mongoose.connect(uri, options);
 
   mongoose.connection.on('open', () => {
-    logger.info('Base de datos conectada');
+    logger.info(`Base de datos conectada: ${uri.replace(/:\/\/([^:]+):([^@]+)@/, '://$1:***@')}`);
   });
 
   mongoose.connection.on('close', () => {
@@ -47,9 +62,7 @@ exports.connect = (
 
   exports.disconnect = () => {
     mongoose.connection.close(() => {
-      logger.info('Base de datos desconectada')
+      logger.info('Base de datos desconectada');
     });
   };
-
-
-}
+};

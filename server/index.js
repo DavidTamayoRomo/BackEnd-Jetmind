@@ -8,6 +8,7 @@ const logger = require('./config/logger');
 const api = require('./api/v1');
 const docs = require('./api/v1/docs');
 const path = require('path');
+const { buildCorsOptions, securityHeaders } = require('./config/security');
 
 // Init App
 const app = express();
@@ -17,15 +18,10 @@ app.use(express.static(__dirname + '/public'));
 
 //Documentacion
 app.use('/docs', swaggerUI.serve, swaggerUI.setup(docs));
+app.use(securityHeaders);
 
 //setup CORS
-app.use(
-  cors({
-    origin: '*',
-    methods: ['GET', 'PUT', 'POST', 'DELETE'],
-    allowedHeaders: ['Accept', 'Content-Type', 'Authorization'],
-  })
-);
+app.use(cors(buildCorsOptions()));
 
 //para que las ruta que contiene imagenes pase
 app.use(express.json({ limit: '50mb' }));

@@ -57,7 +57,7 @@ const actualizarImagenPersona = async (id, atributo, nombreArchivo) => {
   await persona.save();
 }
 /**Marca */
-const actualizarImagenMarca = async (id, nombreArchivo, res) => {
+const actualizarImagenMarca = async (id, nombreArchivo) => {
   let pathViejo;
   const marca = await Marca.findById(id);
   if (!marca) {
@@ -72,12 +72,7 @@ const actualizarImagenMarca = async (id, nombreArchivo, res) => {
   marca.logo = nombreArchivo;
 
   await marca.save();
-  res.json({
-    success: true,
-    msg: 'Imagen actualizada',
-    nombreArchivo,
-    data: marca
-  });
+  return marca;
 }
 /**Contrato */
 const actualizarImagenContrato = async (id, nombreArchivo, res) => {
@@ -123,35 +118,35 @@ const actualizarImagenContratoVoucher = async (id, nombreArchivo, res) => {
   }); */
 }
 
-const actualizarImagen = async (tabla, atributo, id, nombreArchivo, res) => {
+const actualizarImagen = async (tabla, atributo, id, nombreArchivo) => {
   console.log('Este es un mensaje de actualizar imagen');
   switch (tabla) {
     case 'personas':
-      actualizarImagenPersona(id, atributo, nombreArchivo);
+      await actualizarImagenPersona(id, atributo, nombreArchivo);
       return true;
     case 'estudiantes':
-      actualizarImagenPersona(id, nombreArchivo);
+      await actualizarImagenPersona(id, nombreArchivo);
       return true;
     case 'representantes':
-      actualizarImagenPersona(id, nombreArchivo);
+      await actualizarImagenPersona(id, nombreArchivo);
       return true;
     case 'empresas':
-      actualizarImagenPersona(id, nombreArchivo);
+      await actualizarImagenPersona(id, nombreArchivo);
       return true;
     case 'sucursales':
-      actualizarImagenPersona(id, nombreArchivo);
+      await actualizarImagenPersona(id, nombreArchivo);
       return true;
     case 'marcas':
-      actualizarImagenMarca(id, nombreArchivo, res);
+      await actualizarImagenMarca(id, nombreArchivo);
       return true;
     case 'contratos':
-      actualizarImagenContrato(id, nombreArchivo);
+      await actualizarImagenContrato(id, nombreArchivo);
       return true;
     case 'contratosVouchers':
-      actualizarImagenContratoVoucher(id, nombreArchivo);
+      await actualizarImagenContratoVoucher(id, nombreArchivo);
       return true;
     case 'facturas':
-      actualizarImagenPersona(id, nombreArchivo);
+      await actualizarImagenPersona(id, nombreArchivo);
       return true;
     default:
       break;

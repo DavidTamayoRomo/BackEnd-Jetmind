@@ -17,7 +17,7 @@ router
 
 router
   .route('/uploasDigitalOCean')
-  .post(upload, controller.fileUploadDigitalOcean);
+  .post(auth, upload, controller.fileUploadDigitalOcean);
 
 router
   .route('/getDigitalOCean/:nombreImagen')
@@ -29,7 +29,7 @@ router.use(expressFileUpload());
 
 router
   .route('/uploads/:tabla/:atributo/:id')
-  .put(controller.fileUpload)
+  .put(auth, controller.fileUpload)
 
 router
   .route('/uploads/:tabla/:imagen')

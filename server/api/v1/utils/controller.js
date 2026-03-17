@@ -4,6 +4,10 @@ const { v4 } = require('uuid');
 const { actualizarImagen } = require('../../../utils');
 const fs = require('fs')
 
+const MAX_UPLOAD_SIZE = Number(process.env.MAX_UPLOAD_SIZE || 5 * 1024 * 1024);
+const ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif'];
+const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
+
 const { upload, s3 } = require("../../../helper/multer");
 const { BUCKET_NAME } = process.env;
 
@@ -37,6 +41,31 @@ const PeeaCharlotteUk18 = require('../peea_charlotte_uk_18/model');
 const EncuestaPadres = require('../encuesta_padres/model');
 const PlataformaIlvem = require('../plataforma_ilvem/model');
 const PlataformaCharlotte = require('../plataforma_charlotte/model');
+
+const ensureUploadDirectory = (tabla) => {
+  const uploadDir = path.resolve(__dirname, `../../../uploads/${tabla}`);
+  fs.mkdirSync(uploadDir, { recursive: true });
+  return uploadDir;
+};
+
+const validateImageFile = (file) => {
+  const fileName = file.name || '';
+  const extension = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : '';
+
+  if (!ALLOWED_EXTENSIONS.includes(extension)) {
+    return 'Formato no valido, solo se admite png, jpg, jpeg, gif';
+  }
+
+  if (file.mimetype && !ALLOWED_MIME_TYPES.includes(file.mimetype)) {
+    return 'Tipo MIME no permitido';
+  }
+
+  if (file.size > MAX_UPLOAD_SIZE) {
+    return `El archivo excede el tamaño máximo permitido (${MAX_UPLOAD_SIZE} bytes)`;
+  }
+
+  return null;
+};
 
 
 /**
@@ -3195,7 +3224,7 @@ exports.fileUploadVouchers = (req, res) => {
 
 }
 
-exports.fileUpload = (req, res) => {
+exports.fileUpload = async (req, res) => {
   const tabla = req.params.tabla;
   const atributo = req.params.atributo;
   const id = req.params.id;
@@ -3208,98 +3237,51 @@ exports.fileUpload = (req, res) => {
     });
   }
   /**Validar que exista un archivo */
-  if (!req.files || Object.keys(req.files).length === 0) {
+  if (!req.files || Object.keys(req.files).length === 0 || !req.files.imagen) {
     return res.status(400).json({
       success: false,
       data: 'No hay ningun archivo'
     });
   }
-  /**Procesar la imagen */
-  const file = req.files.imagen;
-  if (file.length > 1) {
-    //MAS DE UNA IMAGEN
-    let listaDenombresImagenes = [];
-    file.forEach(element => {
-      const NombreCortado = element.name.split('.');//david.tamayo.jpg
-      const extensionArchivo = NombreCortado[NombreCortado.length - 1];
 
-      /**Validar extension */
-      const extensionesValidas = ['png', 'PNG', 'jpg', 'jpeg', 'gif'];
-      if (!extensionesValidas.includes(extensionArchivo)) {
-        return res.status(400).json({
-          success: false,
-          data: 'Formato no valido, solo se admite png, jpg, jpeg, gif'
-        });
-      }
-      /**Generar el nombre de la imagen */
-      const nombreArchivo = `${v4()}.${extensionArchivo}`
+  const uploadDir = ensureUploadDirectory(tabla);
+  const files = Array.isArray(req.files.imagen) ? req.files.imagen : [req.files.imagen];
 
-      /**Path para guardar imagen */
-      const path = `./server/uploads/${tabla}/${nombreArchivo}`;
-
-      /**Mover la imagen */
-      element.mv(path, (err) => {
-        if (err) {
-          return res.status(500).json({
-            success: false,
-            msg: 'Error al mover la imagen'
-          });
-        }
-        listaDenombresImagenes.push(nombreArchivo);
-
-      });
-    });
-    setTimeout(() => {
-      /**Actualizar la ruta en la base de datos */
-      actualizarImagen(tabla, atributo, id, listaDenombresImagenes, res);
-      res.json({
-        success: true
-      });
-    }, 1000);
-
-
-  } else {
-    //UNA IMAGEN
-    console.log('Entre una imagen');
-    const NombreCortado = file.name.split('.');//david.tamayo.jpg
-    const extensionArchivo = NombreCortado[NombreCortado.length - 1];
-
-
-
-    /**Validar extension */
-    const extensionesValidas = ['png', 'PNG', 'jpg', 'jpeg', 'gif'];
-    if (!extensionesValidas.includes(extensionArchivo)) {
+  for (const file of files) {
+    const validationError = validateImageFile(file);
+    if (validationError) {
       return res.status(400).json({
         success: false,
-        data: 'Formato no valido, solo se admite png, jpg, jpeg, gif'
+        data: validationError,
       });
     }
-    /**Generar el nombre de la imagen */
-    const nombreArchivo = `${v4()}.${extensionArchivo}`
-
-    /**Path para guardar imagen */
-    const path = `./server/uploads/${tabla}/${nombreArchivo}`;
-
-    /**Mover la imagen */
-    file.mv(path, (err) => {
-      if (err) {
-        return res.status(500).json({
-          success: false,
-          msg: 'Error al mover la imagen'
-        });
-      }
-      /**Actualizar la ruta en la base de datos */
-      actualizarImagen(tabla, atributo, id, nombreArchivo, res);
-      res.json({
-        success: true,
-        data: nombreArchivo
-      });
-
-
-    });
   }
 
+  try {
+    const nombresArchivo = [];
 
+    for (const file of files) {
+      const extensionArchivo = file.name.split('.').pop().toLowerCase();
+      const nombreArchivo = `${v4()}.${extensionArchivo}`;
+      const destino = path.join(uploadDir, nombreArchivo);
+      await file.mv(destino);
+      nombresArchivo.push(nombreArchivo);
+    }
+
+    const payload = files.length > 1 ? nombresArchivo : nombresArchivo[0];
+    await actualizarImagen(tabla, atributo, id, payload, res);
+
+    return res.json({
+      success: true,
+      data: payload,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      msg: 'Error al mover la imagen',
+      error: error.message,
+    });
+  }
 }
 
 
