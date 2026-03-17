@@ -13,9 +13,14 @@ const Ciudad = require('../ciudad/model');
 const envioEmail = require('../../../email');
 const config = require('../../../config');
 
+const pdfFonts = require('pdfmake/build/vfs_fonts.js');
+
 const fonts = {
   Roboto: {
-    normal: Buffer.from(require('pdfmake/build/vfs_fonts.js').pdfMake.vfs['Roboto-Regular.ttf'], 'base64'),
+    normal: Buffer.from(pdfFonts['Roboto-Regular.ttf'], 'base64'),
+    bold: Buffer.from(pdfFonts['Roboto-Medium.ttf'], 'base64'),
+    italics: Buffer.from(pdfFonts['Roboto-Italic.ttf'], 'base64'),
+    bolditalics: Buffer.from(pdfFonts['Roboto-MediumItalic.ttf'], 'base64'),
   },
 };
 const printer = new PdfPrinter(fonts);
