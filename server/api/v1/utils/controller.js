@@ -1,15 +1,14 @@
 const { response } = require('express');
 const path = require('path');
-const { v4 } = require('uuid');
-const { actualizarImagen } = require('../../../utils');
 const fs = require('fs')
 
-const MAX_UPLOAD_SIZE = Number(process.env.MAX_UPLOAD_SIZE || 5 * 1024 * 1024);
-const ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif'];
-const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
-
 const { upload, s3 } = require("../../../helper/multer");
-const { BUCKET_NAME } = process.env;
+const {
+  handleLocalUpload,
+  getLocalUploadPath,
+  registerDigitalOceanUpload,
+  fetchDigitalOceanFile,
+} = require('./upload.service');
 
 const Role = require('../role/model');
 const Persona = require('../persona/model');
@@ -41,32 +40,6 @@ const PeeaCharlotteUk18 = require('../peea_charlotte_uk_18/model');
 const EncuestaPadres = require('../encuesta_padres/model');
 const PlataformaIlvem = require('../plataforma_ilvem/model');
 const PlataformaCharlotte = require('../plataforma_charlotte/model');
-
-const ensureUploadDirectory = (tabla) => {
-  const uploadDir = path.resolve(__dirname, `../../../uploads/${tabla}`);
-  fs.mkdirSync(uploadDir, { recursive: true });
-  return uploadDir;
-};
-
-const validateImageFile = (file) => {
-  const fileName = file.name || '';
-  const extension = fileName.includes('.') ? fileName.split('.').pop().toLowerCase() : '';
-
-  if (!ALLOWED_EXTENSIONS.includes(extension)) {
-    return 'Formato no valido, solo se admite png, jpg, jpeg, gif';
-  }
-
-  if (file.mimetype && !ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-    return 'Tipo MIME no permitido';
-  }
-
-  if (file.size > MAX_UPLOAD_SIZE) {
-    return `El archivo excede el tamaño máximo permitido (${MAX_UPLOAD_SIZE} bytes)`;
-  }
-
-  return null;
-};
-
 
 /**
  * ================================================
@@ -3225,56 +3198,15 @@ exports.fileUploadVouchers = (req, res) => {
 }
 
 exports.fileUpload = async (req, res) => {
-  const tabla = req.params.tabla;
-  const atributo = req.params.atributo;
-  const id = req.params.id;
-  /**Validar tipo */
-  const tiposValidos = ['personas', 'representantes', 'estudiantes', 'empresas', 'sucursales', 'marcas', 'contratos', 'facturas']; //a;adir los tipos validos es decir tablas que se tengan que subir archivos
-  if (!tiposValidos.includes(tabla)) {
-    return res.status(400).json({
-      success: false,
-      data: 'No se encontraron coincidencias con las tablas existentes'
-    });
-  }
-  /**Validar que exista un archivo */
-  if (!req.files || Object.keys(req.files).length === 0 || !req.files.imagen) {
-    return res.status(400).json({
-      success: false,
-      data: 'No hay ningun archivo'
-    });
-  }
-
-  const uploadDir = ensureUploadDirectory(tabla);
-  const files = Array.isArray(req.files.imagen) ? req.files.imagen : [req.files.imagen];
-
-  for (const file of files) {
-    const validationError = validateImageFile(file);
-    if (validationError) {
-      return res.status(400).json({
-        success: false,
-        data: validationError,
-      });
-    }
-  }
-
   try {
-    const nombresArchivo = [];
-
-    for (const file of files) {
-      const extensionArchivo = file.name.split('.').pop().toLowerCase();
-      const nombreArchivo = `${v4()}.${extensionArchivo}`;
-      const destino = path.join(uploadDir, nombreArchivo);
-      await file.mv(destino);
-      nombresArchivo.push(nombreArchivo);
-    }
-
-    const payload = files.length > 1 ? nombresArchivo : nombresArchivo[0];
-    await actualizarImagen(tabla, atributo, id, payload, res);
-
-    return res.json({
-      success: true,
-      data: payload,
+    const result = await handleLocalUpload({
+      tabla: req.params.tabla,
+      atributo: req.params.atributo,
+      id: req.params.id,
+      files: req.files,
     });
+
+    return res.status(result.status).json(result.body);
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -3291,68 +3223,18 @@ exports.fileUpload = async (req, res) => {
  * ======================================
  */
 exports.returnfileUpload = (req, res) => {
-  const tabla = req.params.tabla;
-  const imagen = req.params.imagen;
-
-  const pathImg = path.join(__dirname, `../../../uploads/${tabla}/${imagen}`);
-  //imagen por defecto
-  if (fs.existsSync(pathImg)) {
-
-    res.sendFile(pathImg);
-  } else {
-    const pathImg = path.join(__dirname, `../../../uploads/noIMG.png`);
-    res.sendFile(pathImg);
-  }
-
-
+  const pathImg = getLocalUploadPath(req.params.tabla, req.params.imagen);
+  res.sendFile(pathImg);
 }
 
 
 
 exports.fileUploadDigitalOcean = async (req, res) => {
-  const { body } = req;
-  const { idContrato } = body;
-
-  console.log('Entre a fileUploadDigitalOcean');
-  // show the uploaded file information
-  console.log(req.files);
-  const contrato = await Contrato.findById(idContrato);
-  if (contrato) {
-    contrato.voucher.push(req.files[0].key);
-    contrato.save();
-  } else {
-    //marca
-    const marca = await Marca.findById(idContrato);
-    if (marca) {
-      marca.logo = req.files[0].key;
-      marca.save();
-    }
-  }
-
-  // Saving the Image URL in Database
-  //newImage.url = req.file.location;//para almacenar en la base de datos
-  //await newImage.save();
-
-  res.json({
-    success: true
-  });
+  const result = await registerDigitalOceanUpload(req.body, req.files);
+  res.json(result);
 }
 exports.getFilesDigitalOcean = async (req, res) => {
-  const { nombreImagen } = req.params;
-  const data = await s3
-    .getObject({
-      Bucket: BUCKET_NAME,
-      Key: nombreImagen,
-    })
-    .promise();
-
-  const file = fs.createWriteStream(
-    path.resolve(path.join(__dirname, `../../../uploads/prueba/${nombreImagen}`))
-  );
-  file.write(data.Body);
-  file.end();
-  setTimeout(() => {
-    res.sendFile(path.join(__dirname, `../../../uploads/prueba/${nombreImagen}`));
-  }, 100);
+  const filePath = await fetchDigitalOceanFile(req.params.nombreImagen);
+  res.sendFile(filePath);
 
 }
