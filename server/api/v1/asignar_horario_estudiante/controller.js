@@ -6,7 +6,6 @@ const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
-
 const { fields } = require('./model');
 
 exports.id = async (req, res, next, id) => {
@@ -182,37 +181,15 @@ exports.all = async (req, res, next) => {
     next(new Error(err));
   }
 
-  /* const { query = {} } = req;
-  const { limit, page, skip } = paginar(query);
-
-
-  try {
-    const docs = await Model.find({})
-      .populate('idEstudiantes')
-      .populate('idHorario')
-      .populate('idDocente', 'nombresApellidos tipo email estado', { estado: true })
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
-    res.json({
-      success: true,
-      data: docs,
-    });
-  } catch (err) {
-    next(new Error(err));
-  } */
+  
 
 };
-
 
 exports.buscarDocenteHorario = async (req, res, next) => {
 
   const { query = {} } = req;
   const { idDocente, idHorario } = req.params;
   const { limit, page, skip } = paginar(query);
-
 
   try {
     const docs = await Model.find({ idDocente, idHorario })
@@ -246,7 +223,6 @@ exports.buscarbyCiudadMarcaDocenteActivo = async (req, res, next) => {
   idMarca.forEach(element => {
     marca.push(mongoose.Types.ObjectId(element));
   });
-
 
   try {
     const docs = await Model.aggregate([
@@ -301,7 +277,6 @@ exports.buscarbyCiudadMarcaDocenteActivo = async (req, res, next) => {
 
 };
 
-
 exports.buscarHorariosPorDia = async (req, res, next) => {
 
   const { query = {} } = req;
@@ -311,7 +286,6 @@ exports.buscarHorariosPorDia = async (req, res, next) => {
   const estadoBool = estado === 'true' ? true : false;
 
   console.log(dia);
-
 
   try {
     if (sucursal != 'todas') {
@@ -406,17 +380,12 @@ exports.buscarHorariosPorDia = async (req, res, next) => {
           }
         },
 
-
       ]).exec();
       res.json({
         success: true,
         data: docs,
       });
     }
-
-
-
-
 
   } catch (err) {
     next(new Error(err));

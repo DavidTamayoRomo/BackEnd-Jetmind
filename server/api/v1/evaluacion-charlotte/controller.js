@@ -4,7 +4,6 @@ const Model = require('./model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
-
 const { fields } = require('./model');
 
 const Persona = require('../persona/model');
@@ -47,31 +46,7 @@ exports.create = async (req, res, next) => {
     const representante = await Representante.findById(estudiante.idRepresentante[0]).exec();
 
     //TODO: envio de correo 
-    /* const esperar = await envioEmail.transporter.sendMail({
-      from: 'pruebaenvio@clicbro.org',
-      to: 'davidtamayoromo@gmail.com',
-      subject: `Evaluacion Charlotte`,
-      html: `"<div style='background: #c2c2c2;'> <div style='max-width: 600px; margin: auto; display: block;'>
-      <img src='https://www.charlotteenglishschool.com/wp-content/uploads/2021/06/HeaderCharlotteRepote.jpg' 
-      style='max-width: 100%; margin: 0px; display: block'></img> </div> <div style='max-width: 600px;
-      background: #fff;margin: auto;padding-top: 50px;padding-bottom: 50px;'> <div style='text-align: center;'> 
-      <h3 style='margin-bottom: 30px;font-size: 28px;'>Reporte Evaluación</h3> </div> 
-      <div style='padding: 20px;text-align: justify;font-size: 16px;'> <p>Estimado: <strong>${representante.nombresApellidos}
-      </strong></p><br> <p>Reciba un cordial saludo de <strong>Charlotte English School</strong>. 
-      A continuación damos el informe correspondiente a la evaluación realizada por parte del docente
-       <strong>${docente.nombresApellidos}</strong> </p> <p>Estudiante <strong>${estudiante.nombresApellidos}</strong></p> 
-       <p>" + input.Texto + ".</p> <p>Type: <strong>" + input.Quien_Eval_a + "</strong></p> 
-       <table style='width:80%; border: 1px solid black; position: center;'> <tr> <th>Skills</th> <th>Grade</th>
-        </tr> <tr> <td>Grammar</td> <td>" + input.Grammar1 + "</td> </tr> <tr> <td>Listening - Speaking</td>
-         <td>" + input.Listening_Speaking + "</td> </tr> <tr> <td>Writing - Reading</td> <td>" + input.Writing_Reading + "</td> 
-         </tr> </table> <br><br><img style='display: block; margin-left: auto;margin-right: auto; width: 25%;'
-          src='https://www.charlotteenglishschool.com/wp-content/uploads/2021/06/Firma.png' >
-          <div style='display: block; margin-left: auto;margin-right: auto; width: 25%; ''>
-          Firma de la empresa</div><br><br></div> </div> <div style='background: #ff4800;max-width: 600px;margin: 0 auto;'>
-           <div style='width:70%;margin: 0 auto;display:flex;'> <p style='font-size: 12px;padding: 5px 5px;color: #fff;margin-left: 160px;'>
-           <br> </p> <p style='font-size: 12px;padding: 5px 5px;color: #fff;'> <br> </p> </div> </div></div>"`
-    }) */
-
+    
 
     res.status(201);
     res.json({
@@ -86,7 +61,6 @@ exports.create = async (req, res, next) => {
 exports.all = async (req, res, next) => {
   const { query = {} } = req;
   const { limit, page, skip } = paginar(query);
-
 
   try {
     const docs = await Model.find({})

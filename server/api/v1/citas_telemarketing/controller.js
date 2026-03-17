@@ -4,7 +4,6 @@ const Model = require('./model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
-
 const { fields } = require('./model');
 const Persona = require('../persona/model');
 const Role = require('../role/model');
@@ -30,9 +29,7 @@ exports.id = async (req, res, next, id) => {
 
 exports.create = async (req, res, next) => {
   const { body = {}, params = {}, decoded = {} } = req;
-  /**
-   * Saber quien creo el contrato
-   */
+  
   const { _id = null } = decoded;
   if (_id) {
     body.addedUser = _id;
@@ -53,38 +50,7 @@ exports.create = async (req, res, next) => {
 };
 
 exports.all = async (req, res, next) => {
-  /*
-  const { query = {} } = req;
-  const {limit , page, skip }=paginar(query);
-  const {sortBy, direction}=sortParseParams(query,fields);
   
-  const all =  Model.find({})
-    .sort(sortCompactToStr(sortBy,direction))
-    .skip(skip)
-    .limit(limit);
-  const count = Model.countDocuments();
-
-  try {
-    const data = await Promise.all([all.exec(), count.exec()]);
-    const [docs, total]= data;
-    const pages = Math.ceil(total / limit);
-    res.json({
-      success:true,
-      data:docs,
-      meta: {
-        limit,
-        skip,
-        total,
-        page,
-        pages,
-        sortBy,
-        direction
-      }
-    });
-  } catch (err) {
-    next(new Error(err));
-  }
-  */
 
   const { query = {}, decoded = {} } = req;
   const { _id = null } = decoded;
@@ -92,7 +58,6 @@ exports.all = async (req, res, next) => {
 
   const persona = await Persona.findOne({ "_id": _id });
   const role = await Role.findOne({ "_id": { $in: persona.tipo } });
-
 
   try {
     let docs;
@@ -198,7 +163,6 @@ exports.all = async (req, res, next) => {
         .limit(limit)
     }
 
-
     res.json({
       success: true,
       data: docs,
@@ -243,7 +207,6 @@ exports.delete = async (req, res, next) => {
     next(new Error(error));
   }
 };
-
 
 exports.reporte_diario = async (req, res, next) => {
 

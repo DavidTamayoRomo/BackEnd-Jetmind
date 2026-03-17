@@ -14,11 +14,6 @@ const {
   busquedaEspecifica: busquedaEspecificaService,
 } = require('./search.service');
 
-/**
- * ================================================
- * Buscar en todas las colecciones del sistema
- * ================================================
- */
 exports.busquedaGeneral = async (req, res = response, next) => {
   try {
     const data = await busquedaGeneralService(req.params.busqueda);
@@ -31,11 +26,6 @@ exports.busquedaGeneral = async (req, res = response, next) => {
   }
 }
 
-/**
- * ===============================================
- * Busqueda tabla en especifica
- * ===============================================
- */
 exports.busquedaEspecifica = async (req, res = response, next) => {
   try {
     const result = await busquedaEspecificaService({
@@ -70,24 +60,7 @@ exports.fileUploadVouchers = (req, res) => {
   console.log('imagen64', imagen64);
   console.log('id', id);
 
-  /* var data = fs.readFileSync('base64', 'utf8'),
-    base64Data,
-    binaryData;
-
-  base64Data = data.replace(/^data:image\/png;base64,/, "");
-  base64Data += base64Data.replace('+', ' ');
-  binaryData = new Buffer(base64Data, 'base64').toString('binary');
-  console.log('base64Data: ', base64Data);
-  console.log('binaryData: ', binaryData);
-
   
-  const nombreArchivo = `${v4()}.png`;
-
-  fs.writeFile(nombreArchivo, binaryData, "binary", function (err) {
-    console.log(err); // writes out file without error, but it's not a valid image
-  }); */
-
-
 
 }
 
@@ -110,18 +83,10 @@ exports.fileUpload = async (req, res) => {
   }
 }
 
-
-/**
- * ======================================
- * Retornar imagen
- * ======================================
- */
 exports.returnfileUpload = (req, res) => {
   const pathImg = getLocalUploadPath(req.params.tabla, req.params.imagen);
   res.sendFile(pathImg);
 }
-
-
 
 exports.fileUploadDigitalOcean = async (req, res) => {
   const result = await registerDigitalOceanUpload(req.body, req.files);

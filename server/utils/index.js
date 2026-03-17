@@ -9,8 +9,6 @@ const Persona = require('../api/v1/persona/model');
 const Marca = require('../api/v1/marca/model');
 const Contrato = require('../api/v1/contrato/model');
 
-
-
 const paginar = function paginar2({
   limit = pagination.limit,
   page = pagination.page,
@@ -23,16 +21,12 @@ const paginar = function paginar2({
   }
 }
 
-
 const borrarImagen = (path) => {
   if (fs.existsSync(path)) {
     fs.unlinkSync(path);
   }
 }
 
-/**
- * Persona
- */
 const actualizarImagenPersona = async (id, atributo, nombreArchivo) => {
   let pathViejo;
   const persona = await Persona.findById(id);
@@ -41,10 +35,10 @@ const actualizarImagenPersona = async (id, atributo, nombreArchivo) => {
   }
   pathViejo = `./server/uploads/personas/${persona.fotoCedula1}`;
 
-  /**Borra imagen anterior para evitar almacenar informacion no importante */
+  
   borrarImagen(pathViejo);
 
-  /**Actualizamos el nombre del archivo en la base de datos */
+  
   if (atributo == 'fotoPerfil') {
     persona.fotoPerfil = nombreArchivo;
   }
@@ -56,7 +50,7 @@ const actualizarImagenPersona = async (id, atributo, nombreArchivo) => {
   }
   await persona.save();
 }
-/**Marca */
+
 const actualizarImagenMarca = async (id, nombreArchivo) => {
   let pathViejo;
   const marca = await Marca.findById(id);
@@ -65,16 +59,16 @@ const actualizarImagenMarca = async (id, nombreArchivo) => {
   }
   pathViejo = `./server/uploads/marcas/${marca.logo}`;
 
-  /**Borra imagen anterior para evitar almacenar informacion no importante */
+  
   borrarImagen(pathViejo);
 
-  /**Actualizamos el nombre del archivo en la base de datos */
+  
   marca.logo = nombreArchivo;
 
   await marca.save();
   return marca;
 }
-/**Contrato */
+
 const actualizarImagenContrato = async (id, nombreArchivo, res) => {
   let pathViejo;
   const contrato = await Contrato.findById(id);
@@ -83,20 +77,16 @@ const actualizarImagenContrato = async (id, nombreArchivo, res) => {
   }
   //pathViejo = `./server/uploads/contratos/${contrato.voucher}`;
 
-  /**Borra imagen anterior para evitar almacenar informacion no importante */
+  
   //borrarImagen(pathViejo);
 
-  /**Actualizamos el nombre del archivo en la base de datos */
+  
   contrato.voucher = nombreArchivo;
 
   await contrato.save();
-  /* res.json({
-    success:true,
-    msg:'Imagen actualizada',
-  }); */
+  
 }
 
-/**Contrato */
 const actualizarImagenContratoVoucher = async (id, nombreArchivo, res) => {
   let pathViejo;
   const contrato = await Contrato.findById(id);
@@ -105,17 +95,14 @@ const actualizarImagenContratoVoucher = async (id, nombreArchivo, res) => {
   }
   //pathViejo = `./server/uploads/contratos/${contrato.voucher}`;
 
-  /**Borra imagen anterior para evitar almacenar informacion no importante */
+  
   //borrarImagen(pathViejo);
 
-  /**Actualizamos el nombre del archivo en la base de datos */
+  
   //contrato.voucher = nombreArchivo;
 
   //await contrato.save();
-  /* res.json({
-    success:true,
-    msg:'Imagen actualizada',
-  }); */
+  
 }
 
 const actualizarImagen = async (tabla, atributo, id, nombreArchivo) => {
@@ -152,28 +139,6 @@ const actualizarImagen = async (tabla, atributo, id, nombreArchivo) => {
       break;
   }
 }
-
-
-/*
-const sortParseParams = (
-  {sortBy = sort.sortBy.default, direction = sort.direction.default},
-  fields
-) => {
-  const safelist = {
-    sortby: [...Object.getOwnPropertyNames(fields), ...sort.sortBy.fields],
-    direction:sort.direction.options,
-  };
-  return {
-    sortBy:safelist.sortBy.includes(sortBy) ? sortBy: sort.sortBy.default,
-    direction: safelist.direction.includes(direction) ? direction: sort.direction.default,
-  };
-};
-
-const sortCompactToStr = (sortBy, direction) => {
-  const dir =  direction === sort.direction.default ? '-':'';
-  return `${dir}${sortBy}`;
-}
-*/
 
 module.exports = {
   paginar,

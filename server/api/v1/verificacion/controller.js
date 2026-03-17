@@ -6,7 +6,6 @@ const Persona = require('../persona/model');
 const { paginar } = require('../../../utils');
 const { singToken } = require('./../auth');
 
-
 const { fields } = require('./model');
 
 exports.id = async (req, res, next, id) => {
@@ -53,7 +52,6 @@ exports.create = async (req, res, next) => {
 
 exports.all = async (req, res, next) => {
 
-
   const { query = {} } = req;
   const { decoded = {} } = req;
   const { _id = null } = decoded;
@@ -61,7 +59,6 @@ exports.all = async (req, res, next) => {
   const persona = await Persona.findOne({ "_id": _id });
   const role = await Role.findOne({ "_id": { $in: persona.tipo } });
   const { limit, page, skip } = paginar(query);
-
 
   try {
     let docs;
@@ -82,41 +79,8 @@ exports.all = async (req, res, next) => {
         .skip(skip).limit(limit)
         .sort({ '_id': -1 })
         .exec();
-      /* docs = await Model.aggregate([
-        {
-          $lookup: {
-            from: 'personas',
-            localField: 'addedUser',
-            foreignField: '_id',
-            as: 'addedUser'
-          }
-        },
-        {
-          $unwind: {
-            path: '$addedUser',
-          }
-        },
-        {
-          $match: {
-            $and: [
-              { 'addedUser.idCiudad': { $in: persona.idCiudad } },
-            ]
-          }
-        },
-        {
-          $lookup: {
-            from: 'contratos',
-            localField: 'idContrato',
-            foreignField: '_id',
-            as: 'idContrato'
-          }
-        },
-
-
-      ]);
-      console.log(docs); */
+      
     }
-
 
     totalVerficaciones = await Model.countDocuments();
 
@@ -132,7 +96,6 @@ exports.all = async (req, res, next) => {
 };
 
 exports.allReporte = async (req, res, next) => {
-
 
   const { query = {}, body = {} } = req;
   const { fechainicio, fechafin } = body;

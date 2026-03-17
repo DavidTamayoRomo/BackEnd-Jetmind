@@ -58,7 +58,6 @@ exports.all = async (req, res, next) => {
   const persona = await Persona.findOne({ "_id": _id });
   const role = await Role.findOne({ "_id": { $in: persona.tipo } });
 
-
   try {
     let docs;
     let totalHorario;
@@ -95,9 +94,6 @@ exports.all = async (req, res, next) => {
       totalHorario = await Model.countDocuments().exec();
     }
 
-
-
-
     res.json({
       success: true,
       data: docs,
@@ -107,40 +103,13 @@ exports.all = async (req, res, next) => {
     next(new Error(err));
   }
 
-  /* const { query = {} } = req;
-  const { limit, page, skip } = paginar(query);
-
-
-  try {
-    const docs = await Model
-      .find({})
-      .populate('idMarca')
-      .populate('idCiudad')
-      .populate('addedUser', 'nombresApellidos tipo email estado')
-      .populate('modifiedUser', 'nombresApellidos tipo email estado')
-      .skip(skip).limit(limit)
-      .sort({ '_id': -1 })
-      .exec();
-
-    //total de registros
-    const totalHorario = await Model.countDocuments().exec();
-
-
-    res.json({
-      success: true,
-      data: docs,
-      totalHorario
-    });
-  } catch (err) {
-    next(new Error(err));
-  } */
+  
 
 };
 
 exports.allSinLimite = async (req, res, next) => {
 
   const { query = {} } = req;
-
 
   try {
     const docs = await Model
@@ -194,7 +163,6 @@ exports.ByCiudadMarcaEstado = async (req, res, next) => {
 
     //total de registros
     const totalHorario = await Model.countDocuments().exec();
-
 
     res.json({
       success: true,
